@@ -1,0 +1,21 @@
+node_modules/
+tokens.json
+credentials.json
+*.bak
+
+# Work data — do not publish
+*.csv
+*.pdf
+*.xlsx
+records_*.json
+reportsuite_*.json
+Jira_*.html
+records_v21.html
+records_v22.html
+
+# Local folders
+.claude/
+.tmp.drivedownload/
+.tmp.driveupload/
+Files/
+Golden/
