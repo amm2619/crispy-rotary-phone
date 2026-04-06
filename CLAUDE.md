@@ -1,17 +1,17 @@
-# Records â€” Timekeeping App
+# Records GÇö Timekeeping App
 
 ## What This Is
 A single-file HTML timekeeping app for a federal contractor (Nightwing). Tracks work sessions, comp time, leave, and holidays against a biweekly pay period target. Dark warm-amber aesthetic (Inter + Playfair Display). No external dependencies except Google Fonts.
 
 ## Current File
-- App: `records_v25.html`
-- localStorage key: `rec_v35`
+- App: `records_v26.html`
+- localStorage key: `rec_v36`
 - Every new version: increment both the filename AND the localStorage key
 
 ## Versioning Rules
 - ALWAYS increment the version number when making changes
-- Filename: `records_v{N}.html` â†’ `records_v{N+1}.html`
-- localStorage key: `rec_v{N}` â†’ `rec_v{N+1}` (forces fresh load, clears stale cache)
+- Filename: `records_v{N}.html` GåÆ `records_v{N+1}.html`
+- localStorage key: `rec_v{N}` GåÆ `rec_v{N+1}` (forces fresh load, clears stale cache)
 - ALWAYS run `node --check` on extracted JS before shipping
 - NEVER ship without a syntax check passing
 
@@ -19,11 +19,11 @@ A single-file HTML timekeeping app for a federal contractor (Nightwing). Tracks 
 
 ## Pay Period Rules
 
-- **Schedule:** SATâ€“FRI, 14 days
-- **Start date:** `2025-08-23` (Saturday â€” first pay period)
+- **Schedule:** SATGÇôFRI, 14 days
+- **Start date:** `2025-08-23` (Saturday GÇö first pay period)
 - **Period target:** starts at **-80h**, closes to 0 as hours are logged
 - **Week target:** each week starts at **-40h**
-- **Period index:** `Math.floor((date - payPeriodStart) / 14 days)` using UTC math (not ms subtraction â€” DST causes off-by-one errors)
+- **Period index:** `Math.floor((date - payPeriodStart) / 14 days)` using UTC math (not ms subtraction GÇö DST causes off-by-one errors)
 - **Total periods:** 35 (Aug 23 2025 through end of 2026)
 
 ### DST Fix (Critical)
@@ -32,7 +32,7 @@ Always use UTC day counting in `periodOf()`:
 function toUTCDays(s){const p=s.split('-');return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
 const days=Math.round(toUTCDays(d)-toUTCDays(D.settings.payPeriodStart));
 ```
-Never use `(new Date(a) - new Date(b)) / 86400000` â€” DST causes this to return 97.9999 instead of 98.
+Never use `(new Date(a) - new Date(b)) / 86400000` GÇö DST causes this to return 97.9999 instead of 98.
 
 ---
 
@@ -78,11 +78,11 @@ function leaveBalAt(idx){
 ### What Counts Toward the 80h Target
 `dayContribution = workHours + compUsed + leave + holiday`
 
-`compEarned` does NOT count toward 80h â€” it banks hours into the comp bank.
+`compEarned` does NOT count toward 80h GÇö it banks hours into the comp bank.
 
 ### Comp Bank
-- Running all-time balance: `Î£ compEarned - Î£ compUsed`
-- **Explicit only** â€” never auto-calculated from overtime
+- Running all-time balance: `+ú compEarned - +ú compUsed`
+- **Explicit only** GÇö never auto-calculated from overtime
 - User marks comp earned/used manually per session
 
 ---
@@ -95,7 +95,7 @@ function leaveBalAt(idx){
 - Thanksgiving
 - Christmas Day
 
-### Floating Holidays (credit-based â€” user chooses to work or take)
+### Floating Holidays (credit-based GÇö user chooses to work or take)
 - MLK Day, Presidents' Day, Memorial Day, Juneteenth, Labor Day, Columbus Day, Veterans Day
 - If **taken**: counts as 8h toward 80h target, uses a floating credit
 - If **worked**: counts as a regular work day, no credit used
@@ -103,7 +103,7 @@ function leaveBalAt(idx){
 ### Floating Credits Per Year
 - 2025: Columbus Day + Veterans Day + 1 free = 3 total credits
 - 2026: 7 federal floating + 1 free = 8 total credits
-- Note: No Labor Day 2025 â€” Ash started Sep 2, 2025 (after Labor Day Sep 1)
+- Note: No Labor Day 2025 GÇö Ash started Sep 2, 2025 (after Labor Day Sep 1)
 
 ### Free Floating Holiday
 - 1 per year, can be assigned to ANY day
@@ -125,7 +125,7 @@ function leaveBalAt(idx){
 ## Navigation
 - Earliest date: `2025-08-23` (first pay period start)
 - "This Week" button opens a **custom dark calendar picker** (not native browser picker)
-- Arrows step week by week (SATâ€“FRI)
+- Arrows step week by week (SATGÇôFRI)
 - `thisSaturday()` finds the most recent Saturday using JS `getDay()`
 
 ---
@@ -149,14 +149,14 @@ function leaveBalAt(idx){
 
 ## Birthdays
 - Stored as `[{name: "Casper", date: "10-19"}]` (MM-DD format, year-agnostic)
-- Show on day cards every year with ğŸ‚ icon
+- Show on day cards every year with =ƒÄé icon
 - Managed in Settings tab
 
 ---
 
 ## Note Tags System
 Day notes use a tag-based system with emoji pills:
-- Quick tags: ğŸ  Telework, âœˆï¸ Travel, ğŸ“š Training, ğŸ“‹ Meeting, ğŸ“Š EoS Report, ğŸ‰ Event, ğŸ’» WFH
+- Quick tags: =ƒÅá Telework, G£ên+Å Travel, =ƒôÜ Training, =ƒôï Meeting, =ƒôè EoS Report, =ƒÄë Event, =ƒÆ+ WFH
 - Custom tags typed into input + Enter
 - Stored as `tags: ["telework", "meeting"]` array on the day
 - `notes` field = tags joined by `, ` for backward compatibility

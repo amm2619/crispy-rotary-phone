@@ -61,6 +61,9 @@ body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-hei
 .day-card.holiday { background:var(--grnD); border-color:var(--grnB); }
 .day-card.wknd { background:var(--sur); border-color:var(--bdr); opacity:0.75; }
 .day-card.wknd.active { opacity:1; border-color:var(--acc); background:var(--accD); }
+.day-card.skipped { opacity:0.55; }
+.day-card.skipped.active { opacity:1; }
+.dc-skip { font-size:11px; color:var(--t3); font-style:italic; margin-top:2px; }
 .dc-dow { font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--t3); }
 .day-card.active .dc-dow { color:var(--acc); }
 .dc-date { font-size:20px; font-weight:300; color:var(--t2); line-height:1.1; }
@@ -100,6 +103,9 @@ body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-hei
 /* Detail panel */
 .detail-panel { background:var(--sur); border:1px solid var(--bdr); border-radius:var(--r); padding:22px; }
 .detail-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.skip-day-btn { font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid var(--bdr2); background:none; color:var(--t3); cursor:pointer; font-family:'Inter',sans-serif; letter-spacing:0.03em; transition:all 0.15s; }
+.skip-day-btn:hover { border-color:var(--t3); color:var(--t2); }
+.skip-day-btn.active { background:var(--redD); border-color:var(--red); color:var(--red); }
 .detail-title { font-family:'Playfair Display',serif; font-size:19px; font-style:italic; color:var(--t1); }
 .detail-total { font-size:26px; font-weight:700; color:var(--acc); }
 
@@ -455,7 +461,10 @@ canvas { width:100%!important; height:165px!important; }
       <div class="detail-panel">
         <div class="detail-head">
           <div class="detail-title" id="detailTitle">—</div>
-          <div class="detail-total" id="detailTotal">—</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="skip-day-btn" id="skipDayBtn" onclick="toggleSkipDay()" title="Remove this day from the 80h target">Day off</button>
+            <div class="detail-total" id="detailTotal">—</div>
+          </div>
         </div>
         <div class="sessions" id="sessionsEl"></div>
 
@@ -694,7 +703,7 @@ let gapiReady=false, gsiReady=false, tokenClient=null;
 // ── Persist ────────────────────────────────────────────────
 function loadData(){
   try{
-    const r=localStorage.getItem('rec_v35');
+    const r=localStorage.getItem('rec_v36');
     if(r){
       const stored=JSON.parse(r);
       // If pay period start is wrong, reset settings but keep day data
@@ -707,7 +716,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v35',JSON.stringify(D));
+  localStorage.setItem('rec_v36',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!gToken)setSyncState('offline');
@@ -753,10 +762,12 @@ function getBirthdays(s){
 function isFixedHoliday(s){const h=getHoliday(s);return h&&h.type==='fixed';}
 function isFloatingHoliday(s){const h=getHoliday(s);return h&&h.type==='floating';}
 // A day reduces the period target if it's a fixed holiday, a taken floating holiday, or a taken free floating day
+function isSkippedDay(d){return !!(D.days[d]&&D.days[d].skip);}
 function reducesTarget(s){
   if(isFixedHoliday(s))return true;
   if(isFloatingHoliday(s)&&isTakenFloating(s))return true;
   if(isExtraFloating(s))return true;
+  if(isSkippedDay(s))return true;
   return false;
 }
 function isTakenFloating(s){return(D.settings.takenFloating||[]).includes(s);}
@@ -976,9 +987,11 @@ function renderWeek(){
     const lv=dayLeave(date),hday=dayHoliday(date),contrib=dayContribution(date);
     const wfhH=dayWfhHours(date),notes=D.days[date]?.notes||'';
 
+    const skipped=isSkippedDay(date);
     const card=document.createElement('div');
     let cls='day-card';
     if(hol&&!flt)cls+=' holiday';
+    if(skipped)cls+=' skipped';
     if(isA)cls+=' active';
     card.className=cls;
     card.onclick=()=>{activeDay=date;renderWeek();};
@@ -994,6 +1007,8 @@ function renderWeek(){
       if(cu>0)bottom+=`<div style="font-size:11px;color:var(--sky);font-weight:600">${fmtHrs(cu)} comp</div>`;
       if(lv>0)bottom+=`<div class="dc-leave">${fmtHrs(lv)} leave</div>`;
       if(ce>0)bottom+=`<div style="font-size:11px;color:var(--grn);font-weight:600">+${fmtHrs(ce)} banked</div>`;
+    } else if(skipped){
+      bottom=`<div class="dc-skip">day off</div>`;
     } else {
       bottom=`<div class="dc-hrs dim">—</div>`;
     }
@@ -1070,6 +1085,11 @@ function renderDetail(){
   const work=dayWorkHours(date);
 
   document.getElementById('detailTitle').textContent=fmtLong(date);
+  const skipBtn=document.getElementById('skipDayBtn');
+  const skipped=isSkippedDay(date);
+  skipBtn.classList.toggle('active',skipped);
+  skipBtn.textContent=skipped?'↩ Restore day':'Day off';
+  skipBtn.style.display=isWeekend(date)?'none':'inline-block';
 
   // Build total string with breakdown
   let parts=[];
@@ -1161,6 +1181,11 @@ function delSess(date,id){
   sched();
 }
 
+function toggleSkipDay(){
+  ensureDay(activeDay);
+  D.days[activeDay].skip=!D.days[activeDay].skip;
+  sched();renderWeek();
+}
 function saveField(field,inputId){
   ensureDay(activeDay);
   const el=document.getElementById(inputId);
