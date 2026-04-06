@@ -4,8 +4,8 @@
 A single-file HTML timekeeping app for a federal contractor (Nightwing). Tracks work sessions, comp time, leave, and holidays against a biweekly pay period target. Dark warm-amber aesthetic (Inter + Playfair Display). No external dependencies except Google Fonts.
 
 ## Current File
-- App: `records_v24.html`
-- localStorage key: `rec_v34`
+- App: `records_v25.html`
+- localStorage key: `rec_v35`
 - Every new version: increment both the filename AND the localStorage key
 
 ## Versioning Rules
