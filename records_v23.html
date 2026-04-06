@@ -1494,7 +1494,9 @@ function maybeInitAuth(){
     callback:onTokenResponse,
     error_callback:onTokenError
   });
-  // Silent token request (no consent prompt if already authorized)
+  // Show Connect button immediately — don't wait for token callback
+  renderAuthState();
+  // Also attempt silent refresh (succeeds if user previously authorized this session)
   tokenClient.requestAccessToken({prompt:''});
 }
 
