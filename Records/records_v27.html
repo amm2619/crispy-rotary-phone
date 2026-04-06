@@ -33,19 +33,7 @@ body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-hei
 .nav-btn { display:flex; align-items:center; gap:10px; padding:11px 20px; font-size:14px; font-weight:500; color:var(--t3); cursor:pointer; border-left:3px solid transparent; transition:all 0.15s; background:none; border-top:none; border-right:none; border-bottom:none; width:100%; text-align:left; font-family:'Inter',sans-serif; }
 .nav-btn:hover { color:var(--t2); background:var(--sur2); }
 .nav-btn.on { color:var(--t1); background:var(--accD); border-left-color:var(--acc); }
-.nav-text { transition:opacity 0.15s; white-space:nowrap; }
 .side-foot { margin-top:auto; padding:16px 20px; border-top:1px solid var(--bdr); font-size:13px; color:var(--t3); }
-/* ── Sidebar collapse ── */
-.side { transition:width 0.2s ease; overflow:hidden; }
-.side-toggle { display:flex; align-items:center; justify-content:center; width:100%; padding:9px 0; background:none; border:none; border-top:1px solid var(--bdr); color:var(--t3); cursor:pointer; font-size:14px; transition:color 0.15s; font-family:'Inter',sans-serif; }
-.side-toggle:hover { color:var(--acc); background:var(--sur2); }
-.side.collapsed { width:52px; }
-.side.collapsed .mark-t { display:none; }
-.side.collapsed .nav-text { display:none; }
-.side.collapsed .nav-btn { padding:11px 0; justify-content:center; border-left-color:transparent !important; }
-.side.collapsed .nav-btn.on { background:var(--accD); color:var(--acc); }
-.side.collapsed .side-foot { display:none; }
-.side.collapsed .auth-row { display:none; }
 .save-row { display:flex; align-items:center; gap:8px; }
 .dot { width:7px; height:7px; border-radius:50%; background:var(--grn); flex-shrink:0; }
 #saveTime { font-size:12px; color:var(--t3); margin-top:3px; }
@@ -231,6 +219,9 @@ canvas { width:100%!important; height:165px!important; }
 
 /* ── Responsive (half-screen / narrow window) ── */
 @media (max-width: 1050px) {
+  .side { width:52px; overflow:hidden; }
+  .mark, .side-foot, .auth-row { display:none; }
+  .nav-btn { padding:11px 0; justify-content:center; }
   .tab { padding:14px 16px; }
   .week-heading { font-size:20px; }
   .topbar { margin-bottom:14px; }
@@ -368,6 +359,7 @@ canvas { width:100%!important; height:165px!important; }
 
 /* ── Holiday & birthday icons on cards ── */
 .dc-hol-icon { font-size:13px; margin-top:3px; line-height:1.3; }
+.dc-bday { font-size:12px; color: #e8a0c8; margin-top:2px; }
 
 /* ── Notes section ── */
 .notes-section { margin-top:12px; }
@@ -387,19 +379,16 @@ canvas { width:100%!important; height:165px!important; }
 }
 .note-tag .tag-del:hover { color:var(--red); }
 
-/* ── Emoji picker ── */
-.notes-add-row { display:flex; align-items:center; gap:8px; position:relative; }
-.emoji-btn { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:7px 9px; font-size:18px; cursor:pointer; transition:all 0.15s; line-height:1; flex-shrink:0; }
-.emoji-btn:hover, .emoji-btn.open { border-color:var(--acc); background:var(--accD); }
-.emoji-panel { position:absolute; bottom:calc(100% + 8px); left:0; width:300px; background:var(--sur); border:1px solid var(--bdr2); border-radius:var(--r); box-shadow:0 8px 32px rgba(0,0,0,0.55); z-index:150; display:none; }
-.emoji-panel.open { display:block; }
-.emoji-cats { display:flex; border-bottom:1px solid var(--bdr); padding:5px 8px; gap:3px; }
-.emoji-cat { background:none; border:none; font-size:13px; font-weight:600; padding:5px 9px; border-radius:var(--rs); cursor:pointer; transition:all 0.12s; color:var(--t3); font-family:'Inter',sans-serif; }
-.emoji-cat:hover { background:var(--sur2); color:var(--t2); }
-.emoji-cat.on { background:var(--accD); color:var(--acc); }
-.emoji-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:2px; padding:8px; max-height:180px; overflow-y:auto; }
-.emoji-item { font-size:20px; padding:5px 2px; border-radius:6px; cursor:pointer; text-align:center; transition:background 0.1s; line-height:1.2; border:none; background:none; }
-.emoji-item:hover { background:var(--sur3); }
+.note-type-pills { display:flex; flex-wrap:wrap; gap:5px; }
+.note-pill {
+  background:var(--sur2); border:1px solid var(--bdr);
+  border-radius:20px; padding:4px 10px;
+  font-size:12px; color:var(--t3); cursor:pointer;
+  font-family:'Inter',sans-serif; transition:all 0.12s;
+}
+.note-pill:hover { border-color:var(--acc); color:var(--acc); background:var(--accD); }
+
+.notes-add-row { }
 
 /* ── Google sync ── */
 .auth-row { padding:10px 20px 0; }
@@ -441,18 +430,15 @@ canvas { width:100%!important; height:165px!important; }
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
-      <span class="nav-text">This Week</span>
+      This Week
     </button>
     <button class="nav-btn" data-tab="year" onclick="showTab('year')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
-      <span class="nav-text">Year &amp; Leave</span>
+      Year &amp; Leave
     </button>
     <button class="nav-btn" data-tab="settings" onclick="showTab('settings')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.41 1.41M13.54 13.54l1.41 1.41M14.95 5.05l-1.41 1.41M6.46 13.54l-1.41 1.41"/></svg>
-      <span class="nav-text">Settings</span>
-    </button>
-    <button class="side-toggle" id="sideToggle" onclick="toggleSidebar()" title="Toggle sidebar">
-      <svg id="sideToggleIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20"><path d="M13 5l-5 5 5 5"/></svg>
+      Settings
     </button>
     <div id="authRow" class="auth-row"></div>
     <div class="side-foot">
@@ -566,19 +552,18 @@ canvas { width:100%!important; height:165px!important; }
         <div class="notes-section">
           <div class="notes-tags" id="notesTags"></div>
           <div class="notes-add-row">
-            <button class="emoji-btn" id="emojiBtn" onclick="toggleEmojiPicker(event)" title="Add emoji">😊</button>
-            <div class="emoji-panel" id="emojiPanel">
-              <div class="emoji-cats">
-                <button class="emoji-cat on" data-cat="work" onclick="showEmojiCat('work')">💼 Work</button>
-                <button class="emoji-cat" data-cat="face" onclick="showEmojiCat('face')">😊 Faces</button>
-                <button class="emoji-cat" data-cat="travel" onclick="showEmojiCat('travel')">✈️ Travel</button>
-                <button class="emoji-cat" data-cat="misc" onclick="showEmojiCat('misc')">⚡ Misc</button>
-              </div>
-              <div class="emoji-grid" id="emojiGrid"></div>
+            <div class="note-type-pills" id="noteTypePills">
+              <button class="note-pill" onclick="addNoteTag('telework')">🏠 Telework</button>
+              <button class="note-pill" onclick="addNoteTag('travel')">✈️ Travel</button>
+              <button class="note-pill" onclick="addNoteTag('training')">📚 Training</button>
+              <button class="note-pill" onclick="addNoteTag('meeting')">📋 Meeting</button>
+              <button class="note-pill" onclick="addNoteTag('eos')">📊 EoS Report</button>
+              <button class="note-pill" onclick="addNoteTag('event')">🎉 Event</button>
+              <button class="note-pill" onclick="addNoteTag('wfh')">💻 WFH</button>
             </div>
-            <input class="notes-inp" id="notesInp" placeholder="+ note or tag…"
+            <input class="notes-inp" id="notesInp" placeholder="+ custom note…"
               onkeydown="if(event.key==='Enter'&&this.value.trim()){addNoteTag(this.value.trim());this.value='';}"
-              style="flex:1">
+              style="margin-top:8px;width:100%">
           </div>
         </div>
       </div>
@@ -639,6 +624,15 @@ canvas { width:100%!important; height:165px!important; }
             <button class="btn btn-ghost btn-sm" onclick="document.getElementById('impFile').click()">Import JSON</button>
             <button class="btn btn-ghost btn-sm" onclick="resetData()">Reset to spreadsheet data</button>
             <input type="file" id="impFile" accept=".json" style="display:none" onchange="importData(event)">
+          </div>
+        </div>
+        <div class="s-group" style="margin-bottom:0">
+          <div class="s-title">Birthdays</div>
+          <div id="bdayList"></div>
+          <div class="s-row" style="margin-top:10px">
+            <div class="s-field" style="min-width:0"><div class="s-label">Name</div><input class="s-inp" id="bdayName" placeholder="Name" style="width:160px"></div>
+            <div class="s-field" style="min-width:0"><div class="s-label">Date (MM-DD)</div><input class="s-inp" id="bdayDate" placeholder="10-19" style="width:100px"></div>
+            <div class="s-field" style="justify-content:flex-end;min-width:0"><button class="btn btn-ghost btn-sm" onclick="addBirthday()" style="margin-top:auto">+ Birthday</button></div>
           </div>
         </div>
       </div>
@@ -727,32 +721,15 @@ const FLOATING_CREDITS={
 // ── State ──────────────────────────────────────────────────
 let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', saveTimer=null;
 
-// ── Sidebar collapse ───────────────────────────────────────
-let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
-function applySidebarState(){
-  const side=document.querySelector('.side');
-  const icon=document.getElementById('sideToggleIcon');
-  side.classList.toggle('collapsed',sideCollapsed);
-  // Chevron left when expanded (pointing to collapse), right when collapsed (pointing to expand)
-  icon.innerHTML=sideCollapsed
-    ?'<path d="M7 5l5 5-5 5"/>'   // chevron right
-    :'<path d="M13 5l-5 5 5 5"/>'; // chevron left
-}
-function toggleSidebar(){
-  sideCollapsed=!sideCollapsed;
-  localStorage.setItem('sideCollapsed',sideCollapsed);
-  applySidebarState();
-}
-
 // ── Google sync state ──────────────────────────────────────
 let gToken=null, driveFileId=null, userEmail='', syncState='offline';
-let calEvents={}, driveTimer=null;
+let calEvents={}, birthdaysSynced=false, driveTimer=null;
 let gapiReady=false, gsiReady=false, tokenClient=null;
 
 // ── Persist ────────────────────────────────────────────────
 function loadData(){
   try{
-    const r=localStorage.getItem('rec_v38');
+    const r=localStorage.getItem('rec_v37');
     if(r){
       const stored=JSON.parse(r);
       // If pay period start is wrong, reset settings but keep day data
@@ -765,7 +742,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v38',JSON.stringify(D));
+  localStorage.setItem('rec_v37',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!gToken)setSyncState('offline');
@@ -803,6 +780,10 @@ function getHolidayIcon(h){
   if(name.includes('thanksgiving'))return'🦃';
   if(name.includes('christmas'))return'🎄';
   return'🏛️';
+}
+function getBirthdays(s){
+  const mmdd=s.slice(5); // MM-DD from YYYY-MM-DD
+  return(D.settings.birthdays||[]).filter(b=>b.date===mmdd);
 }
 function isFixedHoliday(s){const h=getHoliday(s);return h&&h.type==='fixed';}
 function isFloatingHoliday(s){const h=getHoliday(s);return h&&h.type==='floating';}
@@ -1066,6 +1047,9 @@ function renderWeek(){
       const taken=isTakenFloating(date)||isFixedHoliday(date);
       bottom+=`<div class="dc-hol-icon" title="${hol2.name}">${icon} <span style="font-size:10px;color:${taken?'var(--acc)':'var(--t3)'}">${hol2.name.split(' ')[0]}</span></div>`;
     }
+    // Birthday icons
+    const bdays=getBirthdays(date);
+    for(const b of bdays)bottom+=`<div class="dc-bday">🎂 ${b.name}</div>`;
     if(notes)bottom+=`<div class="dc-note">${notes.slice(0,28)}${notes.length>28?'…':''}</div>`;
     // Google Calendar events
     const dayCalEvs=(calEvents[date]||[]).filter(e=>!e.isRecordsSession);
@@ -1462,8 +1446,37 @@ function renderSettings(){
   document.getElementById('sSB').value=D.settings.startingLeaveBalance;
   document.getElementById('sWFH').value=D.settings.wfhLimit||16;
   document.getElementById('sOfficeDays').value=D.settings.wfhExemptOfficeDays||3;
+  renderBirthdays();
 }
 function saveSetting(k,v){D.settings[k]=v;sched();}
+function renderBirthdays(){
+  const el=document.getElementById('bdayList');if(!el)return;
+  const bdays=D.settings.birthdays||[];
+  el.innerHTML='';
+  for(let i=0;i<bdays.length;i++){
+    const b=bdays[i];
+    el.innerHTML+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)">
+      <span style="font-size:18px">🎂</span>
+      <div style="flex:1"><div style="font-weight:600;color:var(--t1)">${b.name}</div><div style="font-size:12px;color:var(--t3)">${b.date}</div></div>
+      <button class="ic-btn del" onclick="removeBirthday(${i})">✕</button>
+    </div>`;
+  }
+  if(!bdays.length)el.innerHTML='<div style="color:var(--t3);font-size:13px;padding:8px 0">No birthdays added yet</div>';
+}
+function addBirthday(){
+  const name=document.getElementById('bdayName').value.trim();
+  const date=document.getElementById('bdayDate').value.trim();
+  if(!name||!date)return;
+  if(!/^\d{2}-\d{2}$/.test(date)){alert('Date format: MM-DD (e.g. 10-19)');return;}
+  if(!D.settings.birthdays)D.settings.birthdays=[];
+  D.settings.birthdays.push({name,date});
+  document.getElementById('bdayName').value='';
+  document.getElementById('bdayDate').value='';
+  sched();renderBirthdays();
+}
+function removeBirthday(i){
+  D.settings.birthdays.splice(i,1);sched();renderBirthdays();
+}
 function exportData(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='records_'+today()+'.json';a.click();}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);save();renderWeek();alert('Imported.');}catch(x){alert('Invalid file.');}};r.readAsText(f);}
 function resetData(){if(!confirm('Reset to original spreadsheet data?'))return;D=JSON.parse(JSON.stringify(SEED));save();renderWeek();}
@@ -1560,6 +1573,7 @@ function onTokenResponse(resp){
   getUserEmail().then(()=>{
     renderAuthState();
     loadFromDrive();
+    if(!birthdaysSynced)syncBirthdays();
     syncCalendarWeek(viewSat);
   });
 }
@@ -1687,6 +1701,39 @@ async function syncCalendarWeek(sat){
   finally{if(csb)csb.textContent='🗓';}
 }
 
+async function syncBirthdays(){
+  if(!gToken||!gapiReady||birthdaysSynced)return;
+  try{
+    const calList=await gapi.client.calendar.calendarList.list();
+    const bdayCal=(calList.result.items||[]).find(c=>
+      c.summary?.toLowerCase().includes('birthday')||
+      c.id?.toLowerCase().includes('contacts')
+    );
+    if(!bdayCal)return;
+    const yr=new Date().getFullYear();
+    const resp=await gapi.client.calendar.events.list({
+      calendarId:bdayCal.id,
+      timeMin:new Date(yr,0,1).toISOString(),
+      timeMax:new Date(yr+1,11,31).toISOString(),
+      singleEvents:true,
+      maxResults:200
+    });
+    if(!D.settings.birthdays)D.settings.birthdays=[];
+    const existing=new Set(D.settings.birthdays.map(b=>b.name.toLowerCase()));
+    let changed=false;
+    for(const ev of resp.result.items||[]){
+      const name=(ev.summary||'').replace(/'s birthday$/i,'').trim();
+      if(!name||existing.has(name.toLowerCase()))continue;
+      const date=(ev.start.date||ev.start.dateTime||'').slice(5,10); // MM-DD
+      if(!date)continue;
+      D.settings.birthdays.push({name,date});
+      existing.add(name.toLowerCase());
+      changed=true;
+    }
+    birthdaysSynced=true;
+    if(changed)sched();
+  }catch(e){console.error('Birthday sync error:',e);}
+}
 
 async function pushSession(date,sessionId){
   if(!gToken)return;
@@ -1735,7 +1782,6 @@ async function removeSessionEvent(date,sessionId,eventId){
 
 // ── Boot ───────────────────────────────────────────────────
 renderWeek();
-applySidebarState();
 
 // GIS loads async — poll until ready (handles cases where GIS loads after GAPI)
 (function waitForGsi(){
@@ -1850,50 +1896,12 @@ const NOTE_ICONS = {
   eos:'📊', event:'🎉', wfh:'💻'
 };
 function noteLabel(tag){
-  // If it starts with an emoji/non-ASCII, display as-is
-  if(tag.codePointAt(0)>127)return tag;
   const lower=tag.toLowerCase();
   for(const[k,v] of Object.entries(NOTE_ICONS)){
     if(lower===k||lower.startsWith(k))return v+' '+tag.charAt(0).toUpperCase()+tag.slice(1);
   }
-  return tag;
+  return '📝 '+tag;
 }
-
-// ── Emoji picker ───────────────────────────────────────────
-const EMOJI_SETS={
-  work:['💼','📋','📊','📈','📉','📅','🗓','📝','✅','❌','⚠️','🔔','📞','📧','💻','🖥️','🏢','🚀','💡','🔑','🎯','🏆','⭐','✨','🔥','💪','🤝','👏','📣','📌'],
-  face:['😀','😊','😎','😂','🤔','🤨','😐','😮','😴','😩','😤','🥳','🎉','👍','👎','👌','💯','❤️','🙏','🫡','😬','🥱','😇','🤩','😅','🫠','😭','😱','🫶','💀'],
-  travel:['✈️','🚗','🚂','🚌','🏨','🗺️','🧳','🏖️','🏔️','🌍','⛽','🛣️','🛫','🛬','🚕','🚙','🛳️','🚁','🏕️','🗼'],
-  misc:['☀️','🌧️','❄️','🌈','🌺','🍂','🌊','🌙','⚡','🌿','☕','🍕','🎂','🎵','🎨','📚','🎮','⚽','🏋️','🧘','🔴','🟡','🟢','🔵','💜','🖤','⬆️','⬇️','➡️','↩️']
-};
-let emojiCat='work';
-function toggleEmojiPicker(e){
-  e.stopPropagation();
-  const panel=document.getElementById('emojiPanel');
-  const btn=document.getElementById('emojiBtn');
-  const isOpen=panel.classList.contains('open');
-  panel.classList.toggle('open',!isOpen);
-  btn.classList.toggle('open',!isOpen);
-  if(!isOpen)showEmojiCat(emojiCat);
-}
-function showEmojiCat(cat){
-  emojiCat=cat;
-  document.querySelectorAll('.emoji-cat').forEach(b=>b.classList.toggle('on',b.dataset.cat===cat));
-  const grid=document.getElementById('emojiGrid');
-  grid.innerHTML='';
-  for(const em of EMOJI_SETS[cat]){
-    const btn=document.createElement('button');
-    btn.className='emoji-item';
-    btn.textContent=em;
-    btn.title=em;
-    btn.onclick=(e)=>{e.stopPropagation();addNoteTag(em);};
-    grid.appendChild(btn);
-  }
-}
-document.addEventListener('click',()=>{
-  document.getElementById('emojiPanel')?.classList.remove('open');
-  document.getElementById('emojiBtn')?.classList.remove('open');
-});
 function renderNotesTags(){
   const el=document.getElementById('notesTags');
   if(!el)return;
