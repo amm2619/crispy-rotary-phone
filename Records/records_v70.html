@@ -860,11 +860,6 @@ canvas { width:100%!important; height:165px!important; }
                 </div>
                 <div style="height:17px"></div>
               </div>
-              <div class="add-field">
-                <div class="add-lbl">Note</div>
-                <input class="add-inp wide" id="inNote" placeholder="optional">
-                <div style="height:17px"></div>
-              </div>
               <div class="add-field" style="justify-content:flex-end;padding-bottom:17px">
                 <button class="btn btn-acc btn-sm" onclick="addSession()">+ Add</button>
               </div>
@@ -2122,15 +2117,14 @@ function renderDetail(){
 function addSession(){
   const s=parseTime(document.getElementById('inStart').value);
   const e=parseTime(document.getElementById('inEnd').value);
-  const note=document.getElementById('inNote').value.trim();
   if(s===null||e===null){alert('Please enter valid times.\n\nExamples: 8.5 · 8:30am · 14:45 · 2:45pm');return;}
   if(e<=s){
     const dur=round6(e+24-s);
     if(!confirm(`Overnight session: ${fmtDec(s)} → ${fmtDec(e)} (${fmtHrs(dur)}). Is this correct?`))return;
   }
   ensureDay(activeDay);
-  D.days[activeDay].sessions.push({id:'s'+Date.now(),start:s,end:e,loc:addLoc,note});
-  ['inStart','inEnd','inNote'].forEach(id=>document.getElementById(id).value='');
+  D.days[activeDay].sessions.push({id:'s'+Date.now(),start:s,end:e,loc:addLoc});
+  ['inStart','inEnd'].forEach(id=>document.getElementById(id).value='');
   ['pStart','pEnd'].forEach(id=>document.getElementById(id).textContent='');
   sched();
 }
