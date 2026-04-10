@@ -1523,18 +1523,24 @@ function dayCoversCoreHours(d){
   covered+=end-cur;
   return covered>=3.9; // 4h of coverage between 10-14 (small tolerance)
 }
-// Was the user in the OFFICE during core hours?
-function dayInOfficeDuringCore(d){
-  const day=D.days[d];if(!day||!day.sessions)return false;
-  const intervals=day.sessions.filter(s=>s.loc==='office').map(s=>{let e=s.end;if(e<=s.start)e+=24;return [Math.max(s.start,10),Math.min(e,14)];}).filter(([a,b])=>b>a);
-  if(!intervals.length)return false;
+// Fraction of the 10 AM – 2 PM core-hours window (4 hours total) that the
+// user was physically in office on this day. Returns 0..1.
+// Multiple sessions are merged so overlaps don't double-count.
+function dayOfficeCoreCoverage(d){
+  const day=D.days[d];if(!day||!day.sessions)return 0;
+  const intervals=day.sessions
+    .filter(s=>s.loc==='office')
+    .map(s=>{let e=s.end;if(e<=s.start)e+=24;return [Math.max(s.start,10),Math.min(e,14)];})
+    .filter(([a,b])=>b>a);
+  if(!intervals.length)return 0;
   intervals.sort((a,b)=>a[0]-b[0]);
-  let cur=intervals[0][0],end=intervals[0][1];
+  let covered=0,cur=intervals[0][0],end=intervals[0][1];
   for(let i=1;i<intervals.length;i++){
     if(intervals[i][0]<=end)end=Math.max(end,intervals[i][1]);
-    else{cur=intervals[i][0];end=intervals[i][1];}
+    else{covered+=end-cur;cur=intervals[i][0];end=intervals[i][1];}
   }
-  return (end-cur)>=3.9;
+  covered+=end-cur;
+  return covered/4;
 }
 // Did the user stay in the office until at least PM-relevant hour (16:00 = 4 PM)?
 function dayStayedLate(d){
@@ -1570,28 +1576,27 @@ function fmtSpan(h){
 // Only counts days where the user actually worked (has sessions with loc in office/wfh/oh).
 // Returns avg start time, end time, total hours, sessions/day + std devs.
 function patternStats(dayKeys){
-  const starts=[],ends=[],hours=[],sessions=[],officeDays=[];
-  let coreHit=0,officeCoreHit=0,stayedLate=0,officeDayCount=0;
-  let total=0;
+  const starts=[],ends=[],hours=[],sessions=[],coverageVals=[];
+  let stayedLate=0,officeDayCount=0,total=0;
   for(const d of dayKeys){
     const day=D.days[d];
     if(!day||!day.sessions||!day.sessions.length)continue;
     const hasWork=day.sessions.some(s=>s.loc==='office'||s.loc==='wfh'||s.loc==='oh');
     if(!hasWork)continue;
-    // Skip days that are pure leave/holiday (no actual sessions contribute to pattern)
     total++;
     const s0=dayOfficeStart(d);
     const e0=dayOfficeEnd(d);
-    const oh=dayOfficeHours(d);
+    const officeH=dayOfficeHours(d);
     const tot=dayWorkHours(d);
     if(s0!==null)starts.push(s0);
     if(e0!==null)ends.push(e0);
     hours.push(tot);
     sessions.push(daySessionCount(d));
-    if(oh>0)officeDayCount++;
-    if(dayCoversCoreHours(d))coreHit++;
-    if(dayInOfficeDuringCore(d))officeCoreHit++;
-    if(dayStayedLate(d))stayedLate++;
+    if(officeH>0){
+      officeDayCount++;
+      coverageVals.push(dayOfficeCoreCoverage(d));
+      if(dayStayedLate(d))stayedLate++;
+    }
   }
   const avg=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;
   return {
@@ -1601,7 +1606,9 @@ function patternStats(dayKeys){
     hoursMean:avg(hours), hoursStdev:stdDev(hours),
     sessionsMean:avg(sessions),
     officeDayCount,
-    coreHit,officeCoreHit,stayedLate,
+    // avg coverage of the 10-2 core-hours window across office days (0..1)
+    coreCoverageMean:avg(coverageVals),
+    stayedLate,
   };
 }
 // Get last N weekdays worth of keys from the data, ending today
@@ -2248,8 +2255,8 @@ function renderPatternHero(){
     el.innerHTML='<div class="pattern-stat" style="grid-column:1/-1;text-align:center;color:var(--t3)">Not enough data yet to compute patterns.</div>';
     return;
   }
-  // Core hours % = officeCoreHit / officeDayCount (only days where user was actually in office)
-  const corePct=s.officeDayCount>0?Math.round(100*s.officeCoreHit/s.officeDayCount):0;
+  // Core hours coverage: avg % of the 10-2 window present in office, across office days
+  const corePct=Math.round(100*s.coreCoverageMean);
   const latePct=s.officeDayCount>0?Math.round(100*s.stayedLate/s.officeDayCount):0;
   const officePerWeek=s.sampleSize>0?round6(s.officeDayCount/(s.sampleSize/5)):0;
   const startStr=s.startCount?fmtTimeOfDay(s.startMean):'—';
@@ -2275,9 +2282,9 @@ function renderPatternHero(){
       <div class="pstat-sub">${hoursSpanStr} · ${s.sampleSize} workdays</div>
     </div>
     <div class="pattern-stat">
-      <div class="pstat-lbl">Core hours 10–2</div>
+      <div class="pstat-lbl">Core 10–2 coverage</div>
       <div class="pstat-val">${corePct}%</div>
-      <div class="pstat-sub">${s.officeDayCount} in-office · ${round6(officePerWeek)}/wk avg</div>
+      <div class="pstat-sub">avg across ${s.officeDayCount} office days · ${round6(officePerWeek)}/wk</div>
     </div>
   `;
   const sub=document.getElementById('dowWindowLabel');
@@ -2345,45 +2352,77 @@ function renderWeeklyChart(){
   html+=`<div class="weekly-summary">Mean <strong>${fmtHrs(round6(mean))}</strong> · σ <strong>${fmtSpan(sigma)}</strong> · within ±2h of target: <strong>${withinPct}%</strong> of weeks</div>`;
   document.getElementById('weeklyChart').innerHTML=html;
 }
+// Compact time-of-day labels: "6a" / "9a" / "12p" / "1p" — saves horizontal space
+function fmtTimeShort(v){
+  if(v===null||v===undefined||isNaN(v))return '';
+  let h=Math.floor(v);
+  const m=Math.round((v-h)*60);
+  if(m>=30)h+=0; // keep the floor for label positions
+  const ampm=(h%24)<12?'a':'p';
+  let hh=h%12;if(hh===0)hh=12;
+  return hh+ampm;
+}
 function renderStartDots(){
-  const dots=recentOfficeStarts(8);
+  const all=recentOfficeStarts(8);
   const el=document.getElementById('startDots');
-  if(!dots.length){
+  if(!all.length){
     el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:14px">No office sessions logged in the last 8 weeks.</div>';
     return;
   }
-  // SVG dot plot. X axis = date, Y axis = time of day (6-12).
-  const W=800,H=180,pad={t:14,r:14,b:28,l:46};
-  const yMin=6,yMax=12;
+  // Filter outliers: only include starts between 5 AM and 2 PM (reasonable
+  // working-hours range). Sessions that start outside this band are almost
+  // always data errors or edge cases (like an overnight session whose
+  // wrapped start registers at 12:15 AM) and just break the chart.
+  const dots=all.filter(d=>d.start>=5&&d.start<=14);
+  const excluded=all.length-dots.length;
+  if(!dots.length){
+    el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:14px">No office arrivals in the 5 AM–2 PM window over the last 8 weeks.</div>';
+    return;
+  }
+  // Dynamic Y range based on filtered data, padded by 0.5h, snapped to
+  // integer hours. Minimum range of 4 hours so the chart isn't squished
+  // when the data is very tight.
+  const startVals=dots.map(d=>d.start);
+  let yMin=Math.floor(Math.min(...startVals)-0.5);
+  let yMax=Math.ceil(Math.max(...startVals)+0.5);
+  if(yMax-yMin<4){
+    const pad=(4-(yMax-yMin))/2;
+    yMin-=Math.floor(pad);yMax+=Math.ceil(pad);
+  }
+  // Chart geometry
+  const W=800,H=220,pad={t:16,r:16,b:30,l:56};
   const dStart=dots[0].date,dEnd=dots[dots.length-1].date;
   const daySpan=Math.max(1,Math.round((new Date(dEnd+'T00:00:00')-new Date(dStart+'T00:00:00'))/86400000));
   const xOf=date=>pad.l+(Math.round((new Date(date+'T00:00:00')-new Date(dStart+'T00:00:00'))/86400000)/daySpan)*(W-pad.l-pad.r);
   const yOf=h=>pad.t+((h-yMin)/(yMax-yMin))*(H-pad.t-pad.b);
+  // Compute mean + σ for shaded typical-range band
+  const mean=startVals.reduce((a,b)=>a+b,0)/startVals.length;
+  const sigma=stdDev(startVals);
+  const bandTop=Math.max(yMin,mean-sigma);
+  const bandBot=Math.min(yMax,mean+sigma);
   let svg=`<svg class="startdot-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`;
-  // Core hour band (10 AM - 2 PM) - but only top half visible in 6-12 range
-  // Actually show a shaded band for "typical" range, say 8:30-9:30
-  svg+=`<rect x="${pad.l}" y="${yOf(8.5)}" width="${W-pad.l-pad.r}" height="${yOf(9.5)-yOf(8.5)}" fill="var(--accD)" opacity="0.3"/>`;
-  // Horizontal gridlines at each hour
+  // Shaded ±1σ band around the mean
+  svg+=`<rect x="${pad.l}" y="${yOf(bandTop)}" width="${W-pad.l-pad.r}" height="${yOf(bandBot)-yOf(bandTop)}" fill="var(--accD)" opacity="0.35"/>`;
+  // Mean line
+  svg+=`<line x1="${pad.l}" y1="${yOf(mean)}" x2="${W-pad.r}" y2="${yOf(mean)}" stroke="var(--acc)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>`;
+  // Horizontal gridlines + labels at each integer hour in range
   for(let h=yMin;h<=yMax;h++){
     const y=yOf(h);
-    svg+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="var(--bdr)" stroke-width="1" opacity="0.5"/>`;
-    svg+=`<text x="${pad.l-6}" y="${y+4}" text-anchor="end" font-size="10" fill="var(--t3)" font-family="Inter,sans-serif">${fmtTimeOfDay(h)}</text>`;
+    svg+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="var(--bdr)" stroke-width="1" opacity="0.4"/>`;
+    svg+=`<text x="${pad.l-8}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--t3)" font-family="Inter,sans-serif" font-variant-numeric="tabular-nums">${fmtTimeShort(h)}</text>`;
   }
   // Dots
   for(const d of dots){
-    const cx=xOf(d.date),cy=yOf(d.start);
-    svg+=`<circle cx="${cx}" cy="${cy}" r="3" fill="var(--acc)"/>`;
+    svg+=`<circle cx="${xOf(d.date)}" cy="${yOf(d.start)}" r="3.5" fill="var(--acc)" opacity="0.85"/>`;
   }
   // X axis label at endpoints
-  svg+=`<text x="${pad.l}" y="${H-8}" font-size="10" fill="var(--t3)" font-family="Inter,sans-serif">${new Date(dStart+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text>`;
-  svg+=`<text x="${W-pad.r}" y="${H-8}" text-anchor="end" font-size="10" fill="var(--t3)" font-family="Inter,sans-serif">${new Date(dEnd+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text>`;
+  svg+=`<text x="${pad.l}" y="${H-10}" font-size="11" fill="var(--t3)" font-family="Inter,sans-serif">${new Date(dStart+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text>`;
+  svg+=`<text x="${W-pad.r}" y="${H-10}" text-anchor="end" font-size="11" fill="var(--t3)" font-family="Inter,sans-serif">${new Date(dEnd+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text>`;
   svg+='</svg>';
   // Summary
-  const starts=dots.map(d=>d.start);
-  const mean=starts.reduce((a,b)=>a+b,0)/starts.length;
-  const sigma=stdDev(starts);
-  const earliest=Math.min(...starts),latest=Math.max(...starts);
-  el.innerHTML=`<div class="startdot-wrap">${svg}<div class="startdot-summary"><span>${dots.length} office days · earliest ${fmtTimeOfDay(earliest)} · latest ${fmtTimeOfDay(latest)}</span><span>mean <strong style="color:var(--acc)">${fmtTimeOfDay(mean)}</strong> ± ${fmtSpan(sigma)}</span></div></div>`;
+  const earliest=Math.min(...startVals),latest=Math.max(...startVals);
+  const excludedNote=excluded?` · ${excluded} outlier${excluded===1?'':'s'} outside 5a–2p hidden`:'';
+  el.innerHTML=`<div class="startdot-wrap">${svg}<div class="startdot-summary"><span>${dots.length} office days · earliest ${fmtTimeOfDay(earliest)} · latest ${fmtTimeOfDay(latest)}${excludedNote}</span><span>mean <strong style="color:var(--acc)">${fmtTimeOfDay(mean)}</strong> ± ${fmtSpan(sigma)}</span></div></div>`;
 }
 
 // Compact pay period history: "Now" row pinned at top with week sub-rows,
@@ -3037,7 +3076,7 @@ function noteLabel(tag){
 // ── Emoji picker ───────────────────────────────────────────
 const EMOJI_SETS={
   work:['💼','📋','📊','📈','📉','📅','🗓','📝','✅','❌','⚠️','🔔','📞','📧','💻','🖥️','🏢','🚀','💡','🔑','🎯','🏆','⭐','✨','🔥','💪','🤝','👏','📣','📌'],
-  face:['😀','😊','😎','😂','🤔','🤨','😐','😮','😴','😩','😤','🥳','🎉','👍','👎','👌','💯','❤️','🙏','🫡','😬','🥱','😇','🤩','😅','🫠','😭','😱','🫶','💀'],
+  face:['😀','😊','😎','😂','🤔','🤨','😐','😮','😴','😩','😤','🥳','🎉','👍','👎','👌','💯','❤️','🙏','🫡','😬','🥱','😇','🤩','😅','🫠','😭','😱','🫶','💀','🤕','🤒','🤧','🤢','🤮','🥴','😷','🤯','🥺'],
   travel:['✈️','🚗','🚂','🚌','🏨','🗺️','🧳','🏖️','🏔️','🌍','⛽','🛣️','🛫','🛬','🚕','🚙','🛳️','🚁','🏕️','🗼'],
   misc:['☀️','🌧️','❄️','🌈','🌺','🍂','🌊','🌙','⚡','🌿','☕','🍕','🎂','🎵','🎨','📚','🎮','⚽','🏋️','🧘','🔴','🟡','🟢','🔵','💜','🖤','⬆️','⬇️','➡️','↩️']
 };
@@ -3065,9 +3104,16 @@ function showEmojiCat(cat){
     grid.appendChild(btn);
   }
 }
-document.addEventListener('click',()=>{
-  document.getElementById('emojiPanel')?.classList.remove('open');
-  document.getElementById('emojiBtn')?.classList.remove('open');
+// Close emoji picker only when clicking OUTSIDE the panel and its toggle button.
+// Previously this closed unconditionally on any document click, which broke
+// category tab clicks (and any interaction inside the panel).
+document.addEventListener('click',(e)=>{
+  const panel=document.getElementById('emojiPanel');
+  const btn=document.getElementById('emojiBtn');
+  if(!panel||!panel.classList.contains('open'))return;
+  if(panel.contains(e.target)||(btn&&btn.contains(e.target)))return;
+  panel.classList.remove('open');
+  btn?.classList.remove('open');
 });
 function renderNotesTags(){
   const el=document.getElementById('notesTags');
