@@ -117,8 +117,8 @@ body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-hei
 .stats-strip { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
 .stat-box { flex:1; min-width:140px; background:var(--sur); border:1px solid var(--bdr); border-radius:var(--r); padding:14px 18px; text-align:center; }
 /* ── Patterns page layout ── */
-.pattern-hero { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px; }
-.pattern-stat { background:var(--sur); border:1px solid var(--bdr); border-radius:var(--r); padding:14px 16px; }
+.pattern-hero { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:22px; }
+.pattern-stat { background:var(--sur); border:1px solid var(--bdr); border-radius:var(--r); padding:14px 16px; min-width:0; }
 .pattern-stat .pstat-lbl { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--t3); margin-bottom:6px; }
 .pattern-stat .pstat-val { font-size:22px; font-weight:700; color:var(--t1); font-variant-numeric:tabular-nums; line-height:1.1; }
 .pattern-stat .pstat-sub { font-size:11px; color:var(--t3); margin-top:6px; font-variant-numeric:tabular-nums; }
@@ -359,6 +359,8 @@ canvas { width:100%!important; height:165px!important; }
 /* ── Responsive (half-screen / narrow window) ── */
 @media (max-width: 1050px) {
   .tab { padding:14px 16px; }
+  .pattern-hero { grid-template-columns:repeat(3,1fr); gap:10px; }
+  .pattern-stat .pstat-val { font-size:19px; }
   .week-heading { font-size:20px; }
   .topbar { margin-bottom:14px; }
   .day-grid { gap:5px; margin-bottom:14px; }
@@ -1572,18 +1574,40 @@ function fmtSpan(h){
   return hh+'h '+(mm?mm+'m':'0m');
 }
 
-// Aggregate pattern stats for a list of day keys.
-// Only counts days where the user actually worked (has sessions with loc in office/wfh/oh).
-// Returns avg start time, end time, total hours, sessions/day + std devs.
+// Aggregate pattern + attendance stats for a list of day keys (weekdays only).
+// Categorizes every weekday in the window:
+//   - pre-hire    → excluded
+//   - skip (day off) → excluded from expected
+//   - holiday     → excluded from expected, counted as "holiday"
+//   - leave (PTO) → excluded from expected, counted as "pto"
+//   - worked      → contributes to expected AND working-day stats
+//   - absent      → contributes to expected, no stats
+//
+// Returns:
+//   * "when present" stats: avg start/end/hours/coverage computed ONLY across
+//     worked days. These answer "when I'm here, how consistent am I?"
+//   * attendance counts: expected, worked, officeDayCount, wfhOnlyDays, absent,
+//     pto, holiday, skipped
+//   * absence-aware core coverage: sum of per-day coverage / expected workdays
+//     (days you weren't in office count as 0). Answers "how much of my core
+//     hours am I actually in office, out of the days I could have been?"
 function patternStats(dayKeys){
-  const starts=[],ends=[],hours=[],sessions=[],coverageVals=[];
-  let stayedLate=0,officeDayCount=0,total=0;
+  const starts=[],ends=[],hours=[],sessions=[];
+  let stayedLate=0,officeDayCount=0,workedCount=0;
+  let coreCoverageSum=0; // sum across office days only
+  let expected=0,worked=0,wfhOnlyDays=0,absent=0,pto=0,holiday=0,skipped=0;
   for(const d of dayKeys){
+    if(isWeekend(d))continue;
+    if(D.settings.hireDate&&d<D.settings.hireDate)continue;
     const day=D.days[d];
-    if(!day||!day.sessions||!day.sessions.length)continue;
-    const hasWork=day.sessions.some(s=>s.loc==='office'||s.loc==='wfh'||s.loc==='oh');
-    if(!hasWork)continue;
-    total++;
+    if(day&&day.skip){skipped++;continue;}
+    if(day&&(day.holiday||0)>0){holiday++;continue;}
+    if(day&&(day.leave||0)>0){pto++;continue;}
+    expected++;
+    const hasWork=day&&day.sessions&&day.sessions.some(s=>s.loc==='office'||s.loc==='wfh'||s.loc==='oh');
+    if(!hasWork){absent++;continue;}
+    worked++;
+    workedCount++;
     const s0=dayOfficeStart(d);
     const e0=dayOfficeEnd(d);
     const officeH=dayOfficeHours(d);
@@ -1594,21 +1618,27 @@ function patternStats(dayKeys){
     sessions.push(daySessionCount(d));
     if(officeH>0){
       officeDayCount++;
-      coverageVals.push(dayOfficeCoreCoverage(d));
+      coreCoverageSum+=dayOfficeCoreCoverage(d);
       if(dayStayedLate(d))stayedLate++;
+    } else {
+      wfhOnlyDays++;
     }
   }
   const avg=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;
   return {
-    sampleSize:total,
+    sampleSize:workedCount,
     startMean:avg(starts), startStdev:stdDev(starts), startCount:starts.length,
     endMean:avg(ends), endStdev:stdDev(ends), endCount:ends.length,
     hoursMean:avg(hours), hoursStdev:stdDev(hours),
     sessionsMean:avg(sessions),
     officeDayCount,
-    // avg coverage of the 10-2 core-hours window across office days (0..1)
-    coreCoverageMean:avg(coverageVals),
+    // avg coverage of the 10-2 core-hours window across OFFICE DAYS only (current metric)
+    coreCoverageMean:officeDayCount>0?coreCoverageSum/officeDayCount:0,
+    // absence-aware: divide by ALL expected workdays, not just office days
+    coreCoverageOverall:expected>0?coreCoverageSum/expected:0,
     stayedLate,
+    // attendance breakdown
+    expected, worked, wfhOnlyDays, absent, pto, holiday, skipped,
   };
 }
 // Get last N weekdays worth of keys from the data, ending today
@@ -2240,31 +2270,46 @@ function renderYear(){
 // Hero row of 4 typical-workday stats, using last 90 days (weekdays only,
 // work days only — i.e., days where some office/wfh/oh session exists).
 function patternWindowKeys(){
-  // Rolling 90-day window of weekdays with any work session.
-  const allKeys=Object.keys(D.days||{}).filter(d=>d<=today()).sort();
-  if(!allKeys.length)return [];
-  // Cutoff: 90 days ago
+  // Rolling 90-day window of ALL weekdays (not just keys in D.days).
+  // Days with no entry at all are still included so attendance stats can
+  // count them as "absent / unlogged".
+  const keys=[];
   const cutoff=addDays(today(),-90);
-  return allKeys.filter(d=>d>=cutoff&&!isWeekend(d));
+  let d=cutoff;
+  const end=today();
+  while(d<=end){
+    if(!isWeekend(d))keys.push(d);
+    d=addDays(d,1);
+  }
+  return keys;
 }
 function renderPatternHero(){
   const keys=patternWindowKeys();
   const s=patternStats(keys);
   const el=document.getElementById('patternHero');
-  if(!s.sampleSize){
+  if(!s.sampleSize&&!s.expected){
     el.innerHTML='<div class="pattern-stat" style="grid-column:1/-1;text-align:center;color:var(--t3)">Not enough data yet to compute patterns.</div>';
     return;
   }
-  // Core hours coverage: avg % of the 10-2 window present in office, across office days
+  // Core-hours coverage — two numbers:
+  //  - "when present" = avg coverage across office days only (flattering)
+  //  - "overall"      = sum of coverage / expected workdays (absences as 0%)
   const corePct=Math.round(100*s.coreCoverageMean);
+  const coreOverallPct=Math.round(100*s.coreCoverageOverall);
   const latePct=s.officeDayCount>0?Math.round(100*s.stayedLate/s.officeDayCount):0;
-  const officePerWeek=s.sampleSize>0?round6(s.officeDayCount/(s.sampleSize/5)):0;
+  const attendancePct=s.expected>0?Math.round(100*s.worked/s.expected):0;
   const startStr=s.startCount?fmtTimeOfDay(s.startMean):'—';
   const startSpanStr=s.startCount?'± '+fmtSpan(s.startStdev):'';
   const endStr=s.endCount?fmtTimeOfDay(s.endMean):'—';
   const endSpanStr=s.endCount?'± '+fmtSpan(s.endStdev):'';
   const hoursStr=fmtHrs(round6(s.hoursMean));
   const hoursSpanStr='± '+fmtSpan(s.hoursStdev);
+  // Attendance sub-line: pick the most relevant extras to show
+  const attBits=[];
+  if(s.absent>0)attBits.push(s.absent+' absent');
+  if(s.pto>0)attBits.push(s.pto+' PTO');
+  if(s.holiday>0)attBits.push(s.holiday+' hol');
+  const attSub=s.worked+'/'+s.expected+' expected'+(attBits.length?' · '+attBits.join(' · '):'');
   el.innerHTML=`
     <div class="pattern-stat">
       <div class="pstat-lbl">Office in</div>
@@ -2274,21 +2319,26 @@ function renderPatternHero(){
     <div class="pattern-stat">
       <div class="pstat-lbl">Office out</div>
       <div class="pstat-val">${endStr}</div>
-      <div class="pstat-sub">${endSpanStr} · stayed until 4p on <strong>${latePct}%</strong></div>
+      <div class="pstat-sub">${endSpanStr} · stayed 4p <strong>${latePct}%</strong></div>
     </div>
     <div class="pattern-stat">
       <div class="pstat-lbl">Hours / workday</div>
       <div class="pstat-val">${hoursStr}</div>
-      <div class="pstat-sub">${hoursSpanStr} · ${s.sampleSize} workdays</div>
+      <div class="pstat-sub">${hoursSpanStr} · ${s.sampleSize} worked</div>
     </div>
     <div class="pattern-stat">
       <div class="pstat-lbl">Core 10–2 coverage</div>
       <div class="pstat-val">${corePct}%</div>
-      <div class="pstat-sub">avg across ${s.officeDayCount} office days · ${round6(officePerWeek)}/wk</div>
+      <div class="pstat-sub">when present · <strong>${coreOverallPct}%</strong> overall</div>
+    </div>
+    <div class="pattern-stat">
+      <div class="pstat-lbl">Attendance</div>
+      <div class="pstat-val">${attendancePct}%</div>
+      <div class="pstat-sub">${attSub}</div>
     </div>
   `;
   const sub=document.getElementById('dowWindowLabel');
-  if(sub)sub.textContent='last '+s.sampleSize+' workdays';
+  if(sub)sub.textContent=s.worked+' worked / '+s.expected+' expected workdays';
 }
 function renderDowTable(){
   const keys=patternWindowKeys();
