@@ -60,10 +60,11 @@
 .mi { font-family:'Material Icons Round'; font-size:16px; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; display:inline-block; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; vertical-align:middle; color:inherit; }
 .mi-sm { font-size:14px; }
 .mi-xs { font-size:12px; }
-body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-height:1.5; background:var(--bg); color:var(--t1); min-height:100vh; }
+html { height:100%; }
+body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-height:1.5; background:var(--bg); color:var(--t1); height:100vh; height:100dvh; overflow:hidden; }
 
-/* Shell */
-.shell { display:flex; min-height:100vh; }
+/* Shell — locks to viewport; internal .body scrolls if content overflows */
+.shell { display:flex; height:100vh; height:100dvh; }
 
 /* Sidebar */
 .side { width:196px; flex-shrink:0; background:var(--sur); border-right:1px solid var(--bdr); display:flex; flex-direction:column; padding:24px 0; }
