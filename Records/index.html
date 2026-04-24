@@ -2987,22 +2987,9 @@ function initMobile(){
   }
 }
 
-// ── Boot ───────────────────────────────────────────────────
-applyTheme(D.settings.theme||'amber');
-renderWeek();
-applySidebarState();
-initMobile();
-renderAuthState(); // show "Connect Google" button immediately (updated again on auth state change)
-
-// Firestore's offline persistence handles queued writes automatically on
-// reconnect; we just nudge the sync indicator so the UI reflects it.
-window.addEventListener('online',()=>{
-  if(fbUser)cloudSave();
-});
-window.addEventListener('offline',()=>{
-  if(fbUser)setSyncState('syncing'); // reads as "waiting to sync"
-});
-
+// Boot moved to end of script so all `const` declarations below (NOTE_ICONS,
+// EMOJI_SETS, etc.) are initialized before renderWeek runs. Otherwise
+// rendering a day with tags hits a temporal-dead-zone error on load.
 
 // ── Custom date picker ────────────────────────────────────
 let dpYear, dpMonth, dpCallback=null;
@@ -3198,6 +3185,22 @@ function removeNoteTag(idx){
   D.days[activeDay].notes=D.days[activeDay].tags.join(', ');
   sched();renderNotesTags();
 }
+
+// ── Boot ───────────────────────────────────────────────────
+applyTheme(D.settings.theme||'amber');
+renderWeek();
+applySidebarState();
+initMobile();
+renderAuthState(); // show "Connect Google" button immediately (updated again on auth state change)
+
+// Firestore's offline persistence handles queued writes automatically on
+// reconnect; we just nudge the sync indicator so the UI reflects it.
+window.addEventListener('online',()=>{
+  if(fbUser)cloudSave();
+});
+window.addEventListener('offline',()=>{
+  if(fbUser)setSyncState('syncing'); // reads as "waiting to sync"
+});
 
 </script>
 </body>
