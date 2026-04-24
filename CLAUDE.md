@@ -199,8 +199,17 @@ Day notes use a tag-based system with emoji pills:
 
 ---
 
+## Cloud Sync (Firestore)
+- **Auth:** Firebase Auth with Google provider (`signInWithPopup`). Same popup requests Calendar scopes, so one sign-in covers identity + Calendar.
+- **Storage:** Firestore single-doc model at `users/{uid}/state/main` holding `{ D, updatedAt }`. Writes are debounced (~1.1s) and queued offline via Firestore's built-in IndexedDB persistence.
+- **Real-time:** `onSnapshot` listener on the user's doc — edits on one device appear on another without manual refresh. `pendingRemote` stringified JSON is used to skip echoing our own writes.
+- **Rules:** `firestore.rules` at repo root — `users/{uid}/**` locked to `request.auth.uid == uid`. Deploy via Firebase console → Firestore → Rules.
+- **Firebase config:** inline in the `<script type="module">` block at the top of `Records/index.html`. The modular SDK is imported via CDN (`gstatic.com/firebasejs/...`).
+
 ## Google Calendar Sync
-- OAuth handled client-side via Google Identity Services (GIS) popup flow
-- Drive `appDataFolder` stores `records_data.json` (private, not visible in user's Drive)
-- Calendar events pulled per week; sessions can be pushed to primary calendar
-- Google Client ID is in `Records/index.html` near the top of the JS section
+- Access token comes from the Firebase Google-Auth popup (scopes added via `provider.addScope`). Handed to `gapi.client` for Calendar API calls.
+- Token expires ~1h after sign-in. If Calendar calls start 401ing, user signs in again.
+- Calendar events pulled per week; sessions can be pushed to primary calendar.
+
+## Migrating existing data
+localStorage (`rec_v89`) is the source of truth on first sign-in. When the Firestore doc doesn't exist yet for a user, the listener seeds it with current local `D`. Existing Drive-synced data on other devices needs to be surfaced via localStorage once (open old Records there → sign in → local syncs to cloud).

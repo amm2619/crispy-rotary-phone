@@ -7,8 +7,44 @@
 <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%231a1814'/><circle cx='16' cy='16' r='13' fill='none' stroke='%23d4784e' stroke-width='2'/><line x1='16' y1='4.5' x2='16' y2='7.5' stroke='%23d4784e' stroke-width='1.5' stroke-linecap='round'/><line x1='27.5' y1='16' x2='24.5' y2='16' stroke='%23d4784e' stroke-width='1.5' stroke-linecap='round'/><line x1='16' y1='27.5' x2='16' y2='24.5' stroke='%23d4784e' stroke-width='1.5' stroke-linecap='round'/><line x1='4.5' y1='16' x2='7.5' y2='16' stroke='%23d4784e' stroke-width='1.5' stroke-linecap='round'/><line x1='16' y1='16' x2='8' y2='16' stroke='%23d4784e' stroke-width='2.5' stroke-linecap='round'/><line x1='16' y1='16' x2='16' y2='8' stroke='%23e8956e' stroke-width='2' stroke-linecap='round'/><circle cx='16' cy='16' r='2' fill='%23d4784e'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+<script type="module">
+  // Firebase: modular SDK via CDN (no build step). Exposes a small namespace
+  // on window.fb so the rest of the non-module script can call into it.
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+  import {
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    doc, setDoc, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwV6dMLTvxYdnbtabsgNO3TJWw_mIoZnE",
+    authDomain: "records-app-c778b.firebaseapp.com",
+    projectId: "records-app-c778b",
+    storageBucket: "records-app-c778b.firebasestorage.app",
+    messagingSenderId: "347015812942",
+    appId: "1:347015812942:web:e79ded1e407b7162bcb01f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  // Offline persistence via IndexedDB — queues writes while offline, flushes on reconnect.
+  const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+
+  window.fb = {
+    auth, db,
+    GoogleAuthProvider, signInWithPopup, fbSignOut, onAuthStateChanged,
+    doc, setDoc, onSnapshot, serverTimestamp
+  };
+  // Let the rest of the app know Firebase is ready.
+  window.dispatchEvent(new Event('fb-ready'));
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root {
@@ -1045,32 +1081,20 @@ canvas { width:100%!important; height:165px!important; }
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   GOOGLE CLOUD SETUP — do this once, then paste your Client ID below
+   FIREBASE SETUP — config lives in the <script type="module"> above.
    ───────────────────────────────────────────────────────────────
-   1. Go to https://console.cloud.google.com → New Project → "Records"
-   2. APIs & Services → Enable APIs:
-        • Google Drive API
-        • Google Calendar API
-   3. APIs & Services → Credentials → Create Credentials
-        → OAuth 2.0 Client ID → Web application
-   4. Authorized JavaScript origins — add ALL origins you'll use:
-        • https://YOUR_GITHUB_USERNAME.github.io
-        • http://localhost:3000   (optional, for local server)
-   5. No Redirect URIs needed (uses popup flow)
-   6. Copy the Client ID and paste it below
-   7. Push this file to GitHub → enable Pages:
-        Settings → Pages → Source: main branch, / (root)
-   8. Open https://YOUR_GITHUB_USERNAME.github.io/records_v23.html
-        → click "Connect Google" → authorize → you're synced!
+   Data model:
+     users/{uid}/state/main   → single JSON blob (the whole D object)
+   Security rules: see firestore.rules at repo root.
+
+   Google Calendar sync reuses the OAuth access token returned from the
+   Firebase Google-Auth popup. No separate GIS client is needed.
    ═══════════════════════════════════════════════════════════════ */
 
-const GCAL_CLIENT_ID = '692856190521-9lhbfn4ku6uavlmp50003od1onh6gn7h.apps.googleusercontent.com'; // ← paste your OAuth 2.0 Client ID here
 const GCAL_SCOPES = [
-  'https://www.googleapis.com/auth/drive.appdata',
   'https://www.googleapis.com/auth/calendar.readonly',
   'https://www.googleapis.com/auth/calendar.events'
-].join(' ');
-const DRIVE_FILENAME = 'records_data.json';
+];
 
 const SEED={"settings":{"payPeriodStart":"2025-08-23","targetHours":80,"leaveAccrualRate":6.15,"startingLeaveBalance":0,"wfhLimit":16,"wfhExemptOfficeDays":3,"takenFloating":["2025-10-13","2025-11-11","2026-02-26"],"extraFloating":[],"birthdays":[],"theme":"winter","hireDate":"2025-09-02"},"days":{"2026-04-06":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","weight":205.7,"tags":[]},"2025-08-23":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-08-30":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-02":{"sessions":[{"id":"s1775463884177","start":8.5,"end":17,"loc":"oh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-03":{"sessions":[{"id":"patch_1775782820550_0","start":9,"end":14,"loc":"office","note":""},{"id":"patch_1775782820550_1","start":14,"end":17,"loc":"oh","note":"New hire training"}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-04":{"sessions":[{"id":"s1775463901518","start":9,"end":16.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-05":{"sessions":[{"id":"s1775463907856","start":9,"end":17,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-08-25":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-08-26":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-08-27":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-08-28":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-08-29":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-09-01":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","skip":true},"2025-09-08":{"sessions":[{"id":"s1775466915727","start":8,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-07":{"sessions":[{"id":"s1775639409240","start":10.25,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","tags":[],"weight":203.9},"2026-04-14":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-21":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-24":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-17":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-10":{"sessions":[{"id":"s1775765989812","start":9,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-03":{"sessions":[{"id":"s1775476324961","start":3,"end":7.5,"loc":"wfh","note":""},{"id":"s1775476312154","start":10,"end":12,"loc":"office","note":""}],"compEarned":1.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-27":{"sessions":[{"id":"s1775476136035","start":0.25,"end":13.75,"loc":"office","note":""}],"compEarned":0,"compUsed":6,"leave":0,"holiday":0,"notes":""},"2026-03-20":{"sessions":[{"id":"s1775475964248","start":6.5,"end":15,"loc":"office","note":""},{"id":"s1775475988525","start":17.5,"end":20,"loc":"wfh","note":""}],"compEarned":3,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-13":{"sessions":[{"id":"s1775475692515","start":6,"end":8.5,"loc":"wfh","note":""},{"id":"s1775475677815","start":9,"end":15,"loc":"office","note":""}],"compEarned":2.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-06":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-09":{"sessions":[{"id":"s1775467029401","start":8,"end":19,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-10":{"sessions":[{"id":"s1775467038589","start":8,"end":17,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-11":{"sessions":[{"id":"s1775467311549","start":8,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-12":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"Airshow","tags":["Airshow"]},"2025-09-19":{"sessions":[{"id":"s1775467244533","start":9.5,"end":16.5,"loc":"office","note":""}],"compEarned":3,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-15":{"sessions":[{"id":"s1775467113380","start":10,"end":18.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-16":{"sessions":[{"id":"s1775467177601","start":8.5,"end":16.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-17":{"sessions":[{"id":"s1775467201359","start":9,"end":20,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-18":{"sessions":[{"id":"s1775467227300","start":9.5,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-13":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-22":{"sessions":[{"id":"s1775468846022","start":7.5,"end":13,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-23":{"sessions":[{"id":"s1775468857610","start":10.5,"end":21.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-24":{"sessions":[{"id":"s1775468875068","start":9.2,"end":18.7,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-25":{"sessions":[{"id":"s1775468890253","start":6,"end":19.5,"loc":"office","note":""}],"compEarned":1.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-02":{"sessions":[{"id":"s1775469041281","start":8,"end":14,"loc":"office","note":""},{"id":"s1775469051425","start":15,"end":19,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-29":{"sessions":[{"id":"s1775473606650","start":9.25,"end":17.25,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-30":{"sessions":[{"id":"s1775468941919","start":7.5,"end":14.5,"loc":"office","note":""},{"id":"s1775468954478","start":15,"end":16,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-01":{"sessions":[],"compEarned":0,"compUsed":4,"leave":4,"holiday":0,"notes":""},"2025-10-08":{"sessions":[{"id":"s1775469115160","start":9,"end":16,"loc":"office","note":""},{"id":"s1775469130673","start":17,"end":19,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-03":{"sessions":[{"id":"s1775469061247","start":7,"end":13,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-10":{"sessions":[{"id":"s1775469151485","start":8,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-06":{"sessions":[{"id":"s1775469085796","start":7.5,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-07":{"sessions":[{"id":"s1775469095883","start":9.5,"end":17,"loc":"office","note":""},{"id":"s1775469104484","start":18,"end":19,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-09":{"sessions":[{"id":"s1775469141988","start":9.5,"end":15.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-17":{"sessions":[{"id":"s1775469261611","start":7,"end":13,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-12":{"sessions":[{"id":"s1775469168835","start":8,"end":11.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-13":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2025-10-14":{"sessions":[{"id":"s1775469186995","start":8,"end":22,"loc":"office","note":""}],"compEarned":8,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-15":{"sessions":[{"id":"s1775469209337","start":7.5,"end":15.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-16":{"sessions":[{"id":"s1775473718576","start":9.75,"end":15.25,"loc":"office","note":""},{"id":"s1775469251634","start":16,"end":19,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-24":{"sessions":[{"id":"s1775469342176","start":6,"end":14,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-20":{"sessions":[{"id":"s1775469294510","start":11,"end":15,"loc":"office","note":""}],"compEarned":0,"compUsed":3,"leave":0,"holiday":0,"notes":""},"2025-10-21":{"sessions":[{"id":"s1775469316644","start":9.5,"end":16.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-22":{"sessions":[{"id":"s1775469324488","start":8,"end":17,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-23":{"sessions":[{"id":"s1775469333123","start":8.5,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-31":{"sessions":[{"id":"s1775469445801","start":8,"end":14,"loc":"office","note":""},{"id":"s1775469455019","start":15,"end":19,"loc":"wfh","note":""}],"compEarned":8,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-27":{"sessions":[{"id":"s1775469370458","start":7,"end":17,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-28":{"sessions":[{"id":"s1775469385645","start":8.8,"end":16.3,"loc":"office","note":""},{"id":"s1775469398620","start":17,"end":19.5,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-29":{"sessions":[{"id":"s1775469406395","start":6,"end":14,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-10-30":{"sessions":[{"id":"s1775469422371","start":8.8,"end":14.3,"loc":"office","note":""},{"id":"s1775469436875","start":15,"end":19.5,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-07":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-01":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-02":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-03":{"sessions":[],"compEarned":0,"compUsed":8,"leave":0,"holiday":0,"notes":""},"2025-11-04":{"sessions":[],"compEarned":0,"compUsed":5.5,"leave":2.5,"holiday":0,"notes":""},"2025-11-05":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-06":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-13":{"sessions":[{"id":"s1775469693678","start":7,"end":15,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-10":{"sessions":[{"id":"s1775469661700","start":7,"end":15,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-11":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2025-11-12":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-14":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-21":{"sessions":[{"id":"s1775469831910","start":9.5,"end":14.5,"loc":"office","note":""},{"id":"s1775469959104","start":15.5,"end":18,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-17":{"sessions":[{"id":"s1775474078339","start":10.75,"end":12.75,"loc":"oh","note":"Training"}],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2025-11-18":{"sessions":[{"id":"s1775469788872","start":10,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-19":{"sessions":[{"id":"s1775469797354","start":9.5,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-20":{"sessions":[{"id":"s1775469809516","start":10,"end":16,"loc":"office","note":""},{"id":"s1775469815538","start":17,"end":21,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-28":{"sessions":[{"id":"s1775469927790","start":11,"end":17,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-24":{"sessions":[{"id":"s1775474134596","start":10.75,"end":16.75,"loc":"office","note":""},{"id":"s1775469881001","start":17,"end":21,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-11-25":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-26":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2025-11-27":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2025-12-05":{"sessions":[{"id":"s1775470052585","start":10.5,"end":13.5,"loc":"wfh","note":""},{"id":"s1775470063264","start":14,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-01":{"sessions":[{"id":"s1775470000804","start":10,"end":23.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-02":{"sessions":[{"id":"s1775470009710","start":7.5,"end":16.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-03":{"sessions":[{"id":"s1775470021058","start":9.3,"end":16.8,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-04":{"sessions":[{"id":"s1775470040540","start":10,"end":13,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-12":{"sessions":[{"id":"s1775470120946","start":10,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-08":{"sessions":[{"id":"s1775470082086","start":9.5,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-09":{"sessions":[{"id":"s1775470094416","start":9.3,"end":18.8,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-10":{"sessions":[{"id":"s1775470102003","start":9,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-11":{"sessions":[{"id":"s1775470114194","start":9,"end":18.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-19":{"sessions":[{"id":"s1775470196125","start":7,"end":12,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-15":{"sessions":[{"id":"s1775470138331","start":8,"end":14,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-16":{"sessions":[{"id":"s1775470145135","start":10,"end":19,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-17":{"sessions":[{"id":"s1775470154820","start":9,"end":17,"loc":"office","note":""},{"id":"s1775470163667","start":18,"end":20,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-18":{"sessions":[{"id":"s1775470175977","start":6,"end":14,"loc":"office","note":""},{"id":"s1775470186161","start":15,"end":17,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-26":{"sessions":[{"id":"s1775470267330","start":13,"end":21,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-22":{"sessions":[{"id":"s1775470219560","start":10,"end":16,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-23":{"sessions":[{"id":"s1775470237623","start":8,"end":11,"loc":"office","note":""},{"id":"s1775470228723","start":11,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-24":{"sessions":[{"id":"s1775470250901","start":11.3,"end":19.3,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-25":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2026-01-01":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2025-12-29":{"sessions":[{"id":"s1775470328321","start":9,"end":17,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-30":{"sessions":[{"id":"s1775470335177","start":11,"end":19,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-12-31":{"sessions":[{"id":"s1775470343437","start":5,"end":13,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-02":{"sessions":[],"compEarned":0,"compUsed":0,"leave":8,"holiday":0,"notes":""},"2026-01-09":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2026-01-05":{"sessions":[{"id":"patch_1775782820550_2","start":10.5,"end":14.5,"loc":"office","note":""},{"id":"patch_1775782820550_3","start":17.5,"end":18,"loc":"oh","note":"Self assessment"},{"id":"patch_1775782820550_4","start":18,"end":24.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-06":{"sessions":[{"id":"s1775470416608","start":8,"end":15,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-07":{"sessions":[{"id":"s1775470425676","start":11,"end":15,"loc":"office","note":""},{"id":"s1775470442059","start":17.5,"end":22.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-08":{"sessions":[{"id":"s1775470454565","start":10,"end":15,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-16":{"sessions":[{"id":"s1775470524863","start":11.5,"end":16,"loc":"office","note":""},{"id":"s1775470540486","start":17,"end":20.5,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-12":{"sessions":[],"compEarned":0,"compUsed":7,"leave":0,"holiday":0,"notes":""},"2026-01-13":{"sessions":[{"id":"s1775470497563","start":10,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-14":{"sessions":[{"id":"s1775470505821","start":10,"end":21,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-15":{"sessions":[{"id":"s1775470514252","start":10,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-23":{"sessions":[{"id":"s1775470689633","start":9,"end":16,"loc":"office","note":""}],"compEarned":1,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-19":{"sessions":[{"id":"s1775471430406","start":9,"end":14,"loc":"office","note":""},{"id":"s1775471443290","start":15,"end":18,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-20":{"sessions":[{"id":"s1775470755425","start":8,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-21":{"sessions":[{"id":"s1775470657690","start":10,"end":19,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-22":{"sessions":[{"id":"s1775470667743","start":9.5,"end":15,"loc":"office","note":""},{"id":"s1775470680875","start":16,"end":19.5,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-26":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-27":{"sessions":[],"compEarned":0,"compUsed":9,"leave":0,"holiday":0,"notes":""},"2026-01-28":{"sessions":[{"id":"s1775470805504","start":15,"end":23,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-29":{"sessions":[{"id":"s1775470856414","start":7,"end":10,"loc":"wfh","note":""},{"id":"s1775470864646","start":12,"end":24,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-01-30":{"sessions":[{"id":"s1775470951562","start":0,"end":2,"loc":"office","note":""},{"id":"s1775470889982","start":9.8,"end":15.8,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-06":{"sessions":[{"id":"s1775471270888","start":8.8,"end":10.8,"loc":"office","note":""},{"id":"s1775471283958","start":11,"end":19,"loc":"wfh","note":""}],"compEarned":2,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-02":{"sessions":[{"id":"s1775471019213","start":10,"end":16,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-03":{"sessions":[{"id":"s1775471031682","start":5.8,"end":13.8,"loc":"office","note":""},{"id":"s1775471041931","start":16,"end":18,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-04":{"sessions":[{"id":"patch_1775782820550_5","start":9,"end":16,"loc":"office","note":""},{"id":"patch_1775782820550_6","start":17.5,"end":19,"loc":"oh","note":"NW Cybersecurity Training"},{"id":"patch_1775782820550_7","start":19,"end":22,"loc":"wfh","note":""}],"compEarned":3.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-05":{"sessions":[{"id":"patch_1775782820550_8","start":7.75,"end":18.05,"loc":"office","note":""},{"id":"patch_1775782820551_9","start":18.05,"end":20.05,"loc":"wfh","note":""},{"id":"patch_1775782820551_10","start":20.05,"end":20.55,"loc":"oh","note":"Training"}],"compEarned":4.8,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-09":{"sessions":[{"id":"s1775471804178","start":9,"end":19,"loc":"office","note":""},{"id":"s1775474972507","start":20.25,"end":21.45,"loc":"wfh","note":""}],"compEarned":3.2,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-08":{"sessions":[{"id":"s1775471765493","start":9,"end":11,"loc":"wfh","note":""},{"id":"s1775471779467","start":16,"end":16.5,"loc":"wfh","note":""}],"compEarned":2.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-10":{"sessions":[{"id":"s1775471885504","start":6,"end":8,"loc":"wfh","note":""},{"id":"s1775471873307","start":8.8,"end":16.3,"loc":"office","note":""},{"id":"s1775471899420","start":21.5,"end":22.5,"loc":"wfh","note":""}],"compEarned":2.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-11":{"sessions":[{"id":"s1775471921088","start":8.8,"end":16.3,"loc":"office","note":""},{"id":"s1775471935916","start":18,"end":20,"loc":"wfh","note":""}],"compEarned":1.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-12":{"sessions":[{"id":"s1775471970837","start":4,"end":8,"loc":"wfh","note":""},{"id":"s1775471958289","start":9,"end":17,"loc":"office","note":""},{"id":"s1775471982365","start":20,"end":22.5,"loc":"wfh","note":""}],"compEarned":6.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-13":{"sessions":[{"id":"s1775474913883","start":4.5,"end":14,"loc":"office","note":""}],"compEarned":1.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-16":{"sessions":[{"id":"s1775472037169","start":18.5,"end":22,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-17":{"sessions":[{"id":"s1775475023907","start":8.75,"end":23.25,"loc":"office","note":""}],"compEarned":3,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-18":{"sessions":[{"id":"s1775472082619","start":9.8,"end":17.3,"loc":"office","note":""},{"id":"s1775472097434","start":19.5,"end":20.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-19":{"sessions":[{"id":"s1775472111995","start":8.8,"end":15.8,"loc":"office","note":""},{"id":"s1775472154878","start":16.5,"end":18.5,"loc":"wfh","note":"Lunch with Kyra -1hr"}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-20":{"sessions":[{"id":"s1775472176407","start":9,"end":13.5,"loc":"office","note":""},{"id":"s1775472186658","start":14,"end":17,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-23":{"sessions":[{"id":"s1775472218446","start":9.5,"end":25,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-02-24":{"sessions":[],"compEarned":0,"compUsed":8,"leave":0,"holiday":0,"notes":"⭐","tags":["⭐"]},"2026-02-25":{"sessions":[],"compEarned":0,"compUsed":8,"leave":0,"holiday":0,"notes":""},"2026-02-26":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0,"holiday":8,"notes":""},"2026-02-27":{"sessions":[],"compEarned":0,"compUsed":0,"leave":0.5,"holiday":0,"notes":""},"2026-03-02":{"sessions":[],"compEarned":0,"compUsed":8,"leave":0,"holiday":0,"notes":""},"2026-03-03":{"sessions":[],"compEarned":0,"compUsed":8,"leave":0,"holiday":0,"notes":""},"2026-03-04":{"sessions":[],"compEarned":0,"compUsed":4,"leave":0,"holiday":0,"notes":""},"2026-03-05":{"sessions":[{"id":"s1775472666463","start":9,"end":15,"loc":"office","note":""},{"id":"s1775472648738","start":16.5,"end":22,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-06":{"sessions":[{"id":"s1775472509097","start":9,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-30":{"sessions":[{"id":"s1775476187488","start":9,"end":14.5,"loc":"office","note":""},{"id":"s1775476201809","start":15.25,"end":24.25,"loc":"wfh","note":""}],"compEarned":6,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-23":{"sessions":[{"id":"s1775476039365","start":6.75,"end":8.25,"loc":"wfh","note":""},{"id":"s1775476024941","start":8.5,"end":15.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-16":{"sessions":[{"id":"s1775475835193","start":5.5,"end":8.5,"loc":"wfh","note":""},{"id":"s1775475823328","start":9,"end":12,"loc":"office","note":""},{"id":"s1775475848887","start":12,"end":16,"loc":"wfh","note":""}],"compEarned":2,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-09":{"sessions":[{"id":"s1775475593302","start":11,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2025-09-26":{"sessions":[{"id":"s1775473581244","start":9,"end":11,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-10":{"sessions":[{"id":"s1775475603896","start":9.5,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-11":{"sessions":[{"id":"s1775475613905","start":9,"end":15.5,"loc":"office","note":""},{"id":"s1775475624859","start":19,"end":23,"loc":"wfh","note":""}],"compEarned":1,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-12":{"sessions":[{"id":"s1775475652067","start":5.5,"end":23.5,"loc":"office","note":""}],"compEarned":8,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-17":{"sessions":[{"id":"s1775475879498","start":6.5,"end":8.5,"loc":"wfh","note":""},{"id":"s1775475866514","start":9,"end":15.5,"loc":"office","note":""}],"compEarned":0.5,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-18":{"sessions":[{"id":"s1775475896133","start":10,"end":18,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-19":{"sessions":[{"id":"s1775475912061","start":8.75,"end":16.25,"loc":"office","note":""},{"id":"s1775475940614","start":17.5,"end":21,"loc":"wfh","note":""}],"compEarned":3,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-26":{"sessions":[{"id":"s1775476089367","start":8,"end":18,"loc":"office","note":""},{"id":"s1775476113226","start":22.25,"end":24.25,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-03-31":{"sessions":[{"id":"s1775476232528","start":0.25,"end":2.25,"loc":"wfh","note":""},{"id":"s1775476250294","start":9,"end":18,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-01":{"sessions":[{"id":"s1775476267975","start":10,"end":17.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-02":{"sessions":[{"id":"s1775476282024","start":9,"end":17,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":""},"2026-04-05":{"sessions":[{"id":"s1775476360539","start":22,"end":3,"loc":"wfh","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","weight":208.9},"2026-04-08":{"sessions":[{"id":"s1775738692552","start":6.5,"end":18.5,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","weight":203.9},"2026-04-09":{"sessions":[{"id":"s1775739072272","start":9,"end":20.75,"loc":"office","note":""}],"compEarned":0,"compUsed":0,"leave":0,"holiday":0,"notes":"","weight":205.5}},"compRollover":{},"fasting":{"2026-04-06":{"start":14,"end":17,"nextDay":true},"2026-04-07":{"start":22,"end":16,"nextDay":true},"2026-04-08":{"start":22,"end":14,"nextDay":true},"2026-04-09":{"start":21,"end":13,"nextDay":true}}};
 
@@ -1277,10 +1301,15 @@ function toggleSidebar(){
   applySidebarState();
 }
 
-// ── Google sync state ──────────────────────────────────────
-let gToken=null, driveFileId=null, userEmail='', syncState='offline';
-let calEvents={}, driveTimer=null;
-let gapiReady=false, gsiReady=false, tokenClient=null;
+// ── Cloud sync state ───────────────────────────────────────
+// gToken: Google OAuth access token (from Firebase sign-in popup), used for
+// gapi Calendar API calls. Expires after ~1h — user re-signs in if needed.
+// fbUser: current Firebase auth user (null if signed out).
+// cloudUnsub: unsubscribe fn for the Firestore snapshot listener.
+// pendingRemote: most recent remote D we've seen — used to skip echo-writes.
+let gToken=null, fbUser=null, userEmail='', syncState='offline';
+let calEvents={}, cloudTimer=null, cloudUnsub=null, pendingRemote=null;
+let gapiReady=false, fbReady=false;
 
 // ── Persist ────────────────────────────────────────────────
 function applyMigrations(data){
@@ -1394,15 +1423,15 @@ function save(){
   localStorage.setItem('rec_v89',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  if(!gToken)setSyncState('offline');
+  if(!fbUser)setSyncState('offline');
 }
 function sched(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>{
     save();renderWeek();
-    // Drive sync on a slightly longer debounce
-    clearTimeout(driveTimer);
-    driveTimer=setTimeout(()=>saveToDrive(),800);
+    // Cloud sync on a slightly longer debounce
+    clearTimeout(cloudTimer);
+    cloudTimer=setTimeout(()=>cloudSave(),800);
   },350);
 }
 
@@ -2559,7 +2588,7 @@ function setSyncState(state){
   const lbl=document.getElementById('syncLabel');
   if(!dot)return;
   dot.classList.remove('syncing');
-  if(state==='synced'){dot.style.background='var(--grn)';if(lbl)lbl.textContent='Synced to Drive';}
+  if(state==='synced'){dot.style.background='var(--grn)';if(lbl)lbl.textContent='Synced';}
   else if(state==='syncing'){dot.style.background='var(--ylw)';dot.classList.add('syncing');if(lbl)lbl.textContent='Syncing…';}
   else if(state==='error'){dot.style.background='var(--red)';if(lbl)lbl.textContent='Sync error';}
   else{dot.style.background='var(--t3)';if(lbl)lbl.textContent='Offline';}
@@ -2568,172 +2597,137 @@ function setSyncState(state){
 function renderAuthState(){
   const el=document.getElementById('authRow');
   if(!el)return;
-  const hasClientId=GCAL_CLIENT_ID&&GCAL_CLIENT_ID!=='YOUR_CLIENT_ID_HERE';
-  if(!hasClientId){el.innerHTML='';return;}
-  if(gToken&&userEmail){
+  if(fbUser&&userEmail){
     const initial=userEmail.charAt(0).toUpperCase();
     el.innerHTML=`<div class="g-chip"><div class="g-avatar">${initial}</div><div class="g-email" title="${userEmail}">${userEmail}</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
-  } else if(gToken){
+  } else if(fbUser){
     el.innerHTML=`<div class="g-chip"><div class="g-avatar">G</div><div class="g-email">Connected</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
   } else {
     el.innerHTML=`<button class="g-connect-btn" onclick="signIn()">Connect Google</button>`;
   }
-  // Show/hide cal sync button
+  // Show/hide cal sync button — requires a Calendar access token, not just Firebase auth.
   const csb=document.getElementById('calSyncBtn');
   if(csb)csb.style.display=gToken?'':'none';
 }
 
-function signIn(){
-  if(!tokenClient)return;
-  tokenClient.requestAccessToken({prompt:'consent'});
+async function signIn(){
+  if(!fbReady){alert('Still loading — try again in a moment.');return;}
+  const {auth,GoogleAuthProvider,signInWithPopup}=window.fb;
+  const provider=new GoogleAuthProvider();
+  // Request Calendar scopes alongside identity so the same token works for gapi Calendar calls.
+  for(const s of GCAL_SCOPES)provider.addScope(s);
+  try{
+    const result=await signInWithPopup(auth,provider);
+    const credential=GoogleAuthProvider.credentialFromResult(result);
+    if(credential&&credential.accessToken){
+      gToken={access_token:credential.accessToken};
+      if(gapiReady)gapi.client.setToken(gToken);
+    }
+    // onAuthStateChanged handler finishes the wiring (snapshot listener, UI, etc).
+  }catch(e){
+    console.error('Sign-in failed:',e);
+    if(e.code!=='auth/popup-closed-by-user')alert('Sign-in failed: '+(e.message||e.code||e));
+  }
 }
 
-function signOut(){
-  if(!gToken)return;
-  google.accounts.oauth2.revoke(gToken.access_token,()=>{
-    gToken=null;driveFileId=null;userEmail='';
-    gapi.client.setToken(null);
-    setSyncState('offline');
-    renderAuthState();
-  });
+async function signOut(){
+  const {auth,fbSignOut}=window.fb;
+  try{await fbSignOut(auth);}catch(e){console.error('Sign-out error:',e);}
+  // onAuthStateChanged clears fbUser, detaches listener, and re-renders.
 }
 
-// ── GAPI / GIS init ────────────────────────────────────────
+// ── GAPI init (Calendar API only — Firebase handles Drive replacement) ───
 function gapiLoaded(){
   gapi.load('client',async()=>{
     try{
       await gapi.client.init({discoveryDocs:[
-        'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
         'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
       ]});
       gapiReady=true;
-      maybeInitAuth();
+      if(gToken)gapi.client.setToken(gToken);
     }catch(e){console.warn('GAPI init failed (offline?)',e);}
   });
 }
 
-function onGsiLoad(){
-  // GIS client loaded — called via window.onload fallback below
-  gsiReady=true;
-  maybeInitAuth();
-}
-
-function maybeInitAuth(){
-  if(!gapiReady||!gsiReady)return;
-  if(!GCAL_CLIENT_ID||GCAL_CLIENT_ID==='YOUR_CLIENT_ID_HERE'){
-    renderAuthState();return;
-  }
-  tokenClient=google.accounts.oauth2.initTokenClient({
-    client_id:GCAL_CLIENT_ID,
-    scope:GCAL_SCOPES,
-    callback:onTokenResponse,
-    error_callback:onTokenError
-  });
-  // Show Connect button immediately — don't wait for token callback
-  renderAuthState();
-  // Also attempt silent refresh (succeeds if user previously authorized this session)
-  tokenClient.requestAccessToken({prompt:''});
-}
-
-function onTokenResponse(resp){
-  if(resp.error){onTokenError(resp);return;}
-  gToken=resp;
-  gapi.client.setToken(gToken);
-  renderAuthState();
-  getUserEmail().then(()=>{
-    renderAuthState();
-    loadFromDrive();
-    syncCalendarWeek(viewSat);
+// ── Firebase wiring ────────────────────────────────────────
+function onFbReady(){
+  fbReady=true;
+  const {auth,onAuthStateChanged}=window.fb;
+  onAuthStateChanged(auth,async(user)=>{
+    fbUser=user||null;
+    if(user){
+      userEmail=user.email||'';
+      renderAuthState();
+      attachCloudListener(user.uid);
+    } else {
+      userEmail='';
+      gToken=null;
+      if(gapiReady)gapi.client.setToken(null);
+      detachCloudListener();
+      setSyncState('offline');
+      renderAuthState();
+    }
   });
 }
+if(window.fb){onFbReady();}
+else{window.addEventListener('fb-ready',onFbReady,{once:true});}
 
-function onTokenError(err){
-  // Silent auth failed — show Connect button, don't alert
-  gToken=null;
-  setSyncState('offline');
-  renderAuthState();
-}
-
-async function getUserEmail(){
-  try{
-    const resp=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',
-      {headers:{Authorization:`Bearer ${gToken.access_token}`}});
-    const info=await resp.json();
-    userEmail=info.email||'';
-  }catch(e){}
-}
-
-// ── Drive sync ─────────────────────────────────────────────
-async function loadFromDrive(){
-  if(!gToken||!gapiReady)return;
+// ── Cloud sync (Firestore) ─────────────────────────────────
+// Single-doc model: users/{uid}/state/main holds the full D object under
+// `D`, plus a serverTimestamp `updatedAt`. Later we can shard per-day.
+function attachCloudListener(uid){
+  const {db,doc,onSnapshot,setDoc,serverTimestamp}=window.fb;
+  detachCloudListener();
+  const ref=doc(db,'users',uid,'state','main');
   setSyncState('syncing');
-  try{
-    const list=await gapi.client.drive.files.list({
-      spaces:'appDataFolder',
-      fields:'files(id,name)',
-      q:`name='${DRIVE_FILENAME}'`
-    });
-    if(!list.result.files||list.result.files.length===0){
-      // No file yet — upload current data as initial sync
-      await saveToDrive();
+  cloudUnsub=onSnapshot(ref,(snap)=>{
+    if(snap.metadata.hasPendingWrites){
+      // Our own write — wait for server confirmation.
       return;
     }
-    driveFileId=list.result.files[0].id;
-    // Fetch file content
-    const content=await gapi.client.drive.files.get({fileId:driveFileId,alt:'media'});
-    let driveData;
-    if(typeof content.result==='string')driveData=JSON.parse(content.result);
-    else if(content.body)driveData=JSON.parse(content.body);
-    else driveData=content.result;
-    // Drive is authoritative — overwrite local (apply migrations first)
-    if(!driveData.fasting)driveData.fasting={};
-    D=applyMigrations(driveData);
-    save(); // update localStorage cache + write migrated data back to Drive
+    if(!snap.exists()){
+      // First-time sign-in on this account: seed from local D.
+      setDoc(ref,{D,updatedAt:serverTimestamp()}).catch(e=>{
+        console.error('Initial cloud seed failed:',e);setSyncState('error');
+      });
+      return;
+    }
+    const data=snap.data();
+    const remote=data&&data.D;
+    if(!remote){setSyncState('synced');return;}
+    // Skip if the remote matches what we last applied (echo of our own write).
+    const remoteJson=JSON.stringify(remote);
+    if(pendingRemote===remoteJson){setSyncState('synced');return;}
+    pendingRemote=remoteJson;
+    // Remote is authoritative — replace local and rerender.
+    if(!remote.fasting)remote.fasting={};
+    D=applyMigrations(remote);
+    localStorage.setItem('rec_v89',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
-  }catch(e){
-    console.error('Drive load error:',e);
+  },(err)=>{
+    console.error('Snapshot listener error:',err);
     setSyncState('error');
-  }
+  });
 }
 
-async function saveToDrive(){
-  if(!gToken||!gapiReady)return;
+function detachCloudListener(){
+  if(cloudUnsub){cloudUnsub();cloudUnsub=null;}
+  pendingRemote=null;
+}
+
+async function cloudSave(){
+  if(!fbUser||!window.fb)return;
+  const {db,doc,setDoc,serverTimestamp}=window.fb;
   setSyncState('syncing');
-  const content=JSON.stringify(D);
-  const boundary='-------records_boundary_319';
-  const buildBody=(meta)=>[
-    `--${boundary}`,
-    'Content-Type: application/json; charset=UTF-8','',
-    JSON.stringify(meta),
-    `--${boundary}`,
-    'Content-Type: application/json','',
-    content,
-    `--${boundary}--`
-  ].join('\r\n');
   try{
-    if(driveFileId){
-      await gapi.client.request({
-        path:`/upload/drive/v3/files/${driveFileId}`,
-        method:'PATCH',
-        params:{uploadType:'multipart'},
-        headers:{'Content-Type':`multipart/related; boundary=${boundary}`},
-        body:buildBody({name:DRIVE_FILENAME,mimeType:'application/json'})
-      });
-    } else {
-      const resp=await gapi.client.request({
-        path:'/upload/drive/v3/files',
-        method:'POST',
-        params:{uploadType:'multipart'},
-        headers:{'Content-Type':`multipart/related; boundary=${boundary}`},
-        body:buildBody({name:DRIVE_FILENAME,mimeType:'application/json',parents:['appDataFolder']})
-      });
-      driveFileId=resp.result.id;
-    }
+    const ref=doc(db,'users',fbUser.uid,'state','main');
+    pendingRemote=JSON.stringify(D);
+    await setDoc(ref,{D,updatedAt:serverTimestamp()});
     setSyncState('synced');
   }catch(e){
-    console.error('Drive save error:',e);
+    console.error('Cloud save error:',e);
     setSyncState('error');
   }
 }
@@ -2981,20 +2975,15 @@ applyTheme(D.settings.theme||'amber');
 renderWeek();
 applySidebarState();
 initMobile();
+renderAuthState(); // show "Connect Google" button immediately (updated again on auth state change)
 
-// GIS loads async — poll until ready (handles cases where GIS loads after GAPI)
-(function waitForGsi(){
-  if(typeof google!=='undefined'&&google.accounts){
-    gsiReady=true;
-    maybeInitAuth();
-  } else {
-    setTimeout(waitForGsi,100);
-  }
-})();
-
+// Firestore's offline persistence handles queued writes automatically on
+// reconnect; we just nudge the sync indicator so the UI reflects it.
 window.addEventListener('online',()=>{
-  if(!gToken&&tokenClient)tokenClient.requestAccessToken({prompt:''});
-  else if(gToken)saveToDrive();
+  if(fbUser)cloudSave();
+});
+window.addEventListener('offline',()=>{
+  if(fbUser)setSyncState('syncing'); // reads as "waiting to sync"
 });
 
 
