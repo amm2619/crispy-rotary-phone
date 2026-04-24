@@ -2622,8 +2622,13 @@ async function signIn(){
     if(credential&&credential.accessToken){
       gToken={access_token:credential.accessToken};
       if(gapiReady)gapi.client.setToken(gToken);
+      // onAuthStateChanged already ran renderAuthState (with gToken still null). Re-render
+      // now that the Calendar token is in hand so the 🗓 button appears, and pull events.
+      renderAuthState();
+      if(gapiReady)syncCalendarWeek(viewSat);
+    } else {
+      console.warn('Sign-in succeeded but no Calendar access token in credential — Calendar sync disabled.');
     }
-    // onAuthStateChanged handler finishes the wiring (snapshot listener, UI, etc).
   }catch(e){
     console.error('Sign-in failed:',e);
     if(e.code!=='auth/popup-closed-by-user')alert('Sign-in failed: '+(e.message||e.code||e));
