@@ -4,20 +4,15 @@
 A single-file HTML timekeeping app for a federal contractor (Nightwing). Tracks work sessions, comp time, leave, and holidays against a biweekly pay period target. Dark warm-amber aesthetic (Inter + Playfair Display). No external dependencies except Google Fonts.
 
 ## File Locations
-- App: `Records/records_v26.html`
-- Stable URL entry point: `Records/index.html` (copy of current version)
+- App: `Records/index.html` (single canonical file — no more `records_vN.html` copies)
 - Root redirect: `index.html` (redirects to `Records/` for GitHub Pages)
 - Local server: `Records/server.js` (run from Records/ directory)
-- localStorage key: `rec_v36`
-- Every new version: increment both the filename AND the localStorage key
+- localStorage key: `rec_v{N}` — bump when the data shape changes so stale caches are dropped
 
 ## Versioning Rules
-- ALWAYS increment the version number when making changes
-- Filename: `records_v{N}.html` -> `records_v{N+1}.html`
-- localStorage key: `rec_v{N}` -> `rec_v{N+1}` (forces fresh load, clears stale cache)
-- ALWAYS run `node --check` on extracted JS before shipping
-- NEVER ship without a syntax check passing
-- After version bump: copy new file to `Records/index.html` and root `index.html` stays as redirect
+- Edit `Records/index.html` directly. Git history is the version trail; do not commit `records_vN.html` duplicates.
+- Bump the localStorage key (`rec_v{N}` → `rec_v{N+1}`) **only when the data shape changes** — not on every edit. This forces a fresh load and clears stale cache.
+- ALWAYS run `node --check` on extracted JS before shipping. NEVER ship without a syntax check passing.
 
 ---
 
@@ -208,4 +203,4 @@ Day notes use a tag-based system with emoji pills:
 - OAuth handled client-side via Google Identity Services (GIS) popup flow
 - Drive `appDataFolder` stores `records_data.json` (private, not visible in user's Drive)
 - Calendar events pulled per week; sessions can be pushed to primary calendar
-- Google Client ID is in `Records/records_v26.html` near the top of the JS section
+- Google Client ID is in `Records/index.html` near the top of the JS section
