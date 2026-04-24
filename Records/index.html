@@ -2578,7 +2578,7 @@ function renderSettings(){
 }
 function saveSetting(k,v){D.settings[k]=v;sched();}
 function exportData(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='records_'+today()+'.json';a.click();}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);save();renderWeek();alert('Imported.');}catch(x){alert('Invalid file.');}};r.readAsText(f);}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);save();renderWeek();if(fbUser)cloudSave();alert('Imported.');}catch(x){alert('Invalid file.');}};r.readAsText(f);}
 
 // ── Google sync ────────────────────────────────────────────
 
@@ -2680,18 +2680,30 @@ function attachCloudListener(uid){
   detachCloudListener();
   const ref=doc(db,'users',uid,'state','main');
   setSyncState('syncing');
+  // Only auto-seed on the very first snapshot event. If the doc is deleted
+  // later (e.g. manually via Firebase console), DON'T re-upload — that lets
+  // an admin actually clear the cloud without a live tab immediately
+  // rewriting it from its local D.
+  let firstSnapshot=true;
   cloudUnsub=onSnapshot(ref,(snap)=>{
     if(snap.metadata.hasPendingWrites){
       // Our own write — wait for server confirmation.
       return;
     }
     if(!snap.exists()){
+      if(!firstSnapshot){
+        console.warn('Cloud doc was deleted externally — not re-seeding. Use "Sync now" to push local data.');
+        setSyncState('error');
+        return;
+      }
+      firstSnapshot=false;
       // First-time sign-in on this account: seed from local D.
       setDoc(ref,{D,updatedAt:serverTimestamp()}).catch(e=>{
         console.error('Initial cloud seed failed:',e);setSyncState('error');
       });
       return;
     }
+    firstSnapshot=false;
     const data=snap.data();
     const remote=data&&data.D;
     if(!remote){setSyncState('synced');return;}
