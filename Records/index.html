@@ -390,6 +390,80 @@ canvas { width:100%!important; height:165px!important; }
 .dc-fast { display:flex; align-items:center; gap:2px; }
 .fast-rest-msg { opacity:0.6; font-style:italic; }
 
+/* ── Weight loss tab ── */
+.wl-hero { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px; }
+.wl-stat { background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); padding:14px 16px; }
+.wl-stat .wl-lbl { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--t3); margin-bottom:6px; }
+.wl-stat .wl-val { font-size:24px; font-weight:700; color:var(--t1); font-variant-numeric:tabular-nums; line-height:1.1; }
+.wl-stat .wl-sub { font-size:11px; color:var(--t3); margin-top:6px; font-variant-numeric:tabular-nums; }
+.wl-stat.good .wl-val { color:var(--grn); }
+.wl-stat.warn .wl-val { color:var(--ylw); }
+.wl-stat.bad .wl-val { color:var(--red); }
+.wl-stat.acc .wl-val { color:var(--acc); }
+.wl-week-banner { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:14px 16px; background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); margin-bottom:10px; }
+.wl-week-title { font-family:'Playfair Display',serif; font-size:18px; font-style:italic; color:var(--t1); }
+.wl-week-phase { font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--t3); padding:3px 9px; border:1px solid var(--bdr2); border-radius:20px; }
+.wl-week-goal { font-size:13px; color:var(--t2); font-variant-numeric:tabular-nums; margin-left:auto; display:flex; align-items:center; gap:8px; }
+.wl-week-goal strong { color:var(--acc); font-weight:700; }
+.wl-weighin-inp { width:80px; background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); color:var(--t1); padding:6px 8px; font-size:14px; font-weight:700; font-family:'Inter',sans-serif; outline:none; text-align:center; }
+.wl-weighin-inp:focus { border-color:var(--acc); }
+.wl-day-list { display:flex; flex-direction:column; gap:6px; }
+.wl-day-row { display:grid; grid-template-columns:88px 1fr; gap:10px; align-items:center; background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:10px 12px; }
+.wl-day-row.today { border-color:var(--acc); background:var(--accD); }
+.wl-day-row.future { opacity:0.55; }
+.wl-day-lbl { display:flex; flex-direction:column; gap:1px; }
+.wl-day-name { font-size:13px; font-weight:700; color:var(--t1); }
+.wl-day-date { font-size:11px; color:var(--t3); font-variant-numeric:tabular-nums; }
+.wl-day-meal { font-size:10px; color:var(--t3); margin-top:2px; font-style:italic; line-height:1.3; }
+.wl-checks { display:flex; flex-wrap:wrap; gap:4px; }
+.wl-chk { display:inline-flex; align-items:center; gap:4px; padding:5px 9px; border:1px solid var(--bdr); border-radius:20px; background:var(--sur3); color:var(--t3); font-size:11px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.12s; -webkit-tap-highlight-color:transparent; user-select:none; }
+.wl-chk:hover { border-color:var(--bdr2); color:var(--t2); }
+.wl-chk.on { background:var(--grnD); border-color:var(--grn); color:var(--grn); }
+.wl-chk.strength { font-weight:700; }
+.wl-chk.strength.on { background:var(--accD); border-color:var(--acc); color:var(--acc); }
+.wl-chk-icon { font-size:13px; }
+.wl-chart { display:flex; flex-direction:column; gap:2px; font-variant-numeric:tabular-nums; font-size:11px; }
+.wl-chart-row { display:grid; grid-template-columns:62px 1fr 130px; gap:8px; align-items:center; padding:1px 0; }
+.wl-chart-row.now { background:var(--accD); border-radius:3px; padding:2px 4px; margin:0 -4px; }
+.wl-chart-row .wl-c-lbl { color:var(--t3); }
+.wl-chart-row .wl-c-bar-wrap { position:relative; height:14px; background:var(--sur3); border-radius:3px; overflow:hidden; }
+.wl-chart-row .wl-c-bar { position:absolute; left:0; top:0; bottom:0; background:var(--grnD); border-right:1px solid var(--grn); }
+.wl-chart-row .wl-c-bar.actual { background:var(--accD); border-right-color:var(--acc); top:50%; height:50%; }
+.wl-chart-row .wl-c-vals { text-align:right; color:var(--t2); font-size:11px; }
+.wl-chart-row .wl-c-vals .actual { color:var(--acc); font-weight:700; }
+.wl-chart-row .wl-c-vals .behind { color:var(--red); font-weight:700; }
+.wl-chart-row .wl-c-vals .ahead  { color:var(--grn); font-weight:700; }
+.wl-targets-tbl { width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums; }
+.wl-targets-tbl th { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--t3); padding:6px 8px; text-align:left; border-bottom:1px solid var(--bdr); }
+.wl-targets-tbl td { padding:7px 8px; border-bottom:1px solid var(--bdr); color:var(--t2); }
+.wl-targets-tbl tr.now td { background:var(--accD); color:var(--t1); }
+.wl-targets-tbl tr.milestone td { background:var(--ylwD); }
+.wl-targets-tbl td.num { text-align:right; }
+.wl-targets-tbl .delta-good { color:var(--grn); font-weight:700; }
+.wl-targets-tbl .delta-bad  { color:var(--red); font-weight:700; }
+.wl-refs { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.wl-ref { background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); }
+.wl-ref summary { padding:12px 16px; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--t2); list-style:none; display:flex; align-items:center; justify-content:space-between; -webkit-tap-highlight-color:transparent; }
+.wl-ref summary::-webkit-details-marker { display:none; }
+.wl-ref summary::after { content:'+'; color:var(--t3); font-size:18px; font-weight:300; }
+.wl-ref[open] summary::after { content:'−'; }
+.wl-ref summary:hover { color:var(--acc); }
+.wl-ref-body { padding:0 16px 16px; font-size:13px; color:var(--t2); line-height:1.55; }
+.wl-ref-body h4 { font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--t3); margin:14px 0 6px; }
+.wl-ref-body h4:first-child { margin-top:4px; }
+.wl-ref-body ul { padding-left:18px; }
+.wl-ref-body li { margin-bottom:3px; }
+.wl-ref-body .wl-meal-day { padding:8px 0; border-bottom:1px solid var(--bdr); }
+.wl-ref-body .wl-meal-day:last-child { border-bottom:none; }
+.wl-ref-body .wl-meal-day .wl-meal-name { font-weight:700; color:var(--t1); }
+.wl-ref-body .wl-meal-day .wl-meal-macro { color:var(--t3); font-size:11px; font-variant-numeric:tabular-nums; }
+.wl-show-more { text-align:center; padding:10px; color:var(--acc); font-size:12px; font-weight:600; cursor:pointer; }
+.wl-show-more:hover { background:var(--sur2); }
+.wl-empty { text-align:center; padding:18px; color:var(--t3); font-size:13px; font-style:italic; }
+.wl-progress-strip { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:11px; color:var(--t3); }
+.wl-progress-bar { flex:1; height:6px; background:var(--sur3); border-radius:3px; overflow:hidden; }
+.wl-progress-fill { height:100%; background:var(--acc); transition:width 0.2s; }
+
 /* ── Responsive (half-screen / narrow window) ── */
 @media (max-width: 1050px) {
   .tab { padding:14px 16px; }
@@ -611,6 +685,22 @@ canvas { width:100%!important; height:165px!important; }
   /* ── Date picker ── */
   .date-picker-panel { width:calc(100vw - 20px); max-width:320px; left:10px !important; }
   .dp-day { font-size:13px; }
+
+  /* ── Weight loss tab ── */
+  .wl-hero { grid-template-columns:repeat(2,1fr); gap:6px; margin-bottom:14px; }
+  .wl-stat { padding:10px 12px; }
+  .wl-stat .wl-val { font-size:20px; }
+  .wl-week-banner { padding:10px 12px; gap:8px; }
+  .wl-week-title { font-size:16px; }
+  .wl-week-goal { font-size:12px; width:100%; margin-left:0; justify-content:space-between; }
+  .wl-day-row { grid-template-columns:1fr; gap:6px; padding:10px 11px; }
+  .wl-day-lbl { flex-direction:row; gap:8px; align-items:baseline; }
+  .wl-day-meal { margin-top:0; }
+  .wl-checks { gap:4px; }
+  .wl-chk { padding:6px 10px; font-size:12px; }
+  .wl-refs { grid-template-columns:1fr; }
+  .wl-chart-row { grid-template-columns:54px 1fr 100px; font-size:11px; }
+  .wl-chart-row .wl-c-vals { font-size:10px; }
 }
 
 /* ── Year sub-tabs ── */
@@ -814,6 +904,10 @@ canvas { width:100%!important; height:165px!important; }
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
       <span class="nav-text">Year &amp; Leave</span>
     </button>
+    <button class="nav-btn" data-tab="wl" onclick="showTab('wl')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
+      <span class="nav-text">Weight Loss</span>
+    </button>
     <button class="nav-btn" data-tab="settings" onclick="showTab('settings')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.41 1.41M13.54 13.54l1.41 1.41M14.95 5.05l-1.41 1.41M6.46 13.54l-1.41 1.41"/></svg>
       <span class="nav-text">Settings</span>
@@ -994,6 +1088,37 @@ canvas { width:100%!important; height:165px!important; }
       </div>
     </div>
 
+    <!-- WEIGHT LOSS TAB -->
+    <div class="tab" id="tab-wl">
+      <div class="page-title">Weight Loss</div>
+      <div class="page-sub" id="wlSub">207 → 140 lbs · main goal 167 by Sept 22</div>
+      <div class="wl-hero" id="wlHero"></div>
+      <div class="pattern-section">
+        <div class="section-label">
+          <span>This week's checklist</span>
+          <span class="wk-nav">
+            <button class="arr" onclick="wlChangeWeek(-1)">‹</button>
+            <button class="pill" onclick="wlJumpToNow()">This week</button>
+            <button class="arr" onclick="wlChangeWeek(1)">›</button>
+          </span>
+        </div>
+        <div id="wlWeekBanner"></div>
+        <div id="wlWeekDays" class="wl-day-list"></div>
+      </div>
+      <div class="pattern-section">
+        <div class="section-label">Weight progress <span class="section-sub">actual vs plan</span></div>
+        <div id="wlChart"></div>
+      </div>
+      <div class="pattern-section">
+        <div class="section-label">All weekly targets</div>
+        <div id="wlTargetsTbl"></div>
+      </div>
+      <div class="pattern-section">
+        <div class="section-label">Plan reference</div>
+        <div class="wl-refs" id="wlRefs"></div>
+      </div>
+    </div>
+
     <!-- SETTINGS TAB -->
     <div class="tab" id="tab-settings">
       <div class="page-title">Settings</div>
@@ -1051,6 +1176,10 @@ canvas { width:100%!important; height:165px!important; }
     <button class="mob-nav-btn" data-tab="year" onclick="showTab('year');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
       Year
+    </button>
+    <button class="mob-nav-btn" data-tab="wl" onclick="showTab('wl');setMobNav(this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
+      Weight
     </button>
     <button class="mob-nav-btn" data-tab="settings" onclick="showTab('settings');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.41 1.41M13.54 13.54l1.41 1.41M14.95 5.05l-1.41 1.41M6.46 13.54l-1.41 1.41"/></svg>
@@ -1122,6 +1251,70 @@ const HOLIDAYS=[
 const FLOATING_CREDITS={
   2025: {federal:['2025-10-13','2025-11-11'], free:1, total:3},
   2026: {federal:['2026-01-19','2026-02-16','2026-05-25','2026-06-19','2026-09-07','2026-10-12','2026-11-11'], free:1, total:8}
+};
+
+// ── Weight loss plan ──────────────────────────────────────
+// Weekly Saturday-morning weight targets (from Weight_Loss_Master_Plan.docx).
+// Each entry: { wk, date (Saturday weigh-in), goal (lbs), phase, milestone? }
+const WL_TARGETS=[
+  {wk:0,  date:'2026-05-02', goal:207.0, phase:'Start', milestone:'Starting weight'},
+  {wk:1,  date:'2026-05-09', goal:203.0, phase:'Phase 1 — Pre-Event'},
+  {wk:2,  date:'2026-05-16', goal:200.0, phase:'Phase 1 — Pre-Event'},
+  {wk:3,  date:'2026-05-23', goal:197.5, phase:'Phase 1 — Pre-Event'},
+  {wk:4,  date:'2026-05-30', goal:195.5, phase:'Phase 1 — Pre-Event'},
+  {wk:5,  date:'2026-06-06', goal:193.0, phase:'Event week (Jun 5)', milestone:'Event week'},
+  {wk:6,  date:'2026-06-13', goal:190.5, phase:'Phase 2 — Build'},
+  {wk:7,  date:'2026-06-20', goal:188.0, phase:'Phase 2 — Build'},
+  {wk:8,  date:'2026-06-27', goal:185.5, phase:'Phase 2 — Build'},
+  {wk:9,  date:'2026-07-04', goal:183.5, phase:'Phase 2 — Build'},
+  {wk:10, date:'2026-07-11', goal:181.5, phase:'Phase 2 — Build'},
+  {wk:11, date:'2026-07-18', goal:179.5, phase:'Phase 2 — Build'},
+  {wk:12, date:'2026-07-25', goal:177.5, phase:'Phase 2 — Build'},
+  {wk:13, date:'2026-08-01', goal:175.5, phase:'Phase 3 — Push'},
+  {wk:14, date:'2026-08-08', goal:173.5, phase:'Phase 3 — Push'},
+  {wk:15, date:'2026-08-15', goal:171.5, phase:'Phase 3 — Push'},
+  {wk:16, date:'2026-08-22', goal:169.5, phase:'Phase 3 — Push'},
+  {wk:17, date:'2026-08-29', goal:167.5, phase:'40 lb goal hit', milestone:'🎯 40 lb goal'},
+  {wk:18, date:'2026-09-05', goal:165.5, phase:'Phase 4 — Final'},
+  {wk:19, date:'2026-09-12', goal:163.5, phase:'Phase 4 — Final'},
+  {wk:20, date:'2026-09-19', goal:161.5, phase:'Phase 4 — Final'},
+  {wk:21, date:'2026-09-22', goal:160.0, phase:'🎂 Birthday (Sep 22)', milestone:'🎂 Birthday'},
+  {wk:22, date:'2026-09-26', goal:158.5, phase:'Phase 5 — Stretch'},
+  {wk:23, date:'2026-10-03', goal:157.0, phase:'Phase 5 — Stretch'},
+  {wk:24, date:'2026-10-10', goal:155.5, phase:'Phase 5 — Stretch'},
+  {wk:25, date:'2026-10-17', goal:154.0, phase:'Phase 5 — Stretch'},
+  {wk:26, date:'2026-10-24', goal:152.5, phase:'Phase 5 — Stretch'},
+  {wk:27, date:'2026-10-31', goal:151.0, phase:'Phase 5 — Stretch'},
+  {wk:28, date:'2026-11-07', goal:149.5, phase:'Phase 6 — Final cut'},
+  {wk:29, date:'2026-11-14', goal:148.0, phase:'Phase 6 — Final cut'},
+  {wk:30, date:'2026-11-21', goal:146.5, phase:'Phase 6 — Final cut'},
+  {wk:31, date:'2026-11-28', goal:145.0, phase:'Phase 6 — Final cut'},
+  {wk:32, date:'2026-12-05', goal:144.0, phase:'Phase 6 — Final cut'},
+  {wk:33, date:'2026-12-12', goal:143.0, phase:'Phase 6 — Final cut'},
+  {wk:34, date:'2026-12-19', goal:142.0, phase:'Phase 6 — Final cut'},
+  {wk:35, date:'2026-12-26', goal:141.0, phase:'Phase 6 — Final cut'},
+  {wk:36, date:'2027-01-02', goal:140.0, phase:'Goal weight reached', milestone:'🎯 Goal weight'}
+];
+// Habits tracked daily (key, label, icon)
+const WL_HABITS=[
+  {key:'omad',         label:'OMAD',     icon:'🍽️'},
+  {key:'protein',      label:'Protein',  icon:'🥩'},
+  {key:'water',        label:'80oz H₂O', icon:'💧'},
+  {key:'electrolytes', label:'Lytes',    icon:'⚡'},
+  {key:'walks',        label:'3+ walks', icon:'🚶'},
+  {key:'steps',        label:'8k steps', icon:'👟'}
+];
+// Strength training days: 1=Mon, 4=Thu (JS getDay)
+const WL_STRENGTH_DOW=[1,4];
+// Day-of-week meals for OMAD plan. Index by JS getDay (0=Sun..6=Sat).
+const WL_MEALS={
+  1:{name:'Wrap + Greek yogurt stack',  desc:'Egglife wrap, Greek yogurt + berries, 2 hard-boiled eggs', cal:430, protein:50},
+  2:{name:'Wrap + cottage cheese bowl', desc:'Wrap, cottage cheese w/ cucumber, string cheese, pear, almonds', cal:530, protein:47},
+  3:{name:'Wrap + tuna side',           desc:'Wrap, tuna pouch, side salad, Greek yogurt + cinnamon, orange', cal:510, protein:55},
+  4:{name:'Wrap + extra chicken',       desc:'Wrap, 4oz extra chicken, tomatoes/cucumber, Greek yogurt + berries, cashews', cal:570, protein:60},
+  5:{name:'Wrap + egg salad',           desc:'Wrap, egg salad on cucumber rounds, string cheese, grapes', cal:510, protein:50},
+  6:{name:'Salmon home meal',           desc:'6oz salmon, sweet potato, broccoli, salad, Greek yogurt + berries', cal:1450, protein:125},
+  0:{name:'Sunday prep + meal',         desc:'6oz chicken or steak, quinoa/rice, roasted veg, salad w/ avocado', cal:1480, protein:122}
 };
 
 // ── Themes ─────────────────────────────────────────────────
@@ -1284,6 +1477,8 @@ function renderThemePicker(){
 
 // ── State ──────────────────────────────────────────────────
 let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', saveTimer=null, activeFY=null;
+// Weight Loss tab — current week (Saturday) being viewed; shows-all flag for targets table
+let wlViewSat=thisSaturday(), wlShowAllTargets=false;
 
 // ── Sidebar collapse ───────────────────────────────────────
 let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
@@ -1318,6 +1513,19 @@ function applyMigrations(data){
   // 2026-02-24 is a regular work day — strip from floating lists
   data.settings.takenFloating=(data.settings.takenFloating||[]).filter(d=>d!=='2026-02-24');
   data.settings.extraFloating=(data.settings.extraFloating||[]).filter(d=>d!=='2026-02-24');
+  // Weight loss tracker — initialize if missing
+  if(!data.weight)data.weight={weighIns:{},daily:{}};
+  if(!data.weight.weighIns)data.weight.weighIns={};
+  if(!data.weight.daily)data.weight.daily={};
+  // Backfill weigh-ins from any pre-existing D.days[d].weight entries (Saturdays only)
+  if(data.days){
+    for(const d in data.days){
+      const w=data.days[d]&&data.days[d].weight;
+      if(w&&!data.weight.weighIns[d]){
+        data.weight.weighIns[d]=w;
+      }
+    }
+  }
   // ── v77 one-time data migration ──────────────────────────────
   // Applies CSV-ground-truth corrections to live data. Runs once,
   // tracked by settings._v77DataMigration. Every patch checks the
@@ -1968,6 +2176,7 @@ function showTab(id){
   document.querySelectorAll('[data-tab="'+id+'"]').forEach(b=>b.classList.add('on'));
   if(id==='year')renderYear();
   if(id==='settings')renderSettings();
+  if(id==='wl')renderWeightLoss();
 }
 
 // ── Location toggle ────────────────────────────────────────
@@ -2578,6 +2787,400 @@ function renderSettings(){
   renderThemePicker();
 }
 function saveSetting(k,v){D.settings[k]=v;sched();}
+
+// ── Weight loss tracker ────────────────────────────────────
+function wlEnsureDay(d){
+  if(!D.weight)D.weight={weighIns:{},daily:{}};
+  if(!D.weight.daily)D.weight.daily={};
+  if(!D.weight.daily[d])D.weight.daily[d]={};
+  return D.weight.daily[d];
+}
+function wlTargetForDate(d){
+  // Pick the WL_TARGETS row whose Saturday matches d. If exact match exists, return it.
+  return WL_TARGETS.find(t=>t.date===d)||null;
+}
+function wlLatestWeighIn(){
+  if(!D.weight||!D.weight.weighIns)return null;
+  const keys=Object.keys(D.weight.weighIns).filter(k=>typeof D.weight.weighIns[k]==='number'&&D.weight.weighIns[k]>0).sort();
+  if(!keys.length)return null;
+  const latest=keys[keys.length-1];
+  return {date:latest, weight:D.weight.weighIns[latest]};
+}
+function wlSetWeighIn(d,val){
+  if(!D.weight)D.weight={weighIns:{},daily:{}};
+  if(!D.weight.weighIns)D.weight.weighIns={};
+  const v=parseFloat(val);
+  if(isNaN(v)||v<=0){
+    delete D.weight.weighIns[d];
+    if(D.days&&D.days[d])delete D.days[d].weight;
+  }else{
+    D.weight.weighIns[d]=Math.round(v*10)/10;
+    // Also mirror onto D.days[d].weight to stay backward compatible with day cards.
+    if(!D.days[d])D.days[d]={sessions:[],compEarned:0,compUsed:0,leave:0,holiday:0,notes:''};
+    D.days[d].weight=Math.round(v*10)/10;
+  }
+  sched();
+  renderWeightLoss();
+}
+function wlToggleHabit(d,key){
+  const day=wlEnsureDay(d);
+  day[key]=!day[key];
+  sched();
+  renderWeightLoss();
+}
+function wlChangeWeek(dir){
+  const cand=addDays(wlViewSat,dir*7);
+  if(cand<'2026-05-02')return;
+  if(cand>'2027-01-09')return;
+  wlViewSat=cand;
+  renderWeightLoss();
+}
+function wlJumpToNow(){wlViewSat=thisSaturday();renderWeightLoss();}
+function wlToggleAllTargets(){wlShowAllTargets=!wlShowAllTargets;renderWeightLoss();}
+
+function renderWeightLoss(){
+  renderWLHero();
+  renderWLWeek();
+  renderWLChart();
+  renderWLTargetsTbl();
+  renderWLRefs();
+}
+
+function renderWLHero(){
+  const el=document.getElementById('wlHero');
+  if(!el)return;
+  const latest=wlLatestWeighIn();
+  const start=207.0;
+  const goal=140.0;
+  const mainGoal=167.0;
+  const current=latest?latest.weight:start;
+  const lost=Math.round((start-current)*10)/10;
+  const remainMain=Math.round((current-mainGoal)*10)/10;
+  // On-track: compare current weight vs the most recent passed target
+  const td=today();
+  const passed=WL_TARGETS.filter(t=>t.date<=td);
+  const currentTarget=passed.length?passed[passed.length-1]:WL_TARGETS[0];
+  const delta=latest?Math.round((latest.weight-currentTarget.goal)*10)/10:0;
+  let trackClass='acc', trackLabel='—', trackSub='No weigh-ins yet';
+  if(latest){
+    if(delta<=0){trackClass='good';trackLabel='Ahead';trackSub=Math.abs(delta).toFixed(1)+' lbs under target';}
+    else if(delta<=2){trackClass='warn';trackLabel='On pace';trackSub=delta.toFixed(1)+' lbs over target';}
+    else{trackClass='bad';trackLabel='Behind';trackSub=delta.toFixed(1)+' lbs over target';}
+  }
+  // Days to milestones
+  const mainDay='2026-09-22';
+  const daysToMain=Math.max(0,Math.round((new Date(mainDay+'T00:00:00')-new Date(td+'T00:00:00'))/86400000));
+  el.innerHTML=`
+    <div class="wl-stat acc">
+      <div class="wl-lbl">Current weight</div>
+      <div class="wl-val">${current.toFixed(1)}</div>
+      <div class="wl-sub">${latest?'as of '+fmtShort(latest.date):'before first weigh-in'}</div>
+    </div>
+    <div class="wl-stat good">
+      <div class="wl-lbl">Lost so far</div>
+      <div class="wl-val">${lost.toFixed(1)} lb</div>
+      <div class="wl-sub">${(lost/(start-goal)*100).toFixed(0)}% of way to 140</div>
+    </div>
+    <div class="wl-stat">
+      <div class="wl-lbl">To main goal</div>
+      <div class="wl-val">${remainMain.toFixed(1)} lb</div>
+      <div class="wl-sub">${daysToMain} days · 167 by Sep 22</div>
+    </div>
+    <div class="wl-stat ${trackClass}">
+      <div class="wl-lbl">Status</div>
+      <div class="wl-val">${trackLabel}</div>
+      <div class="wl-sub">${trackSub} (wk ${currentTarget.wk} target ${currentTarget.goal})</div>
+    </div>
+  `;
+}
+
+function renderWLWeek(){
+  const banner=document.getElementById('wlWeekBanner');
+  const list=document.getElementById('wlWeekDays');
+  if(!banner||!list)return;
+  const sat=wlViewSat;
+  const target=wlTargetForDate(sat);
+  const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[sat];
+  const td=today();
+  // Banner
+  let bannerHtml='';
+  if(target){
+    const milestone=target.milestone?` <span class="wl-week-phase" style="border-color:var(--ylw);color:var(--ylw)">${target.milestone}</span>`:'';
+    const wiVal=wi?wi:'';
+    const wiDelta=wi?Math.round((wi-target.goal)*10)/10:null;
+    const deltaStr=wiDelta!==null
+      ? (wiDelta<=0
+         ?'<span style="color:var(--grn);font-weight:700">'+(wiDelta).toFixed(1)+' lb vs goal</span>'
+         :'<span style="color:var(--red);font-weight:700">+'+wiDelta.toFixed(1)+' lb vs goal</span>')
+      :'';
+    bannerHtml=`
+      <div class="wl-week-banner">
+        <div class="wl-week-title">Week ${target.wk} · ${fmtShort(sat)}</div>
+        <span class="wl-week-phase">${target.phase}</span>${milestone}
+        <div class="wl-week-goal">
+          <span>Sat weigh-in goal <strong>${target.goal} lb</strong></span>
+          <input class="wl-weighin-inp" type="number" step="0.1" min="0" placeholder="—" value="${wiVal}" onchange="wlSetWeighIn('${sat}',this.value)">
+          ${deltaStr}
+        </div>
+      </div>`;
+  }else{
+    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">${fmtShort(sat)}</div><span class="wl-week-phase">Outside plan window</span></div>`;
+  }
+  banner.innerHTML=bannerHtml;
+  // Days Sat-Fri
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=addDays(sat,i);
+    const dt=new Date(d+'T00:00:00');
+    const dow=dt.getDay();
+    const dayName=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
+    const isToday=d===td;
+    const isFuture=d>td;
+    const meal=WL_MEALS[dow];
+    const dayState=(D.weight&&D.weight.daily&&D.weight.daily[d])||{};
+    const showStrength=WL_STRENGTH_DOW.includes(dow);
+    let pills='';
+    for(const h of WL_HABITS){
+      const on=!!dayState[h.key];
+      pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${h.label}</button>`;
+    }
+    if(showStrength){
+      const on=!!dayState.strength;
+      pills+=`<button class="wl-chk strength${on?' on':''}" onclick="wlToggleHabit('${d}','strength')"><span class="wl-chk-icon">💪</span>Strength</button>`;
+    }
+    const cls=isToday?' today':(isFuture?' future':'');
+    html+=`
+      <div class="wl-day-row${cls}">
+        <div class="wl-day-lbl">
+          <span class="wl-day-name">${dayName}</span>
+          <span class="wl-day-date">${fmtShort(d)}</span>
+          <span class="wl-day-meal">${meal?meal.name:''}</span>
+        </div>
+        <div class="wl-checks">${pills}</div>
+      </div>`;
+  }
+  list.innerHTML=html;
+}
+
+function renderWLChart(){
+  const el=document.getElementById('wlChart');
+  if(!el)return;
+  const td=today();
+  // Show 8 weeks: 2 past, current, 5 future relative to plan position; or first 8 if before plan starts
+  let startIdx=WL_TARGETS.findIndex(t=>t.date>td);
+  if(startIdx<0)startIdx=WL_TARGETS.length-1;
+  startIdx=Math.max(0,startIdx-3);
+  const rows=WL_TARGETS.slice(startIdx,startIdx+8);
+  const minG=Math.min(...rows.map(r=>r.goal))-2;
+  const maxG=Math.max(...rows.map(r=>r.goal))+2;
+  const range=Math.max(1,maxG-minG);
+  let html='';
+  for(const r of rows){
+    const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[r.date];
+    const goalPct=Math.max(0,Math.min(100,((maxG-r.goal)/range)*100));
+    const isNow=r.date===wlViewSat?' now':'';
+    let actualBar='';
+    let valHtml=`<span>goal ${r.goal}</span>`;
+    if(wi){
+      const aPct=Math.max(0,Math.min(100,((maxG-wi)/range)*100));
+      actualBar=`<div class="wl-c-bar actual" style="width:${aPct}%"></div>`;
+      const delta=Math.round((wi-r.goal)*10)/10;
+      const cls=delta<=0?'ahead':'behind';
+      valHtml=`<span>goal ${r.goal}</span> · <span class="actual">${wi}</span> <span class="${cls}">${delta>0?'+':''}${delta.toFixed(1)}</span>`;
+    }
+    html+=`
+      <div class="wl-chart-row${isNow}">
+        <div class="wl-c-lbl">W${r.wk} · ${fmtShort(r.date).replace(' ',' ')}</div>
+        <div class="wl-c-bar-wrap">
+          <div class="wl-c-bar" style="width:${goalPct}%"></div>
+          ${actualBar}
+        </div>
+        <div class="wl-c-vals">${valHtml}</div>
+      </div>`;
+  }
+  el.innerHTML=html;
+}
+
+function renderWLTargetsTbl(){
+  const el=document.getElementById('wlTargetsTbl');
+  if(!el)return;
+  const td=today();
+  // Find current week index
+  let curIdx=WL_TARGETS.findIndex(t=>t.date>=wlViewSat);
+  if(curIdx<0)curIdx=WL_TARGETS.length-1;
+  const rows=wlShowAllTargets?WL_TARGETS:WL_TARGETS.slice(Math.max(0,curIdx-1),curIdx+5);
+  let html='<table class="wl-targets-tbl"><thead><tr><th>Wk</th><th>Date</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Δ</th><th>Phase</th></tr></thead><tbody>';
+  for(const r of rows){
+    const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[r.date];
+    const isNow=r.date===wlViewSat;
+    const cls=[isNow?'now':'',r.milestone?'milestone':''].filter(Boolean).join(' ');
+    let actHtml='—', deltaHtml='';
+    if(typeof wi==='number'){
+      const delta=Math.round((wi-r.goal)*10)/10;
+      actHtml=wi.toFixed(1);
+      const dcls=delta<=0?'delta-good':'delta-bad';
+      deltaHtml=`<span class="${dcls}">${delta>0?'+':''}${delta.toFixed(1)}</span>`;
+    }
+    html+=`<tr class="${cls}"><td>${r.wk}</td><td>${fmtShort(r.date)}</td><td class="num">${r.goal.toFixed(1)}</td><td class="num">${actHtml}</td><td class="num">${deltaHtml}</td><td>${r.milestone?r.milestone+' · ':''}${r.phase}</td></tr>`;
+  }
+  html+='</tbody></table>';
+  html+=`<div class="wl-show-more" onclick="wlToggleAllTargets()">${wlShowAllTargets?'Show fewer':'Show all 36 weeks'}</div>`;
+  el.innerHTML=html;
+}
+
+function renderWLRefs(){
+  const el=document.getElementById('wlRefs');
+  if(!el)return;
+  // Build meal plan list
+  const mealOrder=[1,2,3,4,5,6,0];
+  const dayName={0:'Sunday',1:'Monday',2:'Tuesday',3:'Wednesday',4:'Thursday',5:'Friday',6:'Saturday'};
+  let mealsHtml='';
+  for(const dow of mealOrder){
+    const m=WL_MEALS[dow];
+    mealsHtml+=`<div class="wl-meal-day"><div class="wl-meal-name">${dayName[dow]} — ${m.name}</div><div>${m.desc}</div><div class="wl-meal-macro">~${m.cal} cal · ${m.protein}g protein</div></div>`;
+  }
+  el.innerHTML=`
+    <details class="wl-ref" open>
+      <summary>Daily habits</summary>
+      <div class="wl-ref-body">
+        <h4>Walking</h4>
+        <ul><li>2–3 work breaks × ½ mile each</li><li>Add a 4th break with better weather</li><li>Target 8,000–10,000 steps/day</li></ul>
+        <h4>Hydration & Electrolytes</h4>
+        <ul><li>80+ oz water daily</li><li>Drink most before your meal — distinguishes thirst from hunger</li><li>Pinch of salt in morning water OR an electrolyte packet (LMNT, Liquid IV zero-sugar)</li><li>Critical for OMAD — prevents headaches/dizziness/fatigue</li></ul>
+        <h4>Fasting window</h4>
+        <ul><li>OK: water, black coffee, plain tea, electrolytes</li><li>Avoid: cream, sweeteners, anything with calories</li></ul>
+        <h4>Tracking</h4>
+        <ul><li>Weigh weekly — Saturday morning, after bathroom, before eating</li><li>Track food in MyFitnessPal/Cronometer for first 2 weeks</li></ul>
+      </div>
+    </details>
+    <details class="wl-ref">
+      <summary>Strength routine (Mon/Thu)</summary>
+      <div class="wl-ref-body">
+        <h4>Warm-up (3 min)</h4>
+        <ul><li>30s each: marching in place, arm circles, hip circles, slow bodyweight squats, standing side bends</li></ul>
+        <h4>Main circuit · 3 rounds, rest 60s between</h4>
+        <ul>
+          <li>Bodyweight squats — 12 reps</li>
+          <li>Incline push-ups (counter/sturdy table) — 8–10 reps</li>
+          <li>Glute bridges — 15 reps (squeeze top)</li>
+          <li>Bent-over rows w/ heavy household item — 10 reps each side</li>
+          <li>Reverse lunges — 8 reps each leg</li>
+          <li>Plank — hold 20–30s</li>
+        </ul>
+        <h4>Cooldown (2 min)</h4>
+        <ul><li>Standing forward fold</li><li>Doorway chest stretch</li><li>Quad stretch each side</li></ul>
+        <h4>Notes</h4>
+        <ul><li>Form over reps — skip anything with real pain</li><li>Progress by adding reps before adding rounds</li><li>Add a 4th round once 3 feel manageable (~wk 3–4)</li></ul>
+      </div>
+    </details>
+    <details class="wl-ref">
+      <summary>Weekly meal plan</summary>
+      <div class="wl-ref-body">
+        <p style="margin-bottom:8px">OMAD eaten 12–1pm. Anchor: Egglife wrap with pulled rotisserie chicken, romaine, tomato, yogurt Caesar, parm (Mon–Fri). Sat/Sun are home-cooked.</p>
+        ${mealsHtml}
+      </div>
+    </details>
+    <details class="wl-ref">
+      <summary>Caesar dressing + Sunday prep</summary>
+      <div class="wl-ref-body">
+        <h4>Greek yogurt Caesar (~25 cal/2 tbsp)</h4>
+        <ul>
+          <li>½ cup plain nonfat Greek yogurt</li>
+          <li>2 tbsp grated parmesan</li>
+          <li>2 tbsp fresh lemon juice</li>
+          <li>1 tbsp Dijon mustard</li>
+          <li>1 tsp anchovy paste (or 2 minced fillets)</li>
+          <li>2 cloves garlic, minced</li>
+          <li>1 tbsp olive oil + salt &amp; pepper</li>
+        </ul>
+        <h4>Sunday prep (~25 min)</h4>
+        <ul>
+          <li>Hard-boil dozen eggs</li>
+          <li>Portion 2 lb pulled chicken into baggies (5 × 4oz wraps + Thu side)</li>
+          <li>Mix yogurt Caesar in mason jar</li>
+          <li>Wash romaine, slice 2 tomatoes</li>
+          <li>Pre-portion 1oz almond/cashew snack bags</li>
+          <li>Make Friday's egg salad (or wait until Thu night)</li>
+        </ul>
+      </div>
+    </details>
+    <details class="wl-ref">
+      <summary>Whole Foods shopping list</summary>
+      <div class="wl-ref-body">
+        <h4>Wrap ingredients (Mon–Fri)</h4>
+        <ul>
+          <li>2 × 6oz Egglife Original Egg White Wraps</li>
+          <li>2 lb pulled rotisserie chicken (~$28)</li>
+          <li>1 × 3-pack organic romaine hearts</li>
+          <li>3 Roma tomatoes</li>
+          <li>1 × 5oz 365 Shredded Parmesan</li>
+        </ul>
+        <h4>Caesar dressing</h4>
+        <ul>
+          <li>Anchovy paste (small tube)</li>
+          <li>1 × 8oz 365 Organic Dijon mustard</li>
+          <li>Minced garlic jar (or 1 head)</li>
+          <li>2 lemons</li>
+        </ul>
+        <h4>Other proteins</h4>
+        <ul>
+          <li>1 dozen large eggs</li>
+          <li>2 × 32oz Chobani non-fat plain Greek yogurt</li>
+          <li>1 × 16oz Nancy's organic cottage cheese</li>
+          <li>2 × 3oz Wild Planet lemon pepper tuna</li>
+          <li>1 × 2-pack Atlantic salmon portions</li>
+          <li>1 × 12oz 365 mozzarella string cheese</li>
+        </ul>
+        <h4>Produce</h4>
+        <ul>
+          <li>2 × 6oz raspberries</li>
+          <li>1–2 Bartlett pears</li>
+          <li>3 Cara Cara navel oranges</li>
+          <li>1 bag (~2 lb) green seedless grapes</li>
+          <li>2 English cucumbers</li>
+          <li>1 × 12oz Sunset Wild Wonders tomatoes</li>
+          <li>1 × 10oz baby spring greens</li>
+          <li>3 heads organic broccoli</li>
+          <li>1 medium organic sweet potato</li>
+          <li>1 bag (6ct) Hass avocados</li>
+          <li>1 × 3-pack tricolor bell peppers</li>
+          <li>~½ lb zucchini</li>
+        </ul>
+        <h4>Pantry</h4>
+        <ul>
+          <li>1 × 16oz 365 raw almonds</li>
+          <li>1 × 10oz 365 organic cashews</li>
+          <li>1 × 8oz fig balsamic vinaigrette</li>
+          <li>1 × 8.8oz 365 brown rice microwave pouch</li>
+          <li>1 × 2.85oz everything bagel seasoning</li>
+          <li>1 × 11.25oz Chosen Foods classic mayo</li>
+        </ul>
+      </div>
+    </details>
+    <details class="wl-ref">
+      <summary>Pre-event tips & watch-fors</summary>
+      <div class="wl-ref-body">
+        <h4>Pre-event week (last week before Jun 5)</h4>
+        <ul>
+          <li>Tighten sodium starting Monday — under 2,000 mg/day</li>
+          <li>Increase water to 100+ oz to flush water weight</li>
+          <li>Swap deli wrap chicken for plain unsalted chicken you cook yourself</li>
+          <li>Expect 2–4 lbs additional water-weight drop on top of fat loss</li>
+        </ul>
+        <h4>Watch for</h4>
+        <ul>
+          <li>Energy dips on strength days — add ~200 cal back if dragging in wk 3+</li>
+          <li>Persistent hunger past wk 2 — deficit too aggressive, adjust</li>
+          <li>Weekend compensation eating — stay consistent Sat/Sun</li>
+          <li>Hair shedding around month 2 — bump protein +20g</li>
+          <li>Plateaus around wk 6–10 and 15–18 — biology, not failure</li>
+          <li>Binge urges — adjust the plan rather than push harder</li>
+        </ul>
+      </div>
+    </details>
+  `;
+}
+
 function exportData(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='records_'+today()+'.json';a.click();}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);save();renderWeek();if(fbUser)cloudSave();alert('Imported.');}catch(x){alert('Invalid file.');}};r.readAsText(f);}
 
