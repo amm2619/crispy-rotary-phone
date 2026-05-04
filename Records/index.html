@@ -894,7 +894,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v79</div>
+      <div class="mark-v">v90</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1295,14 +1295,15 @@ const WL_TARGETS=[
   {wk:35, date:'2026-12-26', goal:141.0, phase:'Phase 6 — Final cut'},
   {wk:36, date:'2027-01-02', goal:140.0, phase:'Goal weight reached', milestone:'🎯 Goal weight'}
 ];
-// Habits tracked daily (key, label, icon)
+// Habits tracked daily (key, label, icon). Protein label is computed
+// per-day from WL_MEALS so it reflects the day's protein target.
 const WL_HABITS=[
-  {key:'omad',         label:'OMAD',     icon:'🍽️'},
-  {key:'protein',      label:'Protein',  icon:'🥩'},
-  {key:'water',        label:'80oz H₂O', icon:'💧'},
-  {key:'electrolytes', label:'Lytes',    icon:'⚡'},
-  {key:'walks',        label:'3+ walks', icon:'🚶'},
-  {key:'steps',        label:'8k steps', icon:'👟'}
+  {key:'omad',         label:'OMAD 12–1pm', icon:'🍽️'},
+  {key:'protein',      label:'Protein',     icon:'🥩'},
+  {key:'water',        label:'80oz H₂O',    icon:'💧'},
+  {key:'electrolytes', label:'1 pkt LMNT',  icon:'⚡'},
+  {key:'walks',        label:'3+ walks',    icon:'🚶'},
+  {key:'steps',        label:'8k steps',    icon:'👟'}
 ];
 // Strength training days: 1=Mon, 4=Thu (JS getDay)
 const WL_STRENGTH_DOW=[1,4];
@@ -1477,8 +1478,9 @@ function renderThemePicker(){
 
 // ── State ──────────────────────────────────────────────────
 let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', saveTimer=null, activeFY=null;
-// Weight Loss tab — current week (Saturday) being viewed; shows-all flag for targets table
-let wlViewSat=thisSaturday(), wlShowAllTargets=false;
+// Weight Loss tab — current week (Monday) being viewed; shows-all flag for targets table.
+// Plan weeks run Mon→Sun with the Saturday weigh-in on day 6.
+let wlViewMon=thisMonday(), wlShowAllTargets=false;
 
 // ── Sidebar collapse ───────────────────────────────────────
 let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
@@ -1601,8 +1603,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v89 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79')||localStorage.getItem('rec_v78')||localStorage.getItem('rec_v77')||localStorage.getItem('rec_v76')||localStorage.getItem('rec_v75');
+    // v90 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79')||localStorage.getItem('rec_v78')||localStorage.getItem('rec_v77')||localStorage.getItem('rec_v76');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1629,7 +1631,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v89',JSON.stringify(D));
+  localStorage.setItem('rec_v90',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -1651,6 +1653,7 @@ function sched(){
 function toYMD(d){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
 function today(){return toYMD(new Date());}
 function thisSaturday(){const d=new Date();const day=d.getDay();const off=day===6?0:-(day+1);d.setDate(d.getDate()+off);return toYMD(d);}
+function thisMonday(){const d=new Date();const day=d.getDay();const off=(day+6)%7;d.setDate(d.getDate()-off);return toYMD(d);}
 function addDays(s,n){const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return toYMD(d);}
 function fmtShort(s){return new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function fmtLong(s){return new Date(s+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
@@ -2829,13 +2832,13 @@ function wlToggleHabit(d,key){
   renderWeightLoss();
 }
 function wlChangeWeek(dir){
-  const cand=addDays(wlViewSat,dir*7);
-  if(cand<'2026-05-02')return;
-  if(cand>'2027-01-09')return;
-  wlViewSat=cand;
+  const cand=addDays(wlViewMon,dir*7);
+  if(cand<'2026-05-04')return;
+  if(cand>'2027-01-04')return;
+  wlViewMon=cand;
   renderWeightLoss();
 }
-function wlJumpToNow(){wlViewSat=thisSaturday();renderWeightLoss();}
+function wlJumpToNow(){wlViewMon=thisMonday();renderWeightLoss();}
 function wlToggleAllTargets(){wlShowAllTargets=!wlShowAllTargets;renderWeightLoss();}
 
 function renderWeightLoss(){
@@ -2898,7 +2901,8 @@ function renderWLWeek(){
   const banner=document.getElementById('wlWeekBanner');
   const list=document.getElementById('wlWeekDays');
   if(!banner||!list)return;
-  const sat=wlViewSat;
+  const mon=wlViewMon;
+  const sat=addDays(mon,5);                    // Saturday weigh-in falls on day 6 of a Mon-start week
   const target=wlTargetForDate(sat);
   const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[sat];
   const td=today();
@@ -2915,22 +2919,22 @@ function renderWLWeek(){
       :'';
     bannerHtml=`
       <div class="wl-week-banner">
-        <div class="wl-week-title">Week ${target.wk} · ${fmtShort(sat)}</div>
+        <div class="wl-week-title">Week ${target.wk} · ${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div>
         <span class="wl-week-phase">${target.phase}</span>${milestone}
         <div class="wl-week-goal">
-          <span>Sat weigh-in goal <strong>${target.goal} lb</strong></span>
+          <span>Sat ${fmtShort(sat)} weigh-in goal <strong>${target.goal} lb</strong></span>
           <input class="wl-weighin-inp" type="number" step="0.1" min="0" placeholder="—" value="${wiVal}" onchange="wlSetWeighIn('${sat}',this.value)">
           ${deltaStr}
         </div>
       </div>`;
   }else{
-    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">${fmtShort(sat)}</div><span class="wl-week-phase">Outside plan window</span></div>`;
+    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div><span class="wl-week-phase">Outside plan window</span></div>`;
   }
   banner.innerHTML=bannerHtml;
-  // Days Sat-Fri
+  // Days Mon-Sun
   let html='';
   for(let i=0;i<7;i++){
-    const d=addDays(sat,i);
+    const d=addDays(mon,i);
     const dt=new Date(d+'T00:00:00');
     const dow=dt.getDay();
     const dayName=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
@@ -2942,7 +2946,10 @@ function renderWLWeek(){
     let pills='';
     for(const h of WL_HABITS){
       const on=!!dayState[h.key];
-      pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${h.label}</button>`;
+      // Protein target varies by day — pull from WL_MEALS so weekend (Sat/Sun
+      // home meals) shows the higher 122–125g target instead of the 50g OMAD anchor.
+      const label=(h.key==='protein'&&meal)?(meal.protein+'g protein'):h.label;
+      pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${label}</button>`;
     }
     if(showStrength){
       const on=!!dayState.strength;
@@ -2978,7 +2985,7 @@ function renderWLChart(){
   for(const r of rows){
     const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[r.date];
     const goalPct=Math.max(0,Math.min(100,((maxG-r.goal)/range)*100));
-    const isNow=r.date===wlViewSat?' now':'';
+    const isNow=r.date===addDays(wlViewMon,5)?' now':'';
     let actualBar='';
     let valHtml=`<span>goal ${r.goal}</span>`;
     if(wi){
@@ -3005,14 +3012,15 @@ function renderWLTargetsTbl(){
   const el=document.getElementById('wlTargetsTbl');
   if(!el)return;
   const td=today();
+  const viewSat=addDays(wlViewMon,5);
   // Find current week index
-  let curIdx=WL_TARGETS.findIndex(t=>t.date>=wlViewSat);
+  let curIdx=WL_TARGETS.findIndex(t=>t.date>=viewSat);
   if(curIdx<0)curIdx=WL_TARGETS.length-1;
   const rows=wlShowAllTargets?WL_TARGETS:WL_TARGETS.slice(Math.max(0,curIdx-1),curIdx+5);
   let html='<table class="wl-targets-tbl"><thead><tr><th>Wk</th><th>Date</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Δ</th><th>Phase</th></tr></thead><tbody>';
   for(const r of rows){
     const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[r.date];
-    const isNow=r.date===wlViewSat;
+    const isNow=r.date===viewSat;
     const cls=[isNow?'now':'',r.milestone?'milestone':''].filter(Boolean).join(' ');
     let actHtml='—', deltaHtml='';
     if(typeof wi==='number'){
@@ -3046,7 +3054,9 @@ function renderWLRefs(){
         <h4>Walking</h4>
         <ul><li>2–3 work breaks × ½ mile each</li><li>Add a 4th break with better weather</li><li>Target 8,000–10,000 steps/day</li></ul>
         <h4>Hydration & Electrolytes</h4>
-        <ul><li>80+ oz water daily</li><li>Drink most before your meal — distinguishes thirst from hunger</li><li>Pinch of salt in morning water OR an electrolyte packet (LMNT, Liquid IV zero-sugar)</li><li>Critical for OMAD — prevents headaches/dizziness/fatigue</li></ul>
+        <ul><li>80+ oz water daily</li><li>Drink most before your meal — distinguishes thirst from hunger</li><li>1 packet electrolytes/day: LMNT (~1000 mg sodium) or Liquid IV zero-sugar — OR a generous pinch of salt (~1/4 tsp ≈ 575 mg sodium) in morning water</li><li>Pre-event week only: tighten total sodium to under 2,000 mg/day to flush water weight</li><li>Critical for OMAD — prevents headaches/dizziness/fatigue</li></ul>
+        <h4>Protein targets</h4>
+        <ul><li>Mon: 50g · Tue: 47g · Wed: 55g · Thu: 60g · Fri: 50g (OMAD anchor)</li><li>Sat: 125g · Sun: 122g (full home-cooked meals)</li></ul>
         <h4>Fasting window</h4>
         <ul><li>OK: water, black coffee, plain tea, electrolytes</li><li>Avoid: cream, sweeteners, anything with calories</li></ul>
         <h4>Tracking</h4>
@@ -3323,7 +3333,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v89',JSON.stringify(D));
+    localStorage.setItem('rec_v90',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
