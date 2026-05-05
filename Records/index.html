@@ -944,7 +944,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v91</div>
+      <div class="mark-v">v92</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1426,9 +1426,9 @@ const WL_MEAL_OVERRIDES={
   // Saturday is brunch out. Mon/Tue use the only 2 chicken portions; Wed/Fri
   // become salmon wraps; Thu skips the wrap entirely.
   '2026-05-04':{ // Mon
-    note:'Chicken: using 1 of 2 wraps\' worth on hand',
+    note:'Salmon today (1 of 2 fillets used) · chicken untouched, 2 wraps still on hand',
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken (1 of 2 left), romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub today), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥛', label:'1 cup plain nonfat Greek yogurt + ½ cup raspberries'},
       {icon:'🥚', label:'2 hard-boiled eggs (11 left after one cracked)'}
     ]
@@ -1768,8 +1768,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v91 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79')||localStorage.getItem('rec_v78')||localStorage.getItem('rec_v77');
+    // v92 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79')||localStorage.getItem('rec_v78');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1796,7 +1796,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v91',JSON.stringify(D));
+  localStorage.setItem('rec_v92',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -3532,7 +3532,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v91',JSON.stringify(D));
+    localStorage.setItem('rec_v92',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
