@@ -944,7 +944,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v92</div>
+      <div class="mark-v">v93</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1355,8 +1355,10 @@ const WL_HABITS=[
   {key:'walks',        label:'3+ walks',    icon:'🚶'},
   {key:'steps',        label:'8k steps',    icon:'👟'}
 ];
-// Strength training days: 1=Mon, 4=Thu (JS getDay)
-const WL_STRENGTH_DOW=[1,4];
+// Strength training days: 2=Tue, 4=Thu (JS getDay).
+// Master plan suggests Mon/Thu or Tue/Fri — Tue/Thu also fits the
+// "non-consecutive, ≥1 rest day between" rule (Wed is the rest day).
+const WL_STRENGTH_DOW=[2,4];
 // Day-of-week meals for OMAD plan. Index by JS getDay (0=Sun..6=Sat).
 const WL_MEALS={
   1:{name:'Wrap + Greek yogurt stack',  desc:'Egglife wrap, Greek yogurt + berries, 2 hard-boiled eggs', cal:430, protein:50},
@@ -1768,8 +1770,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v92 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79')||localStorage.getItem('rec_v78');
+    // v93 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1796,7 +1798,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v92',JSON.stringify(D));
+  localStorage.setItem('rec_v93',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -3263,7 +3265,7 @@ function renderWLRefs(){
       </div>
     </details>
     <details class="wl-ref">
-      <summary>Strength routine (Mon/Thu)</summary>
+      <summary>Strength routine (Tue/Thu)</summary>
       <div class="wl-ref-body">
         <h4>Warm-up (3 min)</h4>
         <ul><li>30s each: marching in place, arm circles, hip circles, slow bodyweight squats, standing side bends</li></ul>
@@ -3532,7 +3534,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v92',JSON.stringify(D));
+    localStorage.setItem('rec_v93',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
