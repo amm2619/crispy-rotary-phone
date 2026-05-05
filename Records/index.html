@@ -944,7 +944,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v94</div>
+      <div class="mark-v">v95</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1427,21 +1427,20 @@ const WL_MEAL_OVERRIDES={
   // no olive oil → avocado oil mayo. 2 salmon fillets bought as substitute.
   // Saturday is brunch out. Mon/Tue use the only 2 chicken portions; Wed/Fri
   // become salmon wraps; Thu skips the wrap entirely.
-  // Week-1 protein plan (2 salmon fillets + 2 wraps' worth of chicken):
-  //   Mon = salmon · Tue = chicken · Wed = chicken · Thu = salmon · Fri = egg-salad anchor (no wrap protein left)
-  // Sun (yesterday, May 3): deli wrap, no sides — outside plan window, noted on Mon for context.
-  '2026-05-04':{ // Mon
-    note:'Salmon wrap (1 of 2 fillets) · Sun: deli wrap, no sides — back on plan today',
+  // Week-1 protein plan (today = Tue May 5, 2026):
+  //   Mon = deli wrap (yesterday, no sides) · Tue = salmon (today) · Wed = chicken
+  //   Thu = salmon · Fri = chicken
+  // Sun May 3: weigh-in 208.1.
+  '2026-05-04':{ // Mon — already happened
+    note:'Deli wrap, no sides (off-plan, no time to prep) · back on plan today',
     items:[
-      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub today), romaine, tomato, yogurt Caesar, parm'},
-      {icon:'🥛', label:'1 cup plain nonfat Greek yogurt + ½ cup raspberries'},
-      {icon:'🥚', label:'2 hard-boiled eggs (11 left after one cracked)'}
+      {icon:'🌯', label:'Deli wrap (off-plan, no sides)'}
     ]
   },
-  '2026-05-05':{ // Tue
-    note:'Chicken wrap day (4oz of 8oz on hand) · pear sub: grapes + raspberries',
+  '2026-05-05':{ // Tue — TODAY, salmon
+    note:'Salmon today (1 of 2 fillets) · strength training day · pear sub: grapes + raspberries',
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub today), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥣', label:'1 cup low-fat cottage cheese + cucumber slices + everything bagel seasoning'},
       {icon:'🧀', label:'1 string cheese'},
       {icon:'🍇', label:'½ cup grapes + ¼ cup raspberries (pear substitute)'},
@@ -1449,16 +1448,16 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-06':{ // Wed
-    note:'Chicken wrap day (last 4oz of chicken)',
+    note:'Chicken wrap day (4oz of 8oz on hand)',
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken (last of it), romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
       {icon:'🐟', label:'1 pouch tuna (plain or lemon pepper)'},
       {icon:'🥗', label:'Side salad + 2 tbsp light dressing'},
       {icon:'🥛', label:'1 cup Greek yogurt + cinnamon'},
       {icon:'🍊', label:'1 orange'}
     ]
   },
-  '2026-05-07':{ // Thu
+  '2026-05-07':{ // Thu — salmon, strength day
     note:'Salmon wrap (last fillet) · strength training day',
     items:[
       {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub), romaine, tomato, yogurt Caesar, parm'},
@@ -1468,13 +1467,12 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥜', label:'1 oz cashews'}
     ]
   },
-  '2026-05-08':{ // Fri
-    note:'Out of chicken & salmon — egg salad is the anchor · uses avocado oil mayo',
+  '2026-05-08':{ // Fri — chicken
+    note:'Chicken wrap day (last 4oz) · egg salad uses avocado oil mayo',
     items:[
+      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken (last of it), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥚', label:'Egg salad (3 eggs + 1 tbsp avocado oil mayo, mustard, S&P) on cucumber rounds'},
-      {icon:'🥗', label:'Side salad + 2 tbsp light dressing (pad the meal)'},
       {icon:'🧀', label:'1 string cheese'},
-      {icon:'🥛', label:'1 cup Greek yogurt + cinnamon (extra protein, no wrap today)'},
       {icon:'🍇', label:'1 cup grapes'}
     ]
   },
@@ -1778,8 +1776,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v94 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80');
+    // v95 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1806,7 +1804,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v94',JSON.stringify(D));
+  localStorage.setItem('rec_v95',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -3549,7 +3547,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v94',JSON.stringify(D));
+    localStorage.setItem('rec_v95',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
