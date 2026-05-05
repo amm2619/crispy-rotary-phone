@@ -960,7 +960,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v97</div>
+      <div class="mark-v">v98</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1158,6 +1158,7 @@ canvas { width:100%!important; height:165px!important; }
     <div class="tab" id="tab-wl">
       <div class="page-title">Weight Loss</div>
       <div class="page-sub" id="wlSub">208.1 → 140 lbs · main goal 167 by Sept 22</div>
+      <div class="alert alert-warn" id="wlMacroBanner" style="display:none;align-items:center"></div>
       <div class="wl-hero" id="wlHero"></div>
       <div class="pattern-section">
         <div class="section-label">
@@ -1793,8 +1794,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v97 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83');
+    // v98 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v98')||localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1821,7 +1822,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v97',JSON.stringify(D));
+  localStorage.setItem('rec_v98',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -3009,18 +3010,40 @@ function wlEarliestWeighIn(){
 // in D.weight.macros so each item is fetched at most once across devices.
 // In-flight queries are tracked in `wlMacroPending` to avoid duplicate hits.
 const wlMacroPending=new Set();
+let wlMacroLastError=null;  // shown as a banner so deploy/auth issues surface
 function wlMacroFor(label){
   if(!label||!D.weight||!D.weight.macros)return null;
   return D.weight.macros[label]||null;
+}
+function wlInterpretMacroError(err){
+  // Map Firebase callable error codes / Nutritionix responses to friendly hints.
+  const code=err&&(err.code||err.details&&err.details.code);
+  const msg=(err&&err.message)||'unknown error';
+  if(!fbUser)return 'Sign in with Google to look up macros.';
+  if(code==='functions/unauthenticated')return 'Sign in required — sign in with Google to look up macros.';
+  if(code==='functions/not-found'||code==='functions/internal'&&/not\s*found/i.test(msg))
+    return 'Cloud Function "nutrients" not found — deploy it from /functions: `firebase deploy --only functions`.';
+  if(code==='functions/failed-precondition'&&/credentials/i.test(msg))
+    return 'Nutritionix credentials missing on the server — set NUTRITIONIX_APP_ID / NUTRITIONIX_APP_KEY in functions/.env and redeploy.';
+  if(code==='functions/unavailable')return 'Nutritionix API unreachable: '+msg;
+  if(code==='functions/resource-exhausted')return 'Nutritionix daily quota hit (200/day on free tier).';
+  if(/CORS|network|fetch/i.test(msg))return 'Network or CORS error reaching the function — likely not deployed yet. Run `firebase deploy --only functions`.';
+  return msg;
 }
 async function wlFetchMacro(label){
   if(!label)return null;
   if(wlMacroFor(label))return wlMacroFor(label);
   if(wlMacroPending.has(label))return null;
   if(!window.fb||!window.fb.callNutrients)return null;
-  if(!fbUser)return null;  // require sign-in (matches function rule)
+  if(!fbUser){
+    wlMacroLastError='Sign in with Google to enable macro lookups.';
+    document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
+      el.classList.remove('loading');el.classList.add('err');
+      el.textContent='sign in';el.title=wlMacroLastError;
+    });
+    return null;
+  }
   wlMacroPending.add(label);
-  // Mark all chips for this label as loading.
   document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
     el.classList.add('loading'); el.classList.remove('err');
     el.textContent='looking up…';
@@ -3033,31 +3056,60 @@ async function wlFetchMacro(label){
     }else{
       D.weight.macros[label]={cal:m.calories,protein:m.protein_g,fat:m.fat_g,carbs:m.carbs_g,fiber:m.fiber_g};
     }
+    wlMacroLastError=null;
     sched();
     renderWeightLoss();
     return D.weight.macros[label];
   }catch(err){
+    console.error('[Records] Nutritionix lookup failed for', label, err);
+    wlMacroLastError=wlInterpretMacroError(err);
     document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
       el.classList.remove('loading'); el.classList.add('err');
       el.textContent='lookup failed';
-      el.title=(err&&err.message)||'lookup failed';
+      el.title=wlMacroLastError;
     });
+    // Surface the banner.
+    const b=document.getElementById('wlMacroBanner');
+    if(b){
+      b.innerHTML=`⚠ Macro lookup failed: ${wlMacroLastError} <button class="btn btn-ghost btn-sm" onclick="wlRetryMacros()" style="margin-left:8px">Retry</button>`;
+      b.style.display='flex';
+    }
     return null;
   }finally{
     wlMacroPending.delete(label);
   }
 }
+function wlRetryMacros(){
+  // Clear the cache for unmatched/error items and re-render to retry.
+  if(D.weight&&D.weight.macros){
+    for(const k of Object.keys(D.weight.macros)){
+      if(D.weight.macros[k]&&D.weight.macros[k].unmatched)delete D.weight.macros[k];
+    }
+  }
+  wlMacroLastError=null;
+  wlMacroFailStreak=0;
+  const b=document.getElementById('wlMacroBanner');
+  if(b)b.style.display='none';
+  renderWeightLoss();
+}
 function cssEscape(s){return String(s).replace(/["\\]/g,'\\$&');}
+let wlMacroFailStreak=0;
 function wlQueueMacroLookups(labels){
   // Kick off lookups for any labels not in cache and not already pending.
   // Concurrency-limited to 3 to be polite to the 200/day Nutritionix free tier.
+  // Circuit-breaks at 3 consecutive failures so an undeployed function doesn't
+  // hammer the network — user clicks "Retry" in the banner to reset.
+  if(wlMacroFailStreak>=3)return;
   const pending=labels.filter(l=>l&&!wlMacroFor(l)&&!wlMacroPending.has(l));
   let active=0;
   const next=()=>{
+    if(wlMacroFailStreak>=3)return;
     while(active<3&&pending.length){
       const l=pending.shift();
       active++;
-      wlFetchMacro(l).finally(()=>{active--;next();});
+      wlFetchMacro(l).then(r=>{
+        if(r)wlMacroFailStreak=0; else wlMacroFailStreak++;
+      }).catch(()=>{wlMacroFailStreak++;}).finally(()=>{active--;next();});
     }
   };
   next();
@@ -3651,7 +3703,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v97',JSON.stringify(D));
+    localStorage.setItem('rec_v98',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
