@@ -944,7 +944,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v93</div>
+      <div class="mark-v">v94</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1141,7 +1141,7 @@ canvas { width:100%!important; height:165px!important; }
     <!-- WEIGHT LOSS TAB -->
     <div class="tab" id="tab-wl">
       <div class="page-title">Weight Loss</div>
-      <div class="page-sub" id="wlSub">207 → 140 lbs · main goal 167 by Sept 22</div>
+      <div class="page-sub" id="wlSub">208.1 → 140 lbs · main goal 167 by Sept 22</div>
       <div class="wl-hero" id="wlHero"></div>
       <div class="pattern-section">
         <div class="section-label">
@@ -1307,7 +1307,7 @@ const FLOATING_CREDITS={
 // Weekly Saturday-morning weight targets (from Weight_Loss_Master_Plan.docx).
 // Each entry: { wk, date (Saturday weigh-in), goal (lbs), phase, milestone? }
 const WL_TARGETS=[
-  {wk:0,  date:'2026-05-02', goal:207.0, phase:'Start', milestone:'Starting weight'},
+  {wk:0,  date:'2026-05-03', goal:208.1, phase:'Start', milestone:'Starting weight'},
   {wk:1,  date:'2026-05-09', goal:203.0, phase:'Phase 1 — Pre-Event'},
   {wk:2,  date:'2026-05-16', goal:200.0, phase:'Phase 1 — Pre-Event'},
   {wk:3,  date:'2026-05-23', goal:197.5, phase:'Phase 1 — Pre-Event'},
@@ -1427,8 +1427,11 @@ const WL_MEAL_OVERRIDES={
   // no olive oil → avocado oil mayo. 2 salmon fillets bought as substitute.
   // Saturday is brunch out. Mon/Tue use the only 2 chicken portions; Wed/Fri
   // become salmon wraps; Thu skips the wrap entirely.
+  // Week-1 protein plan (2 salmon fillets + 2 wraps' worth of chicken):
+  //   Mon = salmon · Tue = chicken · Wed = chicken · Thu = salmon · Fri = egg-salad anchor (no wrap protein left)
+  // Sun (yesterday, May 3): deli wrap, no sides — outside plan window, noted on Mon for context.
   '2026-05-04':{ // Mon
-    note:'Salmon today (1 of 2 fillets used) · chicken untouched, 2 wraps still on hand',
+    note:'Salmon wrap (1 of 2 fillets) · Sun: deli wrap, no sides — back on plan today',
     items:[
       {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub today), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥛', label:'1 cup plain nonfat Greek yogurt + ½ cup raspberries'},
@@ -1436,9 +1439,9 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-05':{ // Tue
-    note:'Last of the chicken · pear sub: extra raspberries + grapes',
+    note:'Chicken wrap day (4oz of 8oz on hand) · pear sub: grapes + raspberries',
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken (last 4oz), romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥣', label:'1 cup low-fat cottage cheese + cucumber slices + everything bagel seasoning'},
       {icon:'🧀', label:'1 string cheese'},
       {icon:'🍇', label:'½ cup grapes + ¼ cup raspberries (pear substitute)'},
@@ -1446,9 +1449,9 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-06':{ // Wed
-    note:'Salmon wrap subbed for chicken (short-shipped)',
+    note:'Chicken wrap day (last 4oz of chicken)',
     items:[
-      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub), romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🌯', label:'Egglife wrap + 4oz pulled chicken (last of it), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🐟', label:'1 pouch tuna (plain or lemon pepper)'},
       {icon:'🥗', label:'Side salad + 2 tbsp light dressing'},
       {icon:'🥛', label:'1 cup Greek yogurt + cinnamon'},
@@ -1456,21 +1459,22 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-07':{ // Thu
-    note:'No chicken left — skip wrap, lean on protein sides',
+    note:'Salmon wrap (last fillet) · strength training day',
     items:[
-      {icon:'🥚', label:'3 hard-boiled eggs (chicken-out substitute)'},
+      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub), romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🥚', label:'2 hard-boiled eggs (extra protein for strength day)'},
       {icon:'🥒', label:'Cherry tomatoes + cucumber slices'},
-      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup berries'},
-      {icon:'🥜', label:'1 oz cashews'},
-      {icon:'🧀', label:'1 string cheese (extra protein, no wrap today)'}
+      {icon:'🥛', label:'1 cup Greek yogurt + berries'},
+      {icon:'🥜', label:'1 oz cashews'}
     ]
   },
   '2026-05-08':{ // Fri
-    note:'Salmon wrap subbed for chicken · egg salad uses avocado oil mayo',
+    note:'Out of chicken & salmon — egg salad is the anchor · uses avocado oil mayo',
     items:[
-      {icon:'🐟', label:'Egglife wrap + 4oz baked salmon (chicken sub), romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥚', label:'Egg salad (3 eggs + 1 tbsp avocado oil mayo, mustard, S&P) on cucumber rounds'},
+      {icon:'🥗', label:'Side salad + 2 tbsp light dressing (pad the meal)'},
       {icon:'🧀', label:'1 string cheese'},
+      {icon:'🥛', label:'1 cup Greek yogurt + cinnamon (extra protein, no wrap today)'},
       {icon:'🍇', label:'1 cup grapes'}
     ]
   },
@@ -1695,6 +1699,10 @@ function applyMigrations(data){
       }
     }
   }
+  // Seed plan starting weight (May 3, 2026 weigh-in: 208.1 lbs) if not already present.
+  if(!data.weight.weighIns['2026-05-03']){
+    data.weight.weighIns['2026-05-03']=208.1;
+  }
   // ── v77 one-time data migration ──────────────────────────────
   // Applies CSV-ground-truth corrections to live data. Runs once,
   // tracked by settings._v77DataMigration. Every patch checks the
@@ -1770,8 +1778,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v93 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80')||localStorage.getItem('rec_v79');
+    // v94 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85')||localStorage.getItem('rec_v84')||localStorage.getItem('rec_v83')||localStorage.getItem('rec_v82')||localStorage.getItem('rec_v81')||localStorage.getItem('rec_v80');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1798,7 +1806,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v93',JSON.stringify(D));
+  localStorage.setItem('rec_v94',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -2976,6 +2984,12 @@ function wlLatestWeighIn(){
   const latest=keys[keys.length-1];
   return {date:latest, weight:D.weight.weighIns[latest]};
 }
+function wlEarliestWeighIn(){
+  if(!D.weight||!D.weight.weighIns)return null;
+  const keys=Object.keys(D.weight.weighIns).filter(k=>typeof D.weight.weighIns[k]==='number'&&D.weight.weighIns[k]>0).sort();
+  if(!keys.length)return null;
+  return {date:keys[0], weight:D.weight.weighIns[keys[0]]};
+}
 function wlSetWeighIn(d,val){
   if(!D.weight)D.weight={weighIns:{},daily:{}};
   if(!D.weight.weighIns)D.weight.weighIns={};
@@ -3020,7 +3034,8 @@ function renderWLHero(){
   const el=document.getElementById('wlHero');
   if(!el)return;
   const latest=wlLatestWeighIn();
-  const start=207.0;
+  const earliest=wlEarliestWeighIn();
+  const start=earliest?earliest.weight:208.1;
   const goal=140.0;
   const mainGoal=167.0;
   const current=latest?latest.weight:start;
@@ -3534,7 +3549,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v93',JSON.stringify(D));
+    localStorage.setItem('rec_v94',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
