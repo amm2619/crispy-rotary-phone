@@ -960,7 +960,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v99</div>
+      <div class="mark-v">v100</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1794,8 +1794,8 @@ function applyV77DataMigration(data){
 }
 function loadData(){
   try{
-    // v99 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v99')||localStorage.getItem('rec_v98')||localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86')||localStorage.getItem('rec_v85');
+    // v100 is the current key; fall back to older keys so a version bump doesn't wipe data.
+    const r=localStorage.getItem('rec_v100')||localStorage.getItem('rec_v99')||localStorage.getItem('rec_v98')||localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -1822,7 +1822,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v99',JSON.stringify(D));
+  localStorage.setItem('rec_v100',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -3703,7 +3703,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v99',JSON.stringify(D));
+    localStorage.setItem('rec_v100',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');

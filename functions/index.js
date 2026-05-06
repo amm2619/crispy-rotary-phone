@@ -11,7 +11,7 @@
 // (region-project.cloudfunctions.net/name) is what httpsCallable hits by
 // default and CORS is automatic. v2 has known browser-CORS gotchas.
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 
 exports.nutrients = functions
   .region('us-central1')
