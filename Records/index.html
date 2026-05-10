@@ -961,7 +961,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v103</div>
+      <div class="mark-v">v104</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -3148,6 +3148,9 @@ function renderWLWeekPlans(){
   if(!el)return;
   const plan=WL_WEEK_PLANS[wlViewMon];
   if(!plan){el.innerHTML='';return;}
+  // Preserve which sections were expanded — otherwise toggling a checkbox
+  // re-renders the panel and snaps the <details> back to closed.
+  const wasOpen=[...el.querySelectorAll('details.wl-plan-section')].map(d=>d.open);
   const state=wlWeekState(wlViewMon);
   const renderList=(items,prefix)=>items.map(it=>{
     const k=prefix+'_'+it.id;
@@ -3165,6 +3168,7 @@ function renderWLWeekPlans(){
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Sunday prep</span><span class="wl-plan-count">${prepDone}/${plan.prep.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderList(plan.prep,'prep')}</div>
     </details>`;
+  el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i])d.open=true;});
 }
 
 function renderWLHero(){
@@ -3220,6 +3224,11 @@ function renderWLWeek(){
   const banner=document.getElementById('wlWeekBanner');
   const list=document.getElementById('wlWeekDays');
   if(!banner||!list)return;
+  // Preserve which day rows were expanded — re-rendering the innerHTML wipes
+  // <details> open state, which makes a row snap shut every time the user
+  // clicks a habit pill or food checkbox.
+  const wasOpen={};
+  list.querySelectorAll('details.wl-day-row[data-date]').forEach(d=>{wasOpen[d.dataset.date]=d.open;});
   const mon=wlViewMon;
   const sun=addDays(mon,6);                    // Sunday weigh-in is day 7 of a Mon-start week
   const target=wlTargetForDate(sun);
@@ -3309,9 +3318,10 @@ function renderWLWeek(){
       for(let idx=0;idx<items.length;idx++)if(dayState['food_'+idx])doneChecks++;
     }
     const progressPct=totalChecks?Math.round((doneChecks/totalChecks)*100):0;
-    const openAttr=isToday?' open':'';
+    // Open if it's today by default, or if the user had it open before this re-render.
+    const openAttr=(wasOpen[d]!==undefined?wasOpen[d]:isToday)?' open':'';
     html+=`
-      <details class="wl-day-row${cls}"${openAttr}>
+      <details class="wl-day-row${cls}" data-date="${d}"${openAttr}>
         <summary class="wl-day-summary">
           <div class="wl-day-lbl">
             <span class="wl-day-name">${dayName}</span>
