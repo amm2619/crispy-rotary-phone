@@ -441,6 +441,21 @@ canvas { width:100%!important; height:165px!important; }
 .wl-food .wl-food-text { flex:1; min-width:0; }
 .wl-day-totals { font-size:11px; color:var(--t2); font-variant-numeric:tabular-nums; padding:6px 9px; background:var(--sur3); border-radius:var(--rs); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
 .wl-day-totals strong { color:var(--t1); font-weight:700; }
+#wlWeekPlans { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.wl-plan-section { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--r); overflow:hidden; }
+.wl-plan-section[open] { border-color:var(--bdr2); }
+.wl-plan-summary { display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer; list-style:none; -webkit-tap-highlight-color:transparent; user-select:none; }
+.wl-plan-summary::-webkit-details-marker { display:none; }
+.wl-plan-summary:hover { background:var(--sur3); }
+.wl-plan-icon { font-size:16px; }
+.wl-plan-title { flex:1; font-size:13px; font-weight:600; color:var(--t1); letter-spacing:0.02em; }
+.wl-plan-count { font-size:11px; font-variant-numeric:tabular-nums; color:var(--t3); padding:2px 8px; border:1px solid var(--bdr); border-radius:10px; background:var(--sur3); }
+.wl-plan-section[open] .wl-day-caret { transform:rotate(180deg); }
+.wl-plan-body { display:flex; flex-direction:column; gap:4px; padding:0 14px 12px; }
+.wl-plan-item { display:flex; align-items:center; gap:8px; padding:6px 9px; background:var(--sur3); border:1px solid var(--bdr); border-radius:var(--rs); cursor:pointer; font-size:12px; color:var(--t2); transition:all 0.12s; -webkit-tap-highlight-color:transparent; user-select:none; line-height:1.35; }
+.wl-plan-item:hover { border-color:var(--bdr2); }
+.wl-plan-item.on { background:var(--grnD); border-color:var(--grn); color:var(--t1); }
+.wl-plan-item.on .wl-food-box { background:var(--grn); border-color:var(--grn); color:#1a1814; }
 .wl-day-row.today { border-color:var(--acc); background:var(--accD); }
 .wl-day-row.future { opacity:0.55; }
 .wl-checks { display:flex; flex-wrap:wrap; gap:4px; }
@@ -946,7 +961,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v101</div>
+      <div class="mark-v">v102</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1155,6 +1170,7 @@ canvas { width:100%!important; height:165px!important; }
           </span>
         </div>
         <div id="wlWeekBanner"></div>
+        <div id="wlWeekPlans"></div>
         <div id="wlWeekDays" class="wl-day-list"></div>
       </div>
       <div class="pattern-section">
@@ -1486,6 +1502,95 @@ const WL_MEAL_OVERRIDES={
       {icon:'💧', label:'Water with the meal — skip mimosas / juice / sweet coffee'},
       {icon:'🐟', label:'Optional: bring leftover salmon home for Sun'}
     ]
+  },
+  // ── Week 2 (May 11–17) ──
+  '2026-05-11':{ // Mon — egg salad wrap
+    items:[
+      {icon:'🌯', label:'Egglife wrap + egg salad (3 hard-boiled eggs, 1 tbsp mayo, mustard, S&P), romaine, tomato'},
+      {icon:'🥦', label:'1 cup roasted broccoli'},
+      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-05-12':{ // Tue — chicken wrap
+    items:[
+      {icon:'🌯', label:'Egglife wrap + 4 oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🫑', label:'1 cup roasted bell peppers + zucchini'},
+      {icon:'🥣', label:'1 cup cottage cheese + everything bagel seasoning'},
+      {icon:'🍇', label:'1 cup grapes'}
+    ]
+  },
+  '2026-05-13':{ // Wed — chicken wrap
+    items:[
+      {icon:'🌯', label:'Egglife wrap + 4 oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🥦', label:'1 cup roasted broccoli + sweet potato'},
+      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries'},
+      {icon:'🍊', label:'1 orange'}
+    ]
+  },
+  '2026-05-14':{ // Thu — salmon plate (no wrap)
+    note:'No wrap today — salmon plate. Cook Wed night for freshness.',
+    items:[
+      {icon:'🐟', label:'4 oz baked salmon'},
+      {icon:'🥗', label:'Side salad: spring greens + cherry tomatoes + avocado + fig balsamic vinaigrette'},
+      {icon:'🫑', label:'1 cup roasted veggies'},
+      {icon:'🥣', label:'1 cup cottage cheese'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-05-15':{ // Fri — tuna wrap
+    items:[
+      {icon:'🌯', label:'Egglife wrap + tuna pouch + 1 tbsp mayo + mustard, romaine, tomato, parm'},
+      {icon:'🥛', label:'1 cup Greek yogurt'},
+      {icon:'🍅', label:'1 cup cherry tomatoes'},
+      {icon:'🍇', label:'1 cup grapes'},
+      {icon:'🥑', label:'1 avocado'}
+    ]
+  },
+  '2026-05-16':{ // Sat — home meal
+    items:[
+      {icon:'🐟', label:'6 oz baked salmon'},
+      {icon:'🥗', label:'Side salad with avocado'},
+      {icon:'🫑', label:'Roasted veg leftovers'}
+    ]
+  },
+  '2026-05-17':{ // Sun — home meal + prep for Week 3
+    note:'Prep day — see prep checklist above.',
+    items:[
+      {icon:'🍗', label:'6 oz salmon or chicken'},
+      {icon:'🍚', label:'1 cup brown rice'},
+      {icon:'🥗', label:'Fresh salad with last avocado'},
+      {icon:'🫑', label:'Roast new veggies for next week'}
+    ]
+  }
+};
+
+// Per-week shopping lists and prep checklists, keyed by Monday date.
+// Each item has a stable `id` so its checked state can live in
+// D.weight.weeks[monday] = { shop_<id>: true, prep_<id>: true }.
+const WL_WEEK_PLANS={
+  '2026-05-11':{
+    label:'Week 2 — May 11–17',
+    shopping:[
+      {id:'chicken',     icon:'🍗', label:'1 lb pulled rotisserie chicken'},
+      {id:'salmon',      icon:'🐟', label:'3 salmon fillets'},
+      {id:'eggs',        icon:'🥚', label:'1 dozen eggs'},
+      {id:'cottage',     icon:'🥣', label:'1× 16 oz cottage cheese'},
+      {id:'raspberries', icon:'🫐', label:'2× 6 oz raspberries'},
+      {id:'romaine',     icon:'🥬', label:'1× 3-pack romaine hearts'},
+      {id:'tomatoes',    icon:'🍅', label:'3 roma tomatoes'},
+      {id:'greens',      icon:'🥗', label:'1× 5 oz spring greens'},
+      {id:'oil',         icon:'🫒', label:'Olive oil'}
+    ],
+    prep:[
+      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil dozen eggs'},
+      {id:'portion_chx', icon:'🍗', label:'Portion 1 lb chicken into 2× 4 oz bags'},
+      {id:'roast_veg',   icon:'🔥', label:'Roast big sheet pan: broccoli, bell peppers, zucchini, sweet potato (425°F, 25 min)'},
+      {id:'egg_salad',   icon:'🥚', label:'Make egg salad for Monday'},
+      {id:'wash_prod',   icon:'🥬', label:'Wash romaine, slice 2 tomatoes'},
+      {id:'portion_rasp',icon:'🫐', label:'Portion raspberries (½ cup × 4)'},
+      {id:'cook_salmon', icon:'🐟', label:"Cook Thursday's salmon Wednesday night for freshness"}
+    ]
   }
 };
 
@@ -1687,9 +1792,10 @@ function applyMigrations(data){
   data.settings.takenFloating=(data.settings.takenFloating||[]).filter(d=>d!=='2026-02-24');
   data.settings.extraFloating=(data.settings.extraFloating||[]).filter(d=>d!=='2026-02-24');
   // Weight loss tracker — initialize if missing
-  if(!data.weight)data.weight={weighIns:{},daily:{}};
+  if(!data.weight)data.weight={weighIns:{},daily:{},weeks:{}};
   if(!data.weight.weighIns)data.weight.weighIns={};
   if(!data.weight.daily)data.weight.daily={};
+  if(!data.weight.weeks)data.weight.weeks={};
   // Backfill weigh-ins from any pre-existing D.days[d].weight entries (Saturdays only)
   if(data.days){
     for(const d in data.days){
@@ -3025,9 +3131,46 @@ function wlToggleAllTargets(){wlShowAllTargets=!wlShowAllTargets;renderWeightLos
 function renderWeightLoss(){
   renderWLHero();
   renderWLWeek();
+  renderWLWeekPlans();
   renderWLChart();
   renderWLTargetsTbl();
   renderWLRefs();
+}
+
+function wlWeekState(mon){
+  if(!D.weight)D.weight={weighIns:{},daily:{},weeks:{}};
+  if(!D.weight.weeks)D.weight.weeks={};
+  if(!D.weight.weeks[mon])D.weight.weeks[mon]={};
+  return D.weight.weeks[mon];
+}
+function wlToggleWeekItem(mon,key){
+  const s=wlWeekState(mon);
+  s[key]=!s[key];
+  sched();
+  renderWLWeekPlans();
+}
+function renderWLWeekPlans(){
+  const el=document.getElementById('wlWeekPlans');
+  if(!el)return;
+  const plan=WL_WEEK_PLANS[wlViewMon];
+  if(!plan){el.innerHTML='';return;}
+  const state=wlWeekState(wlViewMon);
+  const renderList=(items,prefix)=>items.map(it=>{
+    const k=prefix+'_'+it.id;
+    const on=!!state[k];
+    return `<div class="wl-plan-item${on?' on':''}" onclick="wlToggleWeekItem('${wlViewMon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
+  }).join('');
+  const shopDone=plan.shopping.filter(it=>state['shop_'+it.id]).length;
+  const prepDone=plan.prep.filter(it=>state['prep_'+it.id]).length;
+  el.innerHTML=`
+    <details class="wl-plan-section">
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Shopping list</span><span class="wl-plan-count">${shopDone}/${plan.shopping.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderList(plan.shopping,'shop')}</div>
+    </details>
+    <details class="wl-plan-section">
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Sunday prep</span><span class="wl-plan-count">${prepDone}/${plan.prep.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderList(plan.prep,'prep')}</div>
+    </details>`;
 }
 
 function renderWLHero(){
