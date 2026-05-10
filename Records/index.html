@@ -20,9 +20,6 @@
     initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
     doc, setDoc, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-  import {
-    getFunctions, httpsCallable
-  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwV6dMLTvxYdnbtabsgNO3TJWw_mIoZnE",
@@ -39,14 +36,11 @@
   const db = initializeFirestore(app, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
   });
-  const functions = getFunctions(app);
-  const callNutrients = httpsCallable(functions, 'nutrients');
 
   window.fb = {
     auth, db,
     GoogleAuthProvider, signInWithPopup, fbSignOut, onAuthStateChanged,
-    doc, setDoc, onSnapshot, serverTimestamp,
-    callNutrients
+    doc, setDoc, onSnapshot, serverTimestamp
   };
   // Let the rest of the app know Firebase is ready.
   window.dispatchEvent(new Event('fb-ready'));
@@ -445,16 +439,8 @@ canvas { width:100%!important; height:165px!important; }
 .wl-food.on .wl-food-box { background:var(--grn); border-color:var(--grn); color:#1a1814; }
 .wl-food .wl-food-icon { font-size:14px; flex-shrink:0; }
 .wl-food .wl-food-text { flex:1; min-width:0; }
-.wl-food-macro { font-size:10px; font-variant-numeric:tabular-nums; color:var(--t3); padding:2px 6px; border-radius:10px; background:var(--sur2); border:1px solid var(--bdr); flex-shrink:0; line-height:1.4; }
-.wl-food.on .wl-food-macro { background:var(--bg); border-color:var(--bg); color:var(--grn); }
-.wl-food-macro.loading { opacity:0.6; font-style:italic; }
-.wl-food-macro.err { color:var(--red); border-color:var(--redD); }
-.wl-food-macro strong { color:var(--t1); font-weight:700; }
-.wl-food.on .wl-food-macro strong { color:var(--grnB); }
 .wl-day-totals { font-size:11px; color:var(--t2); font-variant-numeric:tabular-nums; padding:6px 9px; background:var(--sur3); border-radius:var(--rs); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
 .wl-day-totals strong { color:var(--t1); font-weight:700; }
-.wl-day-totals .wl-totals-actual { color:var(--acc); }
-.wl-macro-empty { font-size:10px; color:var(--t3); font-style:italic; padding:0 6px; }
 .wl-day-row.today { border-color:var(--acc); background:var(--accD); }
 .wl-day-row.future { opacity:0.55; }
 .wl-checks { display:flex; flex-wrap:wrap; gap:4px; }
@@ -960,7 +946,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v100</div>
+      <div class="mark-v">v101</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1158,7 +1144,6 @@ canvas { width:100%!important; height:165px!important; }
     <div class="tab" id="tab-wl">
       <div class="page-title">Weight Loss</div>
       <div class="page-sub" id="wlSub">208.1 → 140 lbs · main goal 167 by Sept 22</div>
-      <div class="alert alert-warn" id="wlMacroBanner" style="display:none;align-items:center"></div>
       <div class="wl-hero" id="wlHero"></div>
       <div class="pattern-section">
         <div class="section-label">
@@ -1702,10 +1687,9 @@ function applyMigrations(data){
   data.settings.takenFloating=(data.settings.takenFloating||[]).filter(d=>d!=='2026-02-24');
   data.settings.extraFloating=(data.settings.extraFloating||[]).filter(d=>d!=='2026-02-24');
   // Weight loss tracker — initialize if missing
-  if(!data.weight)data.weight={weighIns:{},daily:{},macros:{}};
+  if(!data.weight)data.weight={weighIns:{},daily:{}};
   if(!data.weight.weighIns)data.weight.weighIns={};
   if(!data.weight.daily)data.weight.daily={};
-  if(!data.weight.macros)data.weight.macros={};
   // Backfill weigh-ins from any pre-existing D.days[d].weight entries (Saturdays only)
   if(data.days){
     for(const d in data.days){
@@ -3006,114 +2990,6 @@ function wlEarliestWeighIn(){
   if(!keys.length)return null;
   return {date:keys[0], weight:D.weight.weighIns[keys[0]]};
 }
-// Macro lookup via Firebase callable → Nutritionix. Caches by exact label
-// in D.weight.macros so each item is fetched at most once across devices.
-// In-flight queries are tracked in `wlMacroPending` to avoid duplicate hits.
-const wlMacroPending=new Set();
-let wlMacroLastError=null;  // shown as a banner so deploy/auth issues surface
-function wlMacroFor(label){
-  if(!label||!D.weight||!D.weight.macros)return null;
-  return D.weight.macros[label]||null;
-}
-function wlInterpretMacroError(err){
-  // Map Firebase callable error codes / Nutritionix responses to friendly hints.
-  const code=err&&(err.code||err.details&&err.details.code);
-  const msg=(err&&err.message)||'unknown error';
-  if(!fbUser)return 'Sign in with Google to look up macros.';
-  if(code==='functions/unauthenticated')return 'Sign in required — sign in with Google to look up macros.';
-  if(code==='functions/not-found'||code==='functions/internal'&&/not\s*found/i.test(msg))
-    return 'Cloud Function "nutrients" not found — deploy it from /functions: `firebase deploy --only functions`.';
-  if(code==='functions/failed-precondition'&&/credentials/i.test(msg))
-    return 'Nutritionix credentials missing on the server — set NUTRITIONIX_APP_ID / NUTRITIONIX_APP_KEY in functions/.env and redeploy.';
-  if(code==='functions/unavailable')return 'Nutritionix API unreachable: '+msg;
-  if(code==='functions/resource-exhausted')return 'Nutritionix daily quota hit (200/day on free tier).';
-  if(/CORS|network|fetch/i.test(msg))return 'Network or CORS error reaching the function — likely not deployed yet. Run `firebase deploy --only functions`.';
-  return msg;
-}
-async function wlFetchMacro(label){
-  if(!label)return null;
-  if(wlMacroFor(label))return wlMacroFor(label);
-  if(wlMacroPending.has(label))return null;
-  if(!window.fb||!window.fb.callNutrients)return null;
-  if(!fbUser){
-    wlMacroLastError='Sign in with Google to enable macro lookups.';
-    document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
-      el.classList.remove('loading');el.classList.add('err');
-      el.textContent='sign in';el.title=wlMacroLastError;
-    });
-    return null;
-  }
-  wlMacroPending.add(label);
-  document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
-    el.classList.add('loading'); el.classList.remove('err');
-    el.textContent='looking up…';
-  });
-  try{
-    const res=await window.fb.callNutrients({query:label});
-    const m=res&&res.data;
-    if(!m||m.unmatched){
-      D.weight.macros[label]={cal:0,protein:0,fat:0,carbs:0,fiber:0,unmatched:true};
-    }else{
-      D.weight.macros[label]={cal:m.calories,protein:m.protein_g,fat:m.fat_g,carbs:m.carbs_g,fiber:m.fiber_g};
-    }
-    wlMacroLastError=null;
-    sched();
-    renderWeightLoss();
-    return D.weight.macros[label];
-  }catch(err){
-    console.error('[Records] Nutritionix lookup failed for', label, err);
-    wlMacroLastError=wlInterpretMacroError(err);
-    document.querySelectorAll(`[data-wl-macro="${cssEscape(label)}"]`).forEach(el=>{
-      el.classList.remove('loading'); el.classList.add('err');
-      el.textContent='lookup failed';
-      el.title=wlMacroLastError;
-    });
-    // Surface the banner.
-    const b=document.getElementById('wlMacroBanner');
-    if(b){
-      b.innerHTML=`⚠ Macro lookup failed: ${wlMacroLastError} <button class="btn btn-ghost btn-sm" onclick="wlRetryMacros()" style="margin-left:8px">Retry</button>`;
-      b.style.display='flex';
-    }
-    return null;
-  }finally{
-    wlMacroPending.delete(label);
-  }
-}
-function wlRetryMacros(){
-  // Clear the cache for unmatched/error items and re-render to retry.
-  if(D.weight&&D.weight.macros){
-    for(const k of Object.keys(D.weight.macros)){
-      if(D.weight.macros[k]&&D.weight.macros[k].unmatched)delete D.weight.macros[k];
-    }
-  }
-  wlMacroLastError=null;
-  wlMacroFailStreak=0;
-  const b=document.getElementById('wlMacroBanner');
-  if(b)b.style.display='none';
-  renderWeightLoss();
-}
-function cssEscape(s){return String(s).replace(/["\\]/g,'\\$&');}
-let wlMacroFailStreak=0;
-function wlQueueMacroLookups(labels){
-  // Kick off lookups for any labels not in cache and not already pending.
-  // Concurrency-limited to 3 to be polite to the 200/day Nutritionix free tier.
-  // Circuit-breaks at 3 consecutive failures so an undeployed function doesn't
-  // hammer the network — user clicks "Retry" in the banner to reset.
-  if(wlMacroFailStreak>=3)return;
-  const pending=labels.filter(l=>l&&!wlMacroFor(l)&&!wlMacroPending.has(l));
-  let active=0;
-  const next=()=>{
-    if(wlMacroFailStreak>=3)return;
-    while(active<3&&pending.length){
-      const l=pending.shift();
-      active++;
-      wlFetchMacro(l).then(r=>{
-        if(r)wlMacroFailStreak=0; else wlMacroFailStreak++;
-      }).catch(()=>{wlMacroFailStreak++;}).finally(()=>{active--;next();});
-    }
-  };
-  next();
-}
 function wlSetWeighIn(d,val){
   if(!D.weight)D.weight={weighIns:{},daily:{}};
   if(!D.weight.weighIns)D.weight.weighIns={};
@@ -3152,17 +3028,6 @@ function renderWeightLoss(){
   renderWLChart();
   renderWLTargetsTbl();
   renderWLRefs();
-  // After rendering, queue Nutritionix lookups for any uncached food labels
-  // in the visible week. Cached items are no-ops; concurrency-limited to 3.
-  const labels=[];
-  for(let i=0;i<7;i++){
-    const d=addDays(wlViewMon,i);
-    const dow=new Date(d+'T00:00:00').getDay();
-    const override=WL_MEAL_OVERRIDES[d];
-    const items=(override&&override.items)||WL_MEAL_ITEMS[dow]||[];
-    for(const it of items)if(it&&it.label)labels.push(it.label);
-  }
-  wlQueueMacroLookups(labels);
 }
 
 function renderWLHero(){
@@ -3278,33 +3143,14 @@ function renderWLWeek(){
     let foodsHtml='';
     if(items.length){
       let rows='';
-      let totalCal=0,totalProtein=0,actualCal=0,actualProtein=0;
-      let allLookedUp=true;
       for(let idx=0;idx<items.length;idx++){
         const it=items[idx];
         const fkey='food_'+idx;
         const on=!!dayState[fkey];
-        const m=wlMacroFor(it.label);
-        let macroChip;
-        if(m&&!m.unmatched){
-          macroChip=`<span class="wl-food-macro" data-wl-macro="${cssEscape(it.label)}"><strong>${m.cal}</strong> cal · <strong>${m.protein}</strong>g P</span>`;
-          totalCal+=m.cal||0; totalProtein+=m.protein||0;
-          if(on){actualCal+=m.cal||0; actualProtein+=m.protein||0;}
-        }else if(m&&m.unmatched){
-          macroChip=`<span class="wl-food-macro err" data-wl-macro="${cssEscape(it.label)}" title="Nutritionix couldn't parse this item">no match</span>`;
-          allLookedUp=false;
-        }else{
-          macroChip=`<span class="wl-food-macro loading" data-wl-macro="${cssEscape(it.label)}">…</span>`;
-          allLookedUp=false;
-        }
-        rows+=`<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${d}','${fkey}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span>${macroChip}</div>`;
+        rows+=`<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${d}','${fkey}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
       }
       const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
-      const planMacro=meal?'plan: ~'+meal.cal+' cal · '+meal.protein+'g P':'';
-      const lookupMacro=allLookedUp?`looked up: <strong>${Math.round(totalCal)}</strong> cal · <strong>${Math.round(totalProtein*10)/10}</strong>g P`:'';
-      const eatenMacro=actualCal>0?`<span class="wl-totals-actual">eaten: <strong>${Math.round(actualCal)}</strong> cal · <strong>${Math.round(actualProtein*10)/10}</strong>g P</span>`:'';
-      const totalsParts=[planMacro,lookupMacro,eatenMacro].filter(Boolean);
-      const totalsHtml=totalsParts.length?`<div class="wl-day-totals">${totalsParts.join(' · ')}</div>`:'';
+      const totalsHtml=meal?`<div class="wl-day-totals">plan: ~${meal.cal} cal · ${meal.protein}g P</div>`:'';
       foodsHtml=`<div class="wl-foods"><div class="wl-foods-label">Eat today</div>${noteHtml}${rows}${totalsHtml}</div>`;
     }
     const cls=isToday?' today':(isFuture?' future':'');
