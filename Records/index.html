@@ -961,7 +961,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v105</div>
+      <div class="mark-v">v106</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1504,7 +1504,9 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   // ── Week 2 (May 11–17) ──
+  // cal/protein totals are estimated from the labeled portions for each day.
   '2026-05-11':{ // Mon — egg salad
+    cal:1040, protein:71,
     items:[
       {icon:'🌯', label:'Egglife wrap + portion of egg salad (5 eggs total: 1.5 tbsp mayo, 1.5 tsp mustard, S&P), romaine, tomato'},
       {icon:'🥚', label:'Remaining egg salad in side container'},
@@ -1515,6 +1517,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-12':{ // Tue — chicken wrap
+    cal:890, protein:75,
     items:[
       {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
       {icon:'🫑', label:'149g roasted veg'},
@@ -1525,6 +1528,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-13':{ // Wed — chicken wrap
+    cal:820, protein:80,
     items:[
       {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
       {icon:'🫑', label:'149g roasted veg (finishes the sheet pan)'},
@@ -1535,6 +1539,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-14':{ // Thu — salmon plate (no wrap)
+    cal:930, protein:71,
     note:'No wrap today — salmon plate. Cook Wed night for freshness.',
     items:[
       {icon:'🐟', label:'170g salmon (6 oz)'},
@@ -1545,6 +1550,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-15':{ // Fri — chicken wrap
+    cal:1020, protein:76,
     items:[
       {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
       {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries (30g)'},
@@ -1556,6 +1562,7 @@ const WL_MEAL_OVERRIDES={
   },
   // Sat May 16 = brunch out — no plan entry
   '2026-05-17':{ // Sun — home meal + prep for Week 3
+    cal:1070, protein:48,
     note:'Prep day — see prep checklist above.',
     items:[
       {icon:'🐟', label:'170g salmon (6 oz)'},
@@ -3289,15 +3296,19 @@ function renderWLWeek(){
     // Saturday is brunch out — no planned meal, no habit pills tied to food
     const isBrunch=(dow===6);
     const meal=isBrunch?null:WL_MEALS[dow];
+    // Per-date override (custom food list + optional cal/protein totals) beats the WL_MEALS default.
+    const override=isBrunch?null:WL_MEAL_OVERRIDES[d];
+    const dayCal=(override&&override.cal!=null)?override.cal:(meal&&meal.cal);
+    const dayProtein=(override&&override.protein!=null)?override.protein:(meal&&meal.protein);
     const dayState=(D.weight&&D.weight.daily&&D.weight.daily[d])||{};
     const showStrength=!isBrunch&&WL_STRENGTH_DOW.includes(dow);
     let pills='';
     if(!isBrunch){
       for(const h of WL_HABITS){
         const on=!!dayState[h.key];
-        // Protein target varies by day — pull from WL_MEALS so Sunday's home meal
-        // shows the higher protein target instead of the 50g OMAD anchor.
-        const label=(h.key==='protein'&&meal)?(meal.protein+'g protein'):h.label;
+        // Protein target varies by day — override.protein wins so Mon's bigger
+        // egg-salad day shows ~71g instead of the 50g OMAD anchor.
+        const label=(h.key==='protein'&&dayProtein!=null)?(dayProtein+'g protein'):h.label;
         pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${label}</button>`;
       }
       if(showStrength){
@@ -3307,7 +3318,6 @@ function renderWLWeek(){
     }
     // Food items checklist for the day — per-date override beats the default.
     // Saturday brunch days never show a planned-food list.
-    const override=isBrunch?null:WL_MEAL_OVERRIDES[d];
     const items=isBrunch?[]:((override&&override.items)||WL_MEAL_ITEMS[dow]||[]);
     let foodsHtml='';
     if(isBrunch){
@@ -3322,7 +3332,7 @@ function renderWLWeek(){
         rows+=`<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${d}','${fkey}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
       }
       const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
-      const totalsHtml=meal?`<div class="wl-day-totals">plan: ~${meal.cal} cal · ${meal.protein}g P</div>`:'';
+      const totalsHtml=(dayCal!=null||dayProtein!=null)?`<div class="wl-day-totals">plan: ~${dayCal??'—'} cal · ${dayProtein??'—'}g P</div>`:'';
       foodsHtml=`<div class="wl-foods"><div class="wl-foods-label">Eat today</div>${noteHtml}${rows}${totalsHtml}</div>`;
     }
     const cls=isToday?' today':(isFuture?' future':'');
