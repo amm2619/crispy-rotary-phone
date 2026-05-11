@@ -961,7 +961,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v104</div>
+      <div class="mark-v">v105</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1504,57 +1504,65 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   // ── Week 2 (May 11–17) ──
-  '2026-05-11':{ // Mon — egg salad wrap
+  '2026-05-11':{ // Mon — egg salad
     items:[
-      {icon:'🌯', label:'Egglife wrap + egg salad (3 hard-boiled eggs, 1 tbsp mayo, mustard, S&P), romaine, tomato'},
-      {icon:'🥦', label:'1 cup roasted broccoli'},
-      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🌯', label:'Egglife wrap + portion of egg salad (5 eggs total: 1.5 tbsp mayo, 1.5 tsp mustard, S&P), romaine, tomato'},
+      {icon:'🥚', label:'Remaining egg salad in side container'},
+      {icon:'🫑', label:'149g roasted veg (53g sweet potato, 19g zucchini, 53g broccoli, 24g bell peppers)'},
+      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries (30g)'},
+      {icon:'🧀', label:'1 string cheese'},
+      {icon:'🥜', label:'1 oz almonds (28g)'}
     ]
   },
   '2026-05-12':{ // Tue — chicken wrap
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4 oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
-      {icon:'🫑', label:'1 cup roasted bell peppers + zucchini'},
-      {icon:'🥣', label:'1 cup cottage cheese + everything bagel seasoning'},
-      {icon:'🍇', label:'1 cup grapes'}
+      {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🫑', label:'149g roasted veg'},
+      {icon:'🥣', label:'1 cup cottage cheese + ½ cup raspberries (30g)'},
+      {icon:'🍇', label:'150g grapes'},
+      {icon:'🥜', label:'1 oz cashews (28g)'},
+      {icon:'🧀', label:'1 string cheese'}
     ]
   },
   '2026-05-13':{ // Wed — chicken wrap
     items:[
-      {icon:'🌯', label:'Egglife wrap + 4 oz pulled chicken, romaine, tomato, yogurt Caesar, parm'},
-      {icon:'🥦', label:'1 cup roasted broccoli + sweet potato'},
-      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries'},
-      {icon:'🍊', label:'1 orange'}
+      {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🫑', label:'149g roasted veg (finishes the sheet pan)'},
+      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries (30g)'},
+      {icon:'🍊', label:'1 orange'},
+      {icon:'🥚', label:'2 hard-boiled eggs'},
+      {icon:'🧀', label:'1 string cheese'}
     ]
   },
   '2026-05-14':{ // Thu — salmon plate (no wrap)
     note:'No wrap today — salmon plate. Cook Wed night for freshness.',
     items:[
-      {icon:'🐟', label:'4 oz baked salmon'},
-      {icon:'🥗', label:'Side salad: spring greens + cherry tomatoes + avocado + fig balsamic vinaigrette'},
-      {icon:'🫑', label:'1 cup roasted veggies'},
-      {icon:'🥣', label:'1 cup cottage cheese'},
+      {icon:'🐟', label:'170g salmon (6 oz)'},
+      {icon:'🥗', label:'Side salad: spring greens + cherry tomatoes + ½ avocado + fig balsamic vinaigrette'},
+      {icon:'🫑', label:'~150g new roasted veg'},
+      {icon:'🥣', label:'1 cup cottage cheese + ½ cup raspberries (30g)'},
       {icon:'🧀', label:'1 string cheese'}
     ]
   },
-  '2026-05-15':{ // Fri — tuna wrap
+  '2026-05-15':{ // Fri — chicken wrap
     items:[
-      {icon:'🌯', label:'Egglife wrap + tuna pouch + 1 tbsp mayo + mustard, romaine, tomato, parm'},
-      {icon:'🥛', label:'1 cup Greek yogurt'},
-      {icon:'🍅', label:'1 cup cherry tomatoes'},
-      {icon:'🍇', label:'1 cup grapes'},
-      {icon:'🥑', label:'1 avocado'}
+      {icon:'🌯', label:'Egglife wrap + 113g pulled chicken, romaine, tomato, yogurt Caesar, parm'},
+      {icon:'🥛', label:'1 cup Greek yogurt + ½ cup raspberries (30g)'},
+      {icon:'🍅', label:'150g cherry tomatoes'},
+      {icon:'🍇', label:'150g grapes'},
+      {icon:'🥑', label:'1 avocado'},
+      {icon:'🥚', label:'2 hard-boiled eggs'}
     ]
   },
   // Sat May 16 = brunch out — no plan entry
   '2026-05-17':{ // Sun — home meal + prep for Week 3
     note:'Prep day — see prep checklist above.',
     items:[
-      {icon:'🍗', label:'6 oz salmon or chicken'},
+      {icon:'🐟', label:'170g salmon (6 oz)'},
       {icon:'🍚', label:'1 cup brown rice'},
       {icon:'🥗', label:'Fresh salad with last avocado'},
-      {icon:'🫑', label:'Roast new veggies for next week'}
+      {icon:'🫑', label:'1 cup roasted veg'},
+      {icon:'🔥', label:'Roast new sheet pan for week 3'}
     ]
   }
 };
@@ -1566,24 +1574,34 @@ const WL_WEEK_PLANS={
   '2026-05-11':{
     label:'Week 2 — May 11–17',
     shopping:[
-      {id:'chicken',     icon:'🍗', label:'1 lb pulled rotisserie chicken'},
-      {id:'salmon',      icon:'🐟', label:'2 salmon fillets'},
+      {id:'chicken',     icon:'🍗', label:'~12 oz pulled rotisserie chicken (3× 113g portions)'},
+      {id:'salmon',      icon:'🐟', label:'2 salmon fillets (170g each)'},
       {id:'eggs',        icon:'🥚', label:'1 dozen eggs'},
       {id:'cottage',     icon:'🥣', label:'1× 16 oz cottage cheese'},
-      {id:'raspberries', icon:'🫐', label:'2× 6 oz raspberries'},
+      {id:'yogurt',      icon:'🥛', label:'Greek yogurt (3 cups)'},
+      {id:'raspberries', icon:'🫐', label:'~3× 6 oz raspberries (5× ½ cup portions)'},
       {id:'romaine',     icon:'🥬', label:'1× 3-pack romaine hearts'},
       {id:'tomatoes',    icon:'🍅', label:'3 roma tomatoes'},
+      {id:'cherry_tom',  icon:'🍅', label:'~1 pint cherry tomatoes (Thu salad + Fri 150g)'},
       {id:'greens',      icon:'🥗', label:'1× 5 oz spring greens'},
+      {id:'avocado',     icon:'🥑', label:'3 avocados (Thu ½ + Fri 1 + Sun 1)'},
+      {id:'orange',      icon:'🍊', label:'1 orange'},
+      {id:'grapes',      icon:'🍇', label:'~300g grapes (Tue + Fri)'},
+      {id:'string_chz',  icon:'🧀', label:'String cheese (4-pack — Mon–Thu)'},
+      {id:'almonds',     icon:'🥜', label:'1 oz almonds'},
+      {id:'cashews',     icon:'🥜', label:'1 oz cashews'},
+      {id:'rice',        icon:'🍚', label:'Brown rice (1 cup, Sun)'},
       {id:'oil',         icon:'🫒', label:'Olive oil'}
     ],
     prep:[
-      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil dozen eggs'},
-      {id:'portion_chx', icon:'🍗', label:'Portion 1 lb chicken into 2× 4 oz bags'},
-      {id:'roast_veg',   icon:'🔥', label:'Roast big sheet pan: broccoli, bell peppers, zucchini, sweet potato (425°F, 25 min)'},
-      {id:'egg_salad',   icon:'🥚', label:'Make egg salad for Monday'},
+      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil dozen eggs (5 → Mon egg salad, 2 → Wed, 2 → Fri, extras as needed)'},
+      {id:'portion_chx', icon:'🍗', label:'Portion chicken into 3× 113g bags (Tue/Wed/Fri)'},
+      {id:'roast_veg',   icon:'🔥', label:'Roast big sheet pan: broccoli, bell peppers, zucchini, sweet potato (425°F, 25 min) — covers Mon–Wed'},
+      {id:'egg_salad',   icon:'🥚', label:'Make Monday egg salad: 5 eggs + 1.5 tbsp mayo + 1.5 tsp mustard + S&P'},
       {id:'wash_prod',   icon:'🥬', label:'Wash romaine, slice 2 tomatoes'},
-      {id:'portion_rasp',icon:'🫐', label:'Portion raspberries (½ cup × 4)'},
-      {id:'cook_salmon', icon:'🐟', label:"Cook Thursday's salmon Wednesday night for freshness"}
+      {id:'portion_rasp',icon:'🫐', label:'Portion raspberries (½ cup × 5 — Mon/Tue/Wed/Thu/Fri)'},
+      {id:'cook_salmon', icon:'🐟', label:"Cook Thursday's salmon Wednesday night for freshness"},
+      {id:'roast_thu',   icon:'🔥', label:'Wed night: roast small batch of veg for Thu (~150g)'}
     ]
   }
 };
