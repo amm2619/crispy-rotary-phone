@@ -213,3 +213,43 @@ Day notes use a tag-based system with emoji pills:
 
 ## Migrating existing data
 localStorage (`rec_v89`) is the source of truth on first sign-in. When the Firestore doc doesn't exist yet for a user, the listener seeds it with current local `D`. Existing Drive-synced data on other devices needs to be surfaced via localStorage once (open old Records there → sign in → local syncs to cloud).
+
+---
+
+## Weight Loss Plan (Records/index.html · Weight Loss tab)
+
+### Weekly cadence
+Each week's plan is pasted in chat and committed as a code change — there is no in-app editor. The user pastes a 7-day meal list (Mon–Sun); Claude updates:
+1. `WL_MEAL_OVERRIDES[YYYY-MM-DD]` for each day Mon–Fri + Sun. **Skip Saturday** — Saturday is always brunch out (the renderer suppresses planned food/habit pills for `dow===6`).
+2. `WL_WEEK_PLANS[mondayDate]` — shopping list + Sunday prep checklist for that week.
+
+### Required fields on every override day
+Every entry in `WL_MEAL_OVERRIDES` **must** include all of these — never ship an override day without them:
+- `cal:<number>` — total estimated calories for the day
+- `protein:<number>` — total grams of protein
+- `items:[...]` — the food checklist
+- `note:'...'` (optional) — surfaced as a yellow warning banner
+
+The renderer prefers `override.cal` / `override.protein` over the WL_MEALS defaults for both the totals box and the protein habit-pill label, so missing them silently falls back to wrong week-1 numbers.
+
+### Calorie/protein estimation
+Compute from labeled portions before committing. Anchors:
+- Egglife wrap: 25 cal / 5g P
+- Large egg: 72 cal / 6g P
+- Mayo (regular): 90 cal/tbsp
+- Pulled rotisserie chicken: ~165 cal / 28g P per 100g
+- Salmon: ~200 cal / 21g P per 100g
+- Greek yogurt (nonfat plain, 1 cup ≈ 245g): ~130 cal / 22g P
+- Cottage cheese (nonfat, 1 cup): ~140 cal / 24g P
+- String cheese: 80 cal / 6g P
+- Almonds 1 oz: 164 cal / 6g P
+- Cashews 1 oz: 157 cal / 5g P
+- Avocado (whole, ~200g): ~320 cal / 4g P
+- Roasted veg w/ ~1 tsp olive oil per portion (~150g): ~115 cal / 2g P
+- Brown rice 1 cup cooked: ~218 cal / 5g P
+
+### Shopping list / prep checklist
+Each item carries a stable `id` so its checked state lives in `D.weight.weeks[mondayDate]` as `shop_<id>` / `prep_<id>`. Don't reuse ids across weeks if quantities change meaningfully.
+
+### Weigh-in cadence
+Weigh-in is **Sunday** (day 7 of the Mon-start week, `addDays(mon,6)`). All `WL_TARGETS` dates are Sundays. The earlier Saturday cadence was retired.
