@@ -961,7 +961,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v107</div>
+      <div class="mark-v">v108</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -3339,10 +3339,18 @@ function renderWLHero(){
   const current=latest?latest.weight:start;
   const lost=Math.round((start-current)*10)/10;
   const remainMain=Math.round((current-mainGoal)*10)/10;
-  // On-track: compare current weight vs the most recent passed target
+  // On-track: anchor the comparison to the goal that matches your latest weigh-in
+  // date, so you're judged against the milestone you actually hit. If the weigh-in
+  // isn't on a goal date, fall back to the upcoming Sunday's goal (the one you're
+  // currently working toward) rather than the goal you already passed.
   const td=today();
-  const passed=WL_TARGETS.filter(t=>t.date<=td);
-  const currentTarget=passed.length?passed[passed.length-1]:WL_TARGETS[0];
+  let currentTarget=null;
+  if(latest){
+    currentTarget=WL_TARGETS.find(t=>t.date===latest.date)||null;
+  }
+  if(!currentTarget){
+    currentTarget=WL_TARGETS.find(t=>t.date>=td)||WL_TARGETS[WL_TARGETS.length-1];
+  }
   const delta=latest?Math.round((latest.weight-currentTarget.goal)*10)/10:0;
   let trackClass='acc', trackLabel='—', trackSub='No weigh-ins yet';
   if(latest){
