@@ -452,6 +452,8 @@ canvas { width:100%!important; height:165px!important; }
 .wl-plan-count { font-size:11px; font-variant-numeric:tabular-nums; color:var(--t3); padding:2px 8px; border:1px solid var(--bdr); border-radius:10px; background:var(--sur3); }
 .wl-plan-section[open] .wl-day-caret { transform:rotate(180deg); }
 .wl-plan-body { display:flex; flex-direction:column; gap:4px; padding:0 14px 12px; }
+.wl-plan-section-hdr { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--t3); margin:8px 0 2px; padding-bottom:3px; border-bottom:1px solid var(--bdr); }
+.wl-plan-section-hdr:first-child { margin-top:2px; }
 .wl-plan-item { display:flex; align-items:center; gap:8px; padding:6px 9px; background:var(--sur3); border:1px solid var(--bdr); border-radius:var(--rs); cursor:pointer; font-size:12px; color:var(--t2); transition:all 0.12s; -webkit-tap-highlight-color:transparent; user-select:none; line-height:1.35; }
 .wl-plan-item:hover { border-color:var(--bdr2); }
 .wl-plan-item.on { background:var(--grnD); border-color:var(--grn); color:var(--t1); }
@@ -961,7 +963,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v108</div>
+      <div class="mark-v">v109</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1690,44 +1692,46 @@ const WL_WEEK_PLANS={
   '2026-05-18':{
     label:'Week 3 — May 18–24 · Flavor Variety (Memorial Day weekend = no Sat/Sun)',
     shopping:[
-      // Proteins
-      {id:'chicken',     icon:'🍗', label:'Whole Foods pulled rotisserie chicken — 680g (1.5 lbs)'},
-      {id:'salmon',      icon:'🐟', label:'Salmon fillet — 1× 170g (6 oz)'},
-      {id:'eggs',        icon:'🥚', label:'1 dozen large eggs'},
-      {id:'cottage',     icon:'🥣', label:'Cottage cheese — 1× 16 oz (454g) tub'},
-      {id:'yogurt',      icon:'🥛', label:'Greek yogurt — 1× 32 oz (907g) tub (restock)'},
-      {id:'raspberries', icon:'🫐', label:'Raspberries — 2× 6 oz (170g) containers'},
-      {id:'hummus',      icon:'🫘', label:'Hummus — 1× 10 oz (283g) tub'},
-      {id:'mozz',        icon:'🧀', label:'Fresh mozzarella ball or pearls — ~113g (4 oz)'},
-      {id:'feta',        icon:'🧀', label:'Crumbled feta — ~113g (4 oz)'},
-      {id:'blue',        icon:'🧀', label:'Crumbled blue cheese — ~113g (4 oz)'},
-      {id:'shredded',    icon:'🧀', label:'Shredded cheese (Mexican blend or cheddar) — ~227g (8 oz)'},
-      // Produce
-      {id:'greenbean',   icon:'🫛', label:'Green beans — 454g (1 lb)'},
-      {id:'carrots',     icon:'🥕', label:'Carrots — 454g (1 lb)'},
-      {id:'peppers',     icon:'🫑', label:'Bell peppers — 1× 3-pack'},
-      {id:'zucchini',    icon:'🥒', label:'Zucchini — 2 medium (~340g)'},
-      {id:'sweetpot',    icon:'🍠', label:'Sweet potato — 1 large (~340g)'},
-      {id:'cherry_tom',  icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)'},
-      {id:'cucumber',    icon:'🥒', label:'English cucumbers — 3'},
-      {id:'avocado',     icon:'🥑', label:'Avocados — 4 medium'},
-      {id:'roma',        icon:'🍅', label:'Roma tomatoes — 3'},
-      {id:'greens',      icon:'🥬', label:'Spring mix or mixed greens — 1× 10 oz (283g)'},
-      {id:'grapes',      icon:'🍇', label:'Grapes — 227g (½ lb)'},
-      {id:'berries',     icon:'🫐', label:'Mixed berries — 1 container'},
-      {id:'cabbage',     icon:'🥬', label:'Cabbage — 1 small head or 227g pre-shredded'},
-      {id:'basil',       icon:'🌿', label:'Fresh basil — 1 small package'},
-      {id:'limes',       icon:'🍋', label:'Limes — 3'},
-      {id:'cilantro',    icon:'🌿', label:'Cilantro — 1 bunch'},
-      {id:'mint',        icon:'🌿', label:'Fresh mint — small package'},
-      // Pantry one-time buys
-      {id:'soy',         icon:'🍶', label:'Soy sauce or coconut aminos — small bottle'},
-      {id:'olives',      icon:'🫒', label:'Kalamata olives — small jar'},
-      {id:'franks',      icon:'🌶️', label:'Frank’s Red Hot sauce — bottle'},
-      {id:'salsa',       icon:'🍅', label:'Salsa — 1 small jar'},
-      {id:'italian_sea', icon:'🧂', label:'Italian seasoning — jar'},
-      {id:'taco_sea',    icon:'🧂', label:'Taco seasoning OR individual spices (cumin, chili powder, paprika)'},
-      {id:'balsamic',    icon:'🫗', label:'Balsamic glaze (thick) — for caprese'}
+      // Produce (front of store at Harris Teeter)
+      {id:'greenbean',   section:'Produce', icon:'🫛', label:'Green beans — 454g (1 lb)'},
+      {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — 454g (1 lb)'},
+      {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 1× 3-pack'},
+      {id:'zucchini',    section:'Produce', icon:'🥒', label:'Zucchini — 2 medium (~340g)'},
+      {id:'sweetpot',    section:'Produce', icon:'🍠', label:'Sweet potato — 1 large (~340g)'},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)'},
+      {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 3'},
+      {id:'avocado',     section:'Produce', icon:'🥑', label:'Avocados — 4 medium'},
+      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 3'},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Spring mix or mixed greens — 1× 10 oz (283g)'},
+      {id:'cabbage',     section:'Produce', icon:'🥬', label:'Cabbage — 1 small head or 227g pre-shredded'},
+      {id:'raspberries', section:'Produce', icon:'🫐', label:'Raspberries — 2× 6 oz (170g) containers'},
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Mixed berries — 1 container'},
+      {id:'grapes',      section:'Produce', icon:'🍇', label:'Grapes — 227g (½ lb)'},
+      {id:'limes',       section:'Produce', icon:'🍋', label:'Limes — 3'},
+      {id:'basil',       section:'Produce', icon:'🌿', label:'Fresh basil — 1 small package'},
+      {id:'cilantro',    section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch'},
+      {id:'mint',        section:'Produce', icon:'🌿', label:'Fresh mint — small package'},
+      // Deli (rotisserie counter, deli case, olive bar)
+      {id:'chicken',     section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 680g (1.5 lbs)'},
+      {id:'hummus',      section:'Deli',    icon:'🫘', label:'Hummus — 1× 10 oz (283g) tub'},
+      {id:'olives',      section:'Deli',    icon:'🫒', label:'Kalamata olives — small container'},
+      {id:'mozz',        section:'Deli',    icon:'🧀', label:'Fresh mozzarella ball or pearls — ~113g (4 oz)'},
+      {id:'feta',        section:'Deli',    icon:'🧀', label:'Crumbled feta — ~113g (4 oz)'},
+      {id:'blue',        section:'Deli',    icon:'🧀', label:'Crumbled blue cheese — ~113g (4 oz)'},
+      // Seafood
+      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Salmon fillet — 1× 170g (6 oz)'},
+      // Dairy
+      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'1 dozen large eggs'},
+      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — 1× 32 oz (907g) tub (restock)'},
+      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 1× 16 oz (454g) tub'},
+      {id:'shredded',    section:'Dairy',   icon:'🧀', label:'Shredded cheese (Mexican blend or cheddar) — ~227g (8 oz)'},
+      // Pantry / center aisles
+      {id:'soy',         section:'Pantry',  icon:'🍶', label:'Soy sauce or coconut aminos — small bottle'},
+      {id:'franks',      section:'Pantry',  icon:'🌶️', label:'Frank’s Red Hot sauce — bottle'},
+      {id:'salsa',       section:'Pantry',  icon:'🍅', label:'Salsa — 1 small jar'},
+      {id:'italian_sea', section:'Pantry',  icon:'🧂', label:'Italian seasoning — jar'},
+      {id:'taco_sea',    section:'Pantry',  icon:'🧂', label:'Taco seasoning OR individual spices (cumin, chili powder, paprika)'},
+      {id:'balsamic',    section:'Pantry',  icon:'🫗', label:'Balsamic glaze (thick) — for caprese'}
     ],
     prep:[
       {id:'bake_salmon', icon:'🐟', label:"Bake Monday's salmon Sunday afternoon (170g w/ Italian herbs)"},
@@ -3309,11 +3313,20 @@ function renderWLWeekPlans(){
   // re-renders the panel and snaps the <details> back to closed.
   const wasOpen=[...el.querySelectorAll('details.wl-plan-section')].map(d=>d.open);
   const state=wlWeekState(wlViewMon);
-  const renderList=(items,prefix)=>items.map(it=>{
-    const k=prefix+'_'+it.id;
-    const on=!!state[k];
-    return `<div class="wl-plan-item${on?' on':''}" onclick="wlToggleWeekItem('${wlViewMon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
-  }).join('');
+  const renderList=(items,prefix)=>{
+    let out='', lastSection=null;
+    for(const it of items){
+      // Insert a section header whenever item.section changes (store aisle order).
+      if(it.section&&it.section!==lastSection){
+        out+=`<div class="wl-plan-section-hdr">${it.section}</div>`;
+        lastSection=it.section;
+      }
+      const k=prefix+'_'+it.id;
+      const on=!!state[k];
+      out+=`<div class="wl-plan-item${on?' on':''}" onclick="wlToggleWeekItem('${wlViewMon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
+    }
+    return out;
+  };
   const shopDone=plan.shopping.filter(it=>state['shop_'+it.id]).length;
   const prepDone=plan.prep.filter(it=>state['prep_'+it.id]).length;
   el.innerHTML=`
