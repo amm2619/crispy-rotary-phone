@@ -253,3 +253,10 @@ Each item carries a stable `id` so its checked state lives in `D.weight.weeks[mo
 
 ### Weigh-in cadence
 Weigh-in is **Sunday** (day 7 of the Mon-start week, `addDays(mon,6)`). All `WL_TARGETS` dates are Sundays. The earlier Saturday cadence was retired.
+
+### Food preferences (apply to every week)
+- **Ash:** no carrots — never include them in meals, roasted veg, slaws, or the shopping list.
+- **Kara:** prefers **pico de gallo** over salsa — use pico in her meals/shopping (Ash's salsa is fine to leave).
+
+### Shared on-hand inventory
+On-hand stock is a single shared pool in `WL_ONHAND[mondayDate]` (NOT duplicated per person). Each entry: `{key, icon, label, qty?:{n,u}}`. The Coordinate view sums each ingredient's combined Ash+Kara need, subtracts the shared on-hand quantity by matching unit, and shows only the shortfall to buy. Give overlapping shopping items a canonical `key` + `baseLabel` + `qty {n,u}` (consumption amount) so the netting and summing work.
