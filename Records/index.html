@@ -991,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v118</div>
+      <div class="mark-v">v119</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1609,7 +1609,7 @@ const WL_MEAL_OVERRIDES={
     items:[
       {icon:'🐟', label:'170g baked salmon w/ Italian herbs'},
       {icon:'🍅', label:'1 Roma tomato sliced + 28g fresh mozzarella + basil + balsamic glaze'},
-      {icon:'🫑', label:'150g roasted veg (green beans, carrots, peppers, zucchini, sweet potato)'},
+      {icon:'🫑', label:'150g roasted veg (green beans, peppers, zucchini, sweet potato)'},
       {icon:'🥣', label:'1 cup cottage cheese + ½ cup raspberries (60g)'},
       {icon:'🥜', label:'1 oz cashews (28g)'},
       {icon:'🧀', label:'1 string cheese'}
@@ -1620,7 +1620,7 @@ const WL_MEAL_OVERRIDES={
     items:[
       {icon:'🍗', label:'113g chicken w/ lemon + oregano + garlic'},
       {icon:'🫘', label:'60g hummus (4 tbsp)'},
-      {icon:'🥒', label:'Raw veg: 100g cucumber + 50g bell pepper + 50g cherry tomato + 30g carrot'},
+      {icon:'🥒', label:'Raw veg: 100g cucumber + 50g bell pepper + 50g cherry tomato'},
       {icon:'🧀', label:'28g crumbled feta'},
       {icon:'🫒', label:'~30g Kalamata olives (8–10)'},
       {icon:'🥛', label:'1 cup Greek yogurt + 60g raspberries'},
@@ -1632,7 +1632,7 @@ const WL_MEAL_OVERRIDES={
     name:'Thai Peanut Chicken Bowl', cal:1005, protein:97,
     items:[
       {icon:'🍗', label:'140g pulled chicken'},
-      {icon:'🥗', label:'140g cabbage slaw (shredded cabbage + 30g carrot + 50g cucumber)'},
+      {icon:'🥗', label:'140g cabbage slaw (shredded cabbage + 50g cucumber)'},
       {icon:'🍅', label:'75g cherry tomatoes (½ cup)'},
       {icon:'🥜', label:'Thai peanut sauce (24g PB + 15g soy + lime + ginger)'},
       {icon:'🥛', label:'1 cup Greek yogurt + 60g raspberries'},
@@ -1710,7 +1710,7 @@ const WL_MEAL_OVERRIDES={
     items:[
       {icon:'🍗', label:'113g chicken w/ lemon + oregano + garlic'},
       {icon:'🫘', label:'60g hummus (4 tbsp) + 28g chopped almonds tossed with raw veg'},
-      {icon:'🥒', label:'Raw veg: 100g cucumber + 50g bell pepper + 50g cherry tomato + 30g carrot'},
+      {icon:'🥒', label:'Raw veg: 100g cucumber + 50g bell pepper + 50g cherry tomato'},
       {icon:'🧀', label:'28g feta + ~30g Kalamata olives (8–10)'},
       {icon:'🥣', label:'1 cup cottage cheese + 60g berries'}
     ]
@@ -1785,7 +1785,6 @@ const WL_WEEK_PLANS={
     shopping:[
       // Produce (front of store at Harris Teeter)
       {id:'greenbean',   section:'Produce', icon:'🫛', label:'Green beans — 454g (1 lb)'},
-      {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — 454g (1 lb)'},
       {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 1× 3-pack'},
       {id:'zucchini',    section:'Produce', icon:'🥒', label:'Zucchini — 2 medium (~340g)'},
       {id:'sweetpot',    section:'Produce', icon:'🍠', label:'Sweet potato — 1 large (~340g)'},
@@ -1828,12 +1827,12 @@ const WL_WEEK_PLANS={
       {id:'bake_salmon', icon:'🐟', label:"Bake Monday's salmon Sunday afternoon (170g w/ Italian herbs)"},
       {id:'hb_eggs',     icon:'🥚', label:'Hard-boil dozen eggs (Wed/Thu/Fri need 2 each + extras)'},
       {id:'caesar',      icon:'🥄', label:'Mix yogurt Caesar dressing (fresh batch)'},
-      {id:'pan_starchy', icon:'🔥', label:'Sheet pan 1 (starchy): sweet potato + carrots — 425°F, 25–30 min'},
+      {id:'pan_starchy', icon:'🔥', label:'Sheet pan 1 (starchy): sweet potato — 425°F, 25–30 min'},
       {id:'pan_quick',   icon:'🔥', label:'Sheet pan 2 (quick-cook): green beans + bell peppers + zucchini — 425°F, 25–30 min'},
       {id:'portion_chx', icon:'🍗', label:'Portion chicken: 113g (Tue) + 140g (Wed) + 140g (Thu) bags'},
       {id:'portion_rasp',icon:'🫐', label:'Portion raspberries (60g × 5 — Mon/Tue/Wed/Thu/Fri)'},
       {id:'peanut_sauce',icon:'🥜', label:"Mix Wed Thai peanut sauce: 24g PB + 15g soy + lime + ginger + garlic + chili"},
-      {id:'cabbage_slaw',icon:'🥬', label:'Shred cabbage + portion 140g Wed slaw (cabbage + 30g carrot + 50g cucumber)'},
+      {id:'cabbage_slaw',icon:'🥬', label:'Shred cabbage + portion 140g Wed slaw (cabbage + 50g cucumber)'},
       {id:'hummus_pack', icon:'🫘', label:'Pre-portion Tue hummus + raw veg pack'},
       {id:'pass_brother',icon:'🎁', label:'Fri/Sat: pass extras to brother (fresh herbs, mozzarella, avocados, produce)'}
     ]
@@ -1846,7 +1845,6 @@ const WL_WEEK_PLANS={
       {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
       {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
       {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
-      {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
       {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 5 oz', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
       {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2 (wrap slices)', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
       {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
@@ -1889,7 +1887,7 @@ const KARA_MEAL_OVERRIDES={
     name:'Overnight oats + quinoa bowl', cal:1035, protein:50,
     items:[
       {icon:'🍳', label:'Breakfast: Overnight oats — oats, almond milk, chia, peanut butter, cinnamon, banana'},
-      {icon:'🥗', label:'Lunch: Quinoa bowl — quinoa, black beans, salsa, pulled chicken, avocado, cilantro, lime'}
+      {icon:'🥗', label:'Lunch: Quinoa bowl — quinoa, black beans, pico de gallo, pulled chicken, avocado, cilantro, lime'}
     ]
   },
   '2026-05-28':{ // Thu
@@ -1961,7 +1959,7 @@ const KARA_WEEK_PLANS={
       {id:'almondmilk',section:'Pantry', icon:'🥛', label:'Unsweetened almond milk'},
       {id:'oil',      section:'Pantry',  icon:'🫒', label:'Olive oil'},
       {id:'dijon',    section:'Pantry',  icon:'🟡', label:'Dijon mustard'},
-      {id:'salsa',    section:'Pantry',  icon:'🍅', label:'Salsa'},
+      {id:'salsa',    section:'Pantry',  icon:'🍅', label:'Pico de gallo'},
       {id:'olives',   section:'Pantry',  icon:'🫒', label:'Olives'},
       {id:'evrything',section:'Pantry',  icon:'🧂', label:'Everything bagel seasoning'},
       {id:'cinnamon', section:'Pantry',  icon:'🧂', label:'Cinnamon'},
