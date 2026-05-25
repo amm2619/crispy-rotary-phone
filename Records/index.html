@@ -991,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v120</div>
+      <div class="mark-v">v121</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1852,7 +1852,7 @@ const WL_WEEK_PLANS={
       {id:'avocado',     section:'Produce', icon:'🥑', label:'Avocado — 1 (Fri+Sat halves)', key:'avocado', baseLabel:'Avocados', qty:{n:1,u:''}},
       {id:'romaine',     section:'Produce', icon:'🥬', label:'Romaine — 1 head (wraps)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
       // Seafood
-      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
+      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 170g (Sat)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
       // Dairy
       {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 3 cups (Tue/Thu/Sat)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:24,u:'oz'}},
       {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — 2 cups (Wed/Fri)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:16,u:'oz'}},
@@ -1908,7 +1908,7 @@ const KARA_MEAL_OVERRIDES={
     name:'Veggie scramble + salmon salad', cal:725, protein:47,
     items:[
       {icon:'🍳', label:'Breakfast: Veggie scramble — 2 eggs, spinach, tomato; whole-grain toast'},
-      {icon:'🥗', label:'Lunch: Salmon + white bean salad — canned salmon, white beans, romaine, cucumber, lemon, olive oil'}
+      {icon:'🥗', label:'Lunch: Salmon + white bean salad — 5–6 oz (170g) fresh baked salmon, white beans, romaine, cucumber, lemon, olive oil'}
     ]
   },
   '2026-05-31':{ // Sun
@@ -1939,7 +1939,7 @@ const KARA_WEEK_PLANS={
       // Protein
       {id:'chicken',  section:'Protein', icon:'🍗', label:'Pulled rotisserie chicken — 1 pkg (~12 oz)'},
       {id:'tuna',     section:'Protein', icon:'🐟', label:'Canned tuna in water — 1'},
-      {id:'salmoncan',section:'Protein', icon:'🐟', label:'Canned salmon — 1'},
+      {id:'salmon',   section:'Seafood', icon:'🐟', label:'Fresh salmon — 170g (Sat lunch)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
       {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — 4 (Thu + Sun)', key:'eggs', baseLabel:'Eggs', qty:{n:4,u:''}},
       {id:'yogurt',   section:'Protein', icon:'🥛', label:'Greek yogurt — 2 cups (Tue/Sun)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:16,u:'oz'}},
       {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 1 cup (Fri)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:8,u:'oz'}},
