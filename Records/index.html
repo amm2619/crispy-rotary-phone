@@ -988,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v110</div>
+      <div class="mark-v">v111</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1675,6 +1675,69 @@ const WL_MEAL_OVERRIDES={
     items:[
       {icon:'🏖️', label:'Out for Memorial Day weekend — no plan'}
     ]
+  },
+  // ── Week 4 (May 25–31) Tue–Sat OMAD · Mon = Memorial Day off ──
+  // Recipes reuse Week 3's macro'd dishes; the shopping list confirms the same components.
+  '2026-05-25':{ // Mon — Memorial Day, off
+    cal:0, protein:0,
+    note:'Memorial Day — out for the holiday. Plan resumes Tuesday.',
+    items:[{icon:'🏖️', label:'Out for Memorial Day — no plan'}]
+  },
+  '2026-05-26':{ // Tue — Egg Salad
+    name:'Egg Salad Wrap', cal:810, protein:59,
+    items:[
+      {icon:'🌯', label:'Egglife wrap + egg salad (4 eggs, 1.5 tbsp mayo, mustard, S&P), romaine, Roma tomato'},
+      {icon:'🥣', label:'1 cup cottage cheese + ½ cup berries'},
+      {icon:'🥒', label:'English cucumber slices'},
+      {icon:'🥜', label:'1 oz almonds (28g)'}
+    ]
+  },
+  '2026-05-27':{ // Wed — Thai Peanut Chicken Bowl
+    name:'Thai Peanut Chicken Bowl', cal:1005, protein:97,
+    items:[
+      {icon:'🍗', label:'140g pulled chicken'},
+      {icon:'🥗', label:'140g cabbage slaw (shredded cabbage + 30g carrot + 50g cucumber)'},
+      {icon:'🍅', label:'75g cherry tomatoes (½ cup)'},
+      {icon:'🥜', label:'Thai peanut sauce (24g PB + 15g soy + lime + ginger)'},
+      {icon:'🥛', label:'1 cup Greek yogurt + 60g berries'},
+      {icon:'🧀', label:'1 string cheese'},
+      {icon:'🥜', label:'1 oz cashews (28g)'},
+      {icon:'🥚', label:'2 hard-boiled eggs (100g)'}
+    ]
+  },
+  '2026-05-28':{ // Thu — Mediterranean Hummus Plate
+    name:'Mediterranean Hummus Plate', cal:865, protein:80,
+    items:[
+      {icon:'🍗', label:'113g chicken w/ lemon + oregano + garlic'},
+      {icon:'🫘', label:'60g hummus (4 tbsp)'},
+      {icon:'🥒', label:'Raw veg: 100g cucumber + 50g bell pepper + 50g cherry tomato + 30g carrot'},
+      {icon:'🧀', label:'28g crumbled feta'},
+      {icon:'🫒', label:'~30g Kalamata olives (8–10)'},
+      {icon:'🥣', label:'1 cup cottage cheese + 60g berries'},
+      {icon:'🥜', label:'1 oz almonds (28g)'}
+    ]
+  },
+  '2026-05-29':{ // Fri — Buffalo Tuna Wrap
+    name:'Buffalo Tuna Wrap', cal:1055, protein:75,
+    items:[
+      {icon:'🌯', label:'1 Egglife wrap'},
+      {icon:'🐟', label:'74g tuna pouch (lemon pepper)'},
+      {icon:'🌶️', label:'1 tbsp mayo + Frank’s Red Hot'},
+      {icon:'🥬', label:'20g greens + Roma tomato slices'},
+      {icon:'🧀', label:'28g crumbled blue cheese'},
+      {icon:'🥛', label:'1 cup Greek yogurt + 60g berries'},
+      {icon:'🥒', label:'150g cherry tomatoes + 100g cucumber'},
+      {icon:'🥚', label:'2 hard-boiled eggs'}
+    ]
+  },
+  '2026-05-30':{ // Sat — Salmon Plate (overrides the usual Saturday brunch this week)
+    name:'Salmon Plate', cal:1005, protein:84,
+    items:[
+      {icon:'🐟', label:'170g baked salmon (6 oz)'},
+      {icon:'🥗', label:'Side salad: mixed greens + cherry tomatoes + avocado + balsamic'},
+      {icon:'🥣', label:'1 cup cottage cheese + 60g berries'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
   }
 };
 
@@ -1772,14 +1835,144 @@ const WL_WEEK_PLANS={
       {id:'hummus_pack', icon:'🫘', label:'Pre-portion Tue hummus + raw veg pack'},
       {id:'pass_brother',icon:'🎁', label:'Fri/Sat: pass extras to brother (fresh herbs, mozzarella, avocados, produce)'}
     ]
+  },
+  '2026-05-25':{
+    label:'Week 4 — May 25–31 · Tue–Sat OMAD (small trip — pantry stocked)',
+    shopping:[
+      // Produce
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz (raspberry/blackberry/blueberry)'},
+      {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2'},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)'},
+      {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 1× 3-pack'},
+      {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag'},
+      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2'},
+      {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)'},
+      // Seafood
+      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
+      // Dairy
+      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 1 dozen large'},
+      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2× 16 oz tubs (latest use-by)'},
+      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — restock 1× 32 oz if low'},
+      // Check at home
+      {id:'avocado',     section:'Check at home', icon:'🥑', label:'Avocados — only if under 2 left'},
+      {id:'romaine',     section:'Check at home', icon:'🥬', label:'Romaine hearts — should have from wk 2–3'}
+    ],
+    prep:[
+      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil eggs (Tue egg salad uses 4; Wed/Fri need 2 each)'},
+      {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 eggs + 1.5 tbsp mayo + mustard + S&P'},
+      {id:'peanut_sauce',icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
+      {id:'portion_chx', icon:'🍗', label:'Portion home rotisserie chicken: 140g (Wed) + 113g (Thu)'},
+      {id:'bake_salmon', icon:'🐟', label:'Bake Saturday salmon fresh (or Fri night)'},
+      {id:'portion_dairy',icon:'🥣',label:'Portion cottage cheese (3 cups: Tue/Thu/Sat) + berries (½ cup × 5)'}
+    ]
   }
 };
 
 // ── Kara's plans — meals + prep only (no weigh-in tracking) ──
 // Same shape as WL_MEAL_OVERRIDES / WL_WEEK_PLANS. Pasted per week like Ash's.
 // Each override day: { name?, cal, protein, note?, items:[{icon,label}] }.
-const KARA_MEAL_OVERRIDES={};
-const KARA_WEEK_PLANS={};
+// Kara eats breakfast + lunch (not OMAD). Triglyceride-friendly. cal/protein estimated from components.
+const KARA_MEAL_OVERRIDES={
+  // ── Week 4 (May 26–31) Tue–Sun ──
+  '2026-05-26':{ // Tue
+    name:'Yogurt bowl + chicken salad', cal:860, protein:62,
+    items:[
+      {icon:'🍳', label:'Breakfast: Greek yogurt + walnuts, ground flax, berries'},
+      {icon:'🥗', label:'Lunch: Chicken salad over romaine — pulled chicken, olive oil + lemon, cucumber, tomato, white beans'}
+    ]
+  },
+  '2026-05-27':{ // Wed
+    name:'Overnight oats + quinoa bowl', cal:1035, protein:50,
+    items:[
+      {icon:'🍳', label:'Breakfast: Overnight oats — oats, almond milk, chia, peanut butter, cinnamon, banana'},
+      {icon:'🥗', label:'Lunch: Quinoa bowl — quinoa, black beans, salsa, pulled chicken, avocado, cilantro, lime'}
+    ]
+  },
+  '2026-05-28':{ // Thu
+    name:'Avocado toast + tuna salad', cal:745, protein:54,
+    items:[
+      {icon:'🍳', label:'Breakfast: Avocado toast on whole-grain + hard-boiled egg'},
+      {icon:'🥗', label:'Lunch: Tuna salad over romaine — tuna, olive oil, lemon, celery, dijon, white beans, tomato; whole-grain crackers'}
+    ]
+  },
+  '2026-05-29':{ // Fri
+    name:'Cottage cheese + Mediterranean quinoa', cal:965, protein:53,
+    items:[
+      {icon:'🍳', label:'Breakfast: Cottage cheese + banana, walnuts, cinnamon'},
+      {icon:'🥗', label:'Lunch: Mediterranean quinoa bowl — leftover quinoa, chickpeas, cucumber, tomato, feta, olives, olive oil + lemon'}
+    ]
+  },
+  '2026-05-30':{ // Sat — has a real meal (overrides brunch default)
+    name:'Veggie scramble + salmon salad', cal:725, protein:47,
+    items:[
+      {icon:'🍳', label:'Breakfast: Veggie scramble — 2 eggs, spinach, tomato; whole-grain toast'},
+      {icon:'🥗', label:'Lunch: Salmon + white bean salad — canned salmon, white beans, romaine, cucumber, lemon, olive oil'}
+    ]
+  },
+  '2026-05-31':{ // Sun
+    name:'Smoothie + avocado-egg toast', cal:585, protein:38,
+    items:[
+      {icon:'🍳', label:'Breakfast: Smoothie — spinach, frozen berries, Greek yogurt, chia, almond milk'},
+      {icon:'🥗', label:'Lunch: Open-face avocado-egg toast — mashed avocado, hard-boiled egg, everything seasoning; side of berries'}
+    ]
+  }
+};
+const KARA_WEEK_PLANS={
+  '2026-05-25':{
+    label:"Kara — Week of May 25 · Tue–Sun (breakfast + lunch)",
+    shopping:[
+      // Produce
+      {id:'romaine',  section:'Produce', icon:'🥬', label:'Romaine — 1 head (Tue/Thu/Sat)'},
+      {id:'spinach',  section:'Produce', icon:'🥬', label:'Spinach — 5 oz bag'},
+      {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)'},
+      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium'},
+      {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (mixed ripeness)'},
+      {id:'banana',   section:'Produce', icon:'🍌', label:'Bananas — 2'},
+      {id:'frozenber',section:'Produce', icon:'🫐', label:'Frozen berries — 1 bag'},
+      {id:'freshber', section:'Produce', icon:'🍓', label:'Fresh berries — small container'},
+      {id:'lemon',    section:'Produce', icon:'🍋', label:'Lemons — 2'},
+      {id:'lime',     section:'Produce', icon:'🍋', label:'Lime — 1'},
+      {id:'cilantro', section:'Produce', icon:'🌿', label:'Cilantro — small bunch'},
+      {id:'celery',   section:'Produce', icon:'🥬', label:'Celery — small bunch'},
+      // Protein
+      {id:'chicken',  section:'Protein', icon:'🍗', label:'Pulled rotisserie chicken — 1 pkg (~12 oz)'},
+      {id:'tuna',     section:'Protein', icon:'🐟', label:'Canned tuna in water — 1'},
+      {id:'salmoncan',section:'Protein', icon:'🐟', label:'Canned salmon — 1'},
+      {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — ½ dozen'},
+      {id:'yogurt',   section:'Protein', icon:'🥛', label:'Plain Greek yogurt — 32 oz'},
+      {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 16 oz'},
+      // Dairy
+      {id:'feta',     section:'Dairy',   icon:'🧀', label:'Feta — small block (light use)'},
+      // Bread
+      {id:'bread',    section:'Bread',   icon:'🍞', label:'Whole-grain sandwich bread — 1 loaf'},
+      // Pantry
+      {id:'oats',     section:'Pantry',  icon:'🌾', label:'Rolled oats'},
+      {id:'quinoa',   section:'Pantry',  icon:'🌾', label:'Quinoa'},
+      {id:'chia',     section:'Pantry',  icon:'🫙', label:'Chia seeds'},
+      {id:'flax',     section:'Pantry',  icon:'🫙', label:'Ground flaxseed'},
+      {id:'walnuts',  section:'Pantry',  icon:'🥜', label:'Walnuts'},
+      {id:'pb',       section:'Pantry',  icon:'🥜', label:'Natural peanut butter'},
+      {id:'blackbean',section:'Pantry',  icon:'🫘', label:'Canned black beans — 1'},
+      {id:'whitebean',section:'Pantry',  icon:'🫘', label:'Canned white beans — 2'},
+      {id:'chickpea', section:'Pantry',  icon:'🫘', label:'Canned chickpeas — 1'},
+      {id:'almondmilk',section:'Pantry', icon:'🥛', label:'Unsweetened almond milk'},
+      {id:'oil',      section:'Pantry',  icon:'🫒', label:'Olive oil'},
+      {id:'dijon',    section:'Pantry',  icon:'🟡', label:'Dijon mustard'},
+      {id:'salsa',    section:'Pantry',  icon:'🍅', label:'Salsa'},
+      {id:'olives',   section:'Pantry',  icon:'🫒', label:'Olives'},
+      {id:'evrything',section:'Pantry',  icon:'🧂', label:'Everything bagel seasoning'},
+      {id:'cinnamon', section:'Pantry',  icon:'🧂', label:'Cinnamon'},
+      {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
+    ],
+    prep:[
+      {id:'hb_eggs',  icon:'🥚', label:'Hard-boil 4 eggs (covers Thu + Sun lunch)'},
+      {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
+      {id:'chicken',  icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)'},
+      {id:'oats',     icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
+    ]
+  }
+};
 
 // Person registry. Ash tracks weight (weigh-ins/chart/targets); Kara is meals+prep only.
 const WL_PEOPLE={
@@ -3395,8 +3588,9 @@ function wlWeekNavHTML(p,label){
 function wlDayParts(p,d){
   const cfg=WL_PEOPLE[p];
   const dow=new Date(d+'T00:00:00').getDay();
-  const isBrunch=(dow===6);
-  const override=isBrunch?null:cfg.overrides()[d];
+  const override=cfg.overrides()[d]||null;
+  // Saturday defaults to brunch out, but a pasted meal override wins.
+  const isBrunch=(dow===6)&&!override;
   const meal=(cfg.dayMeals&&!isBrunch)?cfg.dayMeals[dow]:null;
   const cal=(override&&override.cal!=null)?override.cal:(meal?meal.cal:null);
   const protein=(override&&override.protein!=null)?override.protein:(meal?meal.protein:null);
