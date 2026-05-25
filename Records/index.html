@@ -407,6 +407,31 @@ canvas { width:100%!important; height:165px!important; }
 .wl-week-goal strong { color:var(--acc); font-weight:700; }
 .wl-weighin-inp { width:80px; background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); color:var(--t1); padding:6px 8px; font-size:14px; font-weight:700; font-family:'Inter',sans-serif; outline:none; text-align:center; }
 .wl-weighin-inp:focus { border-color:var(--acc); }
+/* Segmented control for WL / Kara sub-views */
+.seg { display:flex; gap:4px; background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--r); padding:4px; margin-bottom:14px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.seg-btn { flex:1 1 0; white-space:nowrap; padding:9px 12px; font-size:13px; font-weight:600; color:var(--t3); background:none; border:none; border-radius:var(--rs); cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.seg-btn:hover { color:var(--t2); }
+.seg-btn.on { background:var(--accD); color:var(--acc); font-weight:700; }
+/* Today focus card */
+.wl-today { display:flex; flex-direction:column; gap:14px; }
+.wl-today-head { display:flex; align-items:baseline; gap:10px; }
+.wl-today-day { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:var(--t1); }
+.wl-today-date { font-size:13px; color:var(--t3); font-weight:600; }
+.wl-today-card { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--r); padding:14px; }
+.wl-today-card .wl-tc-title { font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--t3); margin-bottom:10px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+.wl-today-card .wl-tc-title .wl-tc-meal { color:var(--t1); text-transform:none; letter-spacing:0; font-size:14px; font-weight:600; font-style:italic; font-family:'Playfair Display',serif; }
+.wl-mini-stats { display:flex; gap:8px; flex-wrap:wrap; }
+.wl-mini-stat { flex:1 1 0; min-width:90px; background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:10px 12px; }
+.wl-mini-stat .ms-lbl { font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--t3); margin-bottom:4px; }
+.wl-mini-stat .ms-val { font-size:18px; font-weight:700; color:var(--t1); font-variant-numeric:tabular-nums; line-height:1.1; }
+.wl-mini-stat.good .ms-val { color:var(--grn); }
+.wl-mini-stat.warn .ms-val { color:var(--ylw); }
+.wl-mini-stat.bad  .ms-val { color:var(--red); }
+.wl-empty { color:var(--t3); font-size:13px; text-align:center; padding:24px 12px; background:var(--sur2); border:1px dashed var(--bdr); border-radius:var(--r); }
+.coord-who { font-size:9px; font-weight:700; letter-spacing:0.04em; padding:1px 5px; border-radius:8px; margin-left:auto; flex-shrink:0; }
+.coord-who.A { background:var(--accD); color:var(--acc); }
+.coord-who.K { background:var(--skyD); color:var(--sky); }
+.coord-who.AK { background:var(--grnD); color:var(--grn); }
 .wl-day-list { display:flex; flex-direction:column; gap:6px; }
 .wl-day-row { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); overflow:hidden; }
 .wl-day-row.today { border-color:var(--acc); }
@@ -963,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v109</div>
+      <div class="mark-v">v110</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -976,6 +1001,10 @@ canvas { width:100%!important; height:165px!important; }
     <button class="nav-btn" data-tab="wl" onclick="showTab('wl')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
       <span class="nav-text">Weight Loss</span>
+    </button>
+    <button class="nav-btn" data-tab="kara" onclick="showTab('kara')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 18c0-3 3-5 7-5s7 2 7 5"/><circle cx="10" cy="7" r="3.2"/></svg>
+      <span class="nav-text">Kara</span>
     </button>
     <button class="nav-btn" data-tab="settings" onclick="showTab('settings')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.41 1.41M13.54 13.54l1.41 1.41M14.95 5.05l-1.41 1.41M6.46 13.54l-1.41 1.41"/></svg>
@@ -1161,32 +1190,25 @@ canvas { width:100%!important; height:165px!important; }
     <div class="tab" id="tab-wl">
       <div class="page-title">Weight Loss</div>
       <div class="page-sub" id="wlSub">208.1 → 140 lbs · main goal 167 by Sept 22</div>
-      <div class="wl-hero" id="wlHero"></div>
-      <div class="pattern-section">
-        <div class="section-label">
-          <span>This week's checklist</span>
-          <span class="wk-nav">
-            <button class="arr" onclick="wlChangeWeek(-1)">‹</button>
-            <button class="pill" onclick="wlJumpToNow()">This week</button>
-            <button class="arr" onclick="wlChangeWeek(1)">›</button>
-          </span>
-        </div>
-        <div id="wlWeekBanner"></div>
-        <div id="wlWeekPlans"></div>
-        <div id="wlWeekDays" class="wl-day-list"></div>
+      <div class="seg" id="wlSeg">
+        <button class="seg-btn on" data-wlview="today" onclick="wlSetView('today')">Today</button>
+        <button class="seg-btn" data-wlview="week" onclick="wlSetView('week')">Week</button>
+        <button class="seg-btn" data-wlview="shop" onclick="wlSetView('shop')">Prep &amp; Shop</button>
+        <button class="seg-btn" data-wlview="progress" onclick="wlSetView('progress')">Progress</button>
       </div>
-      <div class="pattern-section">
-        <div class="section-label">Weight progress <span class="section-sub">actual vs plan</span></div>
-        <div id="wlChart"></div>
+      <div id="wlPanel"></div>
+    </div>
+
+    <!-- KARA TAB -->
+    <div class="tab" id="tab-kara">
+      <div class="page-title">Kara</div>
+      <div class="page-sub">Meals &amp; prep · coordinating with Ash</div>
+      <div class="seg" id="karaSeg">
+        <button class="seg-btn on" data-karaview="today" onclick="karaSetView('today')">Today</button>
+        <button class="seg-btn" data-karaview="week" onclick="karaSetView('week')">Week</button>
+        <button class="seg-btn" data-karaview="coord" onclick="karaSetView('coord')">Coordinate</button>
       </div>
-      <div class="pattern-section">
-        <div class="section-label">All weekly targets</div>
-        <div id="wlTargetsTbl"></div>
-      </div>
-      <div class="pattern-section">
-        <div class="section-label">Plan reference</div>
-        <div class="wl-refs" id="wlRefs"></div>
-      </div>
+      <div id="karaPanel"></div>
     </div>
 
     <!-- SETTINGS TAB -->
@@ -1250,6 +1272,10 @@ canvas { width:100%!important; height:165px!important; }
     <button class="mob-nav-btn" data-tab="wl" onclick="showTab('wl');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
       Weight
+    </button>
+    <button class="mob-nav-btn" data-tab="kara" onclick="showTab('kara');setMobNav(this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 18c0-3 3-5 7-5s7 2 7 5"/><circle cx="10" cy="7" r="3.2"/></svg>
+      Kara
     </button>
     <button class="mob-nav-btn" data-tab="settings" onclick="showTab('settings');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.41 1.41M13.54 13.54l1.41 1.41M14.95 5.05l-1.41 1.41M6.46 13.54l-1.41 1.41"/></svg>
@@ -1576,7 +1602,7 @@ const WL_MEAL_OVERRIDES={
   },
   // ── Week 3 (May 18–24) Flavor Variety — ~1,000 cal/day, under 75g carbs, Mon–Fri only ──
   '2026-05-18':{ // Mon — Italian Caprese Salmon Plate
-    cal:1005, protein:84,
+    name:'Italian Caprese Salmon Plate', cal:1005, protein:84,
     items:[
       {icon:'🐟', label:'170g baked salmon w/ Italian herbs'},
       {icon:'🍅', label:'1 Roma tomato sliced + 28g fresh mozzarella + basil + balsamic glaze'},
@@ -1587,7 +1613,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-19':{ // Tue — Mediterranean Hummus Plate
-    cal:865, protein:80,
+    name:'Mediterranean Hummus Plate', cal:865, protein:80,
     items:[
       {icon:'🍗', label:'113g chicken w/ lemon + oregano + garlic'},
       {icon:'🫘', label:'60g hummus (4 tbsp)'},
@@ -1600,7 +1626,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-20':{ // Wed — Thai Peanut Chicken Bowl
-    cal:1005, protein:97,
+    name:'Thai Peanut Chicken Bowl', cal:1005, protein:97,
     items:[
       {icon:'🍗', label:'140g pulled chicken'},
       {icon:'🥗', label:'140g cabbage slaw (shredded cabbage + 30g carrot + 50g cucumber)'},
@@ -1613,7 +1639,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-21':{ // Thu — Mexican Chicken Plate
-    cal:1030, protein:96,
+    name:'Mexican Chicken Plate', cal:1030, protein:96,
     items:[
       {icon:'🍗', label:'140g chicken w/ taco seasoning'},
       {icon:'🥬', label:'80g mixed greens base'},
@@ -1627,7 +1653,7 @@ const WL_MEAL_OVERRIDES={
     ]
   },
   '2026-05-22':{ // Fri — Buffalo Tuna Wrap
-    cal:1055, protein:75,
+    name:'Buffalo Tuna Wrap', cal:1055, protein:75,
     items:[
       {icon:'🌯', label:'1 Egglife wrap'},
       {icon:'🐟', label:'74g tuna pouch (lemon pepper)'},
@@ -1747,6 +1773,20 @@ const WL_WEEK_PLANS={
       {id:'pass_brother',icon:'🎁', label:'Fri/Sat: pass extras to brother (fresh herbs, mozzarella, avocados, produce)'}
     ]
   }
+};
+
+// ── Kara's plans — meals + prep only (no weigh-in tracking) ──
+// Same shape as WL_MEAL_OVERRIDES / WL_WEEK_PLANS. Pasted per week like Ash's.
+// Each override day: { name?, cal, protein, note?, items:[{icon,label}] }.
+const KARA_MEAL_OVERRIDES={};
+const KARA_WEEK_PLANS={};
+
+// Person registry. Ash tracks weight (weigh-ins/chart/targets); Kara is meals+prep only.
+const WL_PEOPLE={
+  ash:{ name:'Ash', tracking:true,  habits:WL_HABITS, strengthDow:WL_STRENGTH_DOW,
+        overrides:()=>WL_MEAL_OVERRIDES, plans:()=>WL_WEEK_PLANS, dayMeals:WL_MEALS, dayItems:WL_MEAL_ITEMS },
+  kara:{ name:'Kara', tracking:false, habits:[], strengthDow:[],
+        overrides:()=>KARA_MEAL_OVERRIDES, plans:()=>KARA_WEEK_PLANS, dayMeals:null, dayItems:null }
 };
 
 // ── Themes ─────────────────────────────────────────────────
@@ -1911,7 +1951,8 @@ function renderThemePicker(){
 let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', saveTimer=null, activeFY=null;
 // Weight Loss tab — current week (Monday) being viewed; shows-all flag for targets table.
 // Plan weeks run Mon→Sun with the Saturday weigh-in on day 6.
-let wlViewMon=thisMonday(), wlShowAllTargets=false;
+let wlViewMon=thisMonday(), wlShowAllTargets=false, wlView='today';
+let karaViewMon=thisMonday(), karaView='today';
 
 // ── Sidebar collapse ───────────────────────────────────────
 let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
@@ -1951,6 +1992,12 @@ function applyMigrations(data){
   if(!data.weight.weighIns)data.weight.weighIns={};
   if(!data.weight.daily)data.weight.daily={};
   if(!data.weight.weeks)data.weight.weeks={};
+  // Kara — meals + prep only (no weigh-ins). Coordination check state lives in data.coord.
+  if(!data.kara)data.kara={daily:{},weeks:{}};
+  if(!data.kara.daily)data.kara.daily={};
+  if(!data.kara.weeks)data.kara.weeks={};
+  if(!data.coord)data.coord={weeks:{}};
+  if(!data.coord.weeks)data.coord.weeks={};
   // Backfill weigh-ins from any pre-existing D.days[d].weight entries (Sundays only)
   if(data.days){
     for(const d in data.days){
@@ -2616,6 +2663,7 @@ function showTab(id){
   if(id==='year')renderYear();
   if(id==='settings')renderSettings();
   if(id==='wl')renderWeightLoss();
+  if(id==='kara')renderKara();
 }
 
 // ── Location toggle ────────────────────────────────────────
@@ -3228,12 +3276,22 @@ function renderSettings(){
 function saveSetting(k,v){D.settings[k]=v;sched();}
 
 // ── Weight loss tracker ────────────────────────────────────
-function wlEnsureDay(d){
-  if(!D.weight)D.weight={weighIns:{},daily:{}};
+// Per-person stores: Ash = D.weight {weighIns,daily,weeks}; Kara = D.kara {daily,weeks}.
+function personStore(p){
+  if(p==='kara'){
+    if(!D.kara)D.kara={daily:{},weeks:{}};
+    if(!D.kara.daily)D.kara.daily={};
+    if(!D.kara.weeks)D.kara.weeks={};
+    return D.kara;
+  }
+  if(!D.weight)D.weight={weighIns:{},daily:{},weeks:{}};
   if(!D.weight.daily)D.weight.daily={};
-  if(!D.weight.daily[d])D.weight.daily[d]={};
-  return D.weight.daily[d];
+  if(!D.weight.weeks)D.weight.weeks={};
+  return D.weight;
 }
+function personDay(p,d){ const s=personStore(p); if(!s.daily[d])s.daily[d]={}; return s.daily[d]; }
+function personWeek(p,mon){ const s=personStore(p); if(!s.weeks[mon])s.weeks[mon]={}; return s.weeks[mon]; }
+function wlEnsureDay(d){ return personDay('ash',d); }
 function wlTargetForDate(d){
   // Pick the WL_TARGETS row whose Sunday matches d. If exact match exists, return it.
   return WL_TARGETS.find(t=>t.date===d)||null;
@@ -3267,78 +3325,320 @@ function wlSetWeighIn(d,val){
   sched();
   renderWeightLoss();
 }
-function wlToggleHabit(d,key){
-  const day=wlEnsureDay(d);
+function wlToggleHabit(p,d,key){
+  const day=personDay(p,d);
   day[key]=!day[key];
   sched();
-  renderWeightLoss();
+  if(p==='kara')renderKara(); else renderWeightLoss();
+}
+function wlToggleWeekItem(p,mon,key){
+  const w=personWeek(p,mon);
+  w[key]=!w[key];
+  sched();
+  if(p==='kara')renderKara(); else renderWeightLoss();
+}
+function coordToggle(mon,key){
+  if(!D.coord)D.coord={weeks:{}};
+  if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
+  D.coord.weeks[mon][key]=!D.coord.weeks[mon][key];
+  sched();
+  renderKara();
 }
 function wlChangeWeek(dir){
   const cand=addDays(wlViewMon,dir*7);
-  if(cand<'2026-05-04')return;
-  if(cand>'2027-01-04')return;
-  wlViewMon=cand;
-  renderWeightLoss();
+  if(cand<'2026-05-04'||cand>'2027-01-04')return;
+  wlViewMon=cand; renderWeightLoss();
 }
 function wlJumpToNow(){wlViewMon=thisMonday();renderWeightLoss();}
 function wlToggleAllTargets(){wlShowAllTargets=!wlShowAllTargets;renderWeightLoss();}
+function wlSetView(v){wlView=v;renderWeightLoss();}
+function karaChangeWeek(dir){
+  const cand=addDays(karaViewMon,dir*7);
+  if(cand<'2026-05-04'||cand>'2027-01-04')return;
+  karaViewMon=cand; renderKara();
+}
+function karaJumpToNow(){karaViewMon=thisMonday();renderKara();}
+function karaSetView(v){karaView=v;renderKara();}
 
-function renderWeightLoss(){
-  renderWLHero();
-  renderWLWeek();
-  renderWLWeekPlans();
-  renderWLChart();
-  renderWLTargetsTbl();
-  renderWLRefs();
+// ── Shared status helper (Ash weight tracking) ──
+function wlStatus(){
+  const latest=wlLatestWeighIn();
+  const earliest=wlEarliestWeighIn();
+  const start=earliest?earliest.weight:208.1;
+  const goal=140.0, mainGoal=167.0;
+  const current=latest?latest.weight:start;
+  const lost=Math.round((start-current)*10)/10;
+  const td=today();
+  let currentTarget=null;
+  if(latest)currentTarget=WL_TARGETS.find(t=>t.date===latest.date)||null;
+  if(!currentTarget)currentTarget=WL_TARGETS.find(t=>t.date>=td)||WL_TARGETS[WL_TARGETS.length-1];
+  const delta=latest?Math.round((latest.weight-currentTarget.goal)*10)/10:0;
+  let trackClass='acc',trackLabel='—',trackSub='No weigh-ins yet';
+  if(latest){
+    if(delta<=0){trackClass='good';trackLabel='Ahead';trackSub=Math.abs(delta).toFixed(1)+' lb under target';}
+    else if(delta<=2){trackClass='warn';trackLabel='On pace';trackSub=delta.toFixed(1)+' lb over target';}
+    else{trackClass='bad';trackLabel='Behind';trackSub=delta.toFixed(1)+' lb over target';}
+  }
+  return {latest,start,goal,mainGoal,current,lost,currentTarget,delta,trackClass,trackLabel,trackSub};
 }
 
-function wlWeekState(mon){
-  if(!D.weight)D.weight={weighIns:{},daily:{},weeks:{}};
-  if(!D.weight.weeks)D.weight.weeks={};
-  if(!D.weight.weeks[mon])D.weight.weeks[mon]={};
-  return D.weight.weeks[mon];
+// ── Week nav header ──
+function wlWeekNavHTML(p,label){
+  const pre=p==='kara'?'kara':'wl';
+  return `<div class="section-label"><span>${label}</span><span class="wk-nav">
+    <button class="arr" onclick="${pre}ChangeWeek(-1)">‹</button>
+    <button class="pill" onclick="${pre}JumpToNow()">This week</button>
+    <button class="arr" onclick="${pre}ChangeWeek(1)">›</button></span></div>`;
 }
-function wlToggleWeekItem(mon,key){
-  const s=wlWeekState(mon);
-  s[key]=!s[key];
-  sched();
-  renderWLWeekPlans();
+
+// ── Shared day-card builder (used by Today + Week for both people) ──
+function wlDayParts(p,d){
+  const cfg=WL_PEOPLE[p];
+  const dow=new Date(d+'T00:00:00').getDay();
+  const isBrunch=(dow===6);
+  const override=isBrunch?null:cfg.overrides()[d];
+  const meal=(cfg.dayMeals&&!isBrunch)?cfg.dayMeals[dow]:null;
+  const cal=(override&&override.cal!=null)?override.cal:(meal?meal.cal:null);
+  const protein=(override&&override.protein!=null)?override.protein:(meal?meal.protein:null);
+  const mealName=isBrunch?'Brunch out':((override&&override.name)||(meal&&meal.name)||(override?'Planned meal':'No meal planned'));
+  const dayState=personDay(p,d);
+  const showStrength=cfg.tracking&&!isBrunch&&cfg.strengthDow.includes(dow);
+  let pills='';
+  if(cfg.tracking&&!isBrunch){
+    for(const h of cfg.habits){
+      const on=!!dayState[h.key];
+      const label=(h.key==='protein'&&protein!=null)?(protein+'g protein'):h.label;
+      pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${label}</button>`;
+    }
+    if(showStrength){
+      const on=!!dayState.strength;
+      pills+=`<button class="wl-chk strength${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','strength')"><span class="wl-chk-icon">💪</span>Strength</button>`;
+    }
+  }
+  const items=isBrunch?[]:((override&&override.items)||(cfg.dayItems?cfg.dayItems[dow]:null)||[]);
+  let foods='';
+  if(isBrunch){
+    foods=`<div class="wl-foods"><div class="wl-foods-label">Saturday brunch out — no plan</div></div>`;
+  }else if(items.length){
+    let rows='';
+    for(let idx=0;idx<items.length;idx++){
+      const it=items[idx], fkey='food_'+idx, on=!!dayState[fkey];
+      rows+=`<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','${fkey}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
+    }
+    const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
+    const hasTotals=(cal!=null||protein!=null)&&(cal||protein);
+    const totalsHtml=hasTotals?`<div class="wl-day-totals">plan: ~${cal??'—'} cal · ${protein??'—'}g P</div>`:'';
+    foods=`<div class="wl-foods"><div class="wl-foods-label">Eat today</div>${noteHtml}${rows}${totalsHtml}</div>`;
+  }else{
+    foods=`<div class="wl-foods"><div class="wl-foods-label">No meal planned</div></div>`;
+  }
+  let total=0,done=0;
+  if(!isBrunch){
+    total=items.length+(cfg.tracking?cfg.habits.length+(showStrength?1:0):0);
+    for(let idx=0;idx<items.length;idx++)if(dayState['food_'+idx])done++;
+    if(cfg.tracking){ for(const h of cfg.habits)if(dayState[h.key])done++; if(showStrength&&dayState.strength)done++; }
+  }
+  return {dow,isBrunch,mealName,cal,protein,pills,foods,done,total};
 }
-function renderWLWeekPlans(){
-  const el=document.getElementById('wlWeekPlans');
+
+function renderWLDays(p,mon,listId){
+  const list=document.getElementById(listId);
+  if(!list)return;
+  const wasOpen={};
+  list.querySelectorAll('details.wl-day-row[data-date]').forEach(d=>{wasOpen[d.dataset.date]=d.open;});
+  const td=today();
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=addDays(mon,i);
+    const dow=new Date(d+'T00:00:00').getDay();
+    const dayName=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
+    const isToday=d===td, isFuture=d>td;
+    const parts=wlDayParts(p,d);
+    const cls=isToday?' today':(isFuture?' future':'');
+    const pct=parts.total?Math.round((parts.done/parts.total)*100):0;
+    const openAttr=(wasOpen[d]!==undefined?wasOpen[d]:isToday)?' open':'';
+    html+=`<details class="wl-day-row${cls}" data-date="${d}"${openAttr}>
+      <summary class="wl-day-summary">
+        <div class="wl-day-lbl"><span class="wl-day-name">${dayName}</span><span class="wl-day-date">${fmtShort(d)}</span><span class="wl-day-meal">${parts.mealName}</span></div>
+        <div class="wl-day-progress">${parts.total?`<span class="wl-day-count">${parts.done}/${parts.total}</span><div class="wl-day-bar"><div class="wl-day-bar-fill" style="width:${pct}%"></div></div>`:''}<span class="wl-day-caret">▾</span></div>
+      </summary>
+      <div class="wl-day-content">${parts.pills?`<div class="wl-checks">${parts.pills}</div>`:''}${parts.foods}</div>
+    </details>`;
+  }
+  list.innerHTML=html;
+}
+
+function renderWLBanner(mon,bannerId){
+  const banner=document.getElementById(bannerId);
+  if(!banner)return;
+  const sun=addDays(mon,6);
+  const target=wlTargetForDate(sun);
+  const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[sun];
+  let bannerHtml='';
+  if(target){
+    const milestone=target.milestone?` <span class="wl-week-phase" style="border-color:var(--ylw);color:var(--ylw)">${target.milestone}</span>`:'';
+    const wiVal=wi?wi:'';
+    const wiDelta=wi?Math.round((wi-target.goal)*10)/10:null;
+    const deltaStr=wiDelta!==null?(wiDelta<=0?'<span style="color:var(--grn);font-weight:700">'+wiDelta.toFixed(1)+' lb vs goal</span>':'<span style="color:var(--red);font-weight:700">+'+wiDelta.toFixed(1)+' lb vs goal</span>'):'';
+    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">Week ${target.wk} · ${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div><span class="wl-week-phase">${target.phase}</span>${milestone}<div class="wl-week-goal"><span>Sun ${fmtShort(sun)} weigh-in goal <strong>${target.goal} lb</strong></span><input class="wl-weighin-inp" type="number" step="0.1" min="0" placeholder="—" value="${wiVal}" onchange="wlSetWeighIn('${sun}',this.value)">${deltaStr}</div></div>`;
+  }else{
+    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div><span class="wl-week-phase">Outside plan window</span></div>`;
+  }
+  banner.innerHTML=bannerHtml;
+}
+
+function wlWeighInCardHTML(d){
+  const target=wlTargetForDate(d);
+  const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[d];
+  const wiVal=wi?wi:'';
+  let goalLine='<span>Log today\'s weight</span>', deltaStr='';
+  if(target){
+    goalLine=`<span>Goal <strong>${target.goal} lb</strong></span>`;
+    const wiDelta=wi?Math.round((wi-target.goal)*10)/10:null;
+    deltaStr=wiDelta!==null?(wiDelta<=0?'<span style="color:var(--grn);font-weight:700">'+wiDelta.toFixed(1)+' lb vs goal</span>':'<span style="color:var(--red);font-weight:700">+'+wiDelta.toFixed(1)+' lb vs goal</span>'):'';
+  }
+  return `<div class="wl-today-card"><div class="wl-tc-title"><span>Sunday weigh-in</span></div><div class="wl-week-goal">${goalLine}<input class="wl-weighin-inp" type="number" step="0.1" min="0" placeholder="—" value="${wiVal}" onchange="wlSetWeighIn('${d}',this.value)">${deltaStr}</div></div>`;
+}
+
+function renderWLToday(p,elId){
+  const el=document.getElementById(elId);
   if(!el)return;
-  const plan=WL_WEEK_PLANS[wlViewMon];
-  if(!plan){el.innerHTML='';return;}
-  // Preserve which sections were expanded — otherwise toggling a checkbox
-  // re-renders the panel and snaps the <details> back to closed.
+  const cfg=WL_PEOPLE[p];
+  const td=today();
+  const dow=new Date(td+'T00:00:00').getDay();
+  const dayLong=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow];
+  const parts=wlDayParts(p,td);
+  let html=`<div class="wl-today">`;
+  html+=`<div class="wl-today-head"><span class="wl-today-day">${dayLong}</span><span class="wl-today-date">${fmtShort(td)}</span></div>`;
+  if(cfg.tracking){
+    const s=wlStatus();
+    html+=`<div class="wl-mini-stats">
+      <div class="wl-mini-stat"><div class="ms-lbl">Current</div><div class="ms-val">${s.current.toFixed(1)}</div></div>
+      <div class="wl-mini-stat good"><div class="ms-lbl">Lost</div><div class="ms-val">${s.lost.toFixed(1)} lb</div></div>
+      <div class="wl-mini-stat ${s.trackClass}"><div class="ms-lbl">Status</div><div class="ms-val">${s.trackLabel}</div></div>
+    </div>`;
+    if(dow===0)html+=wlWeighInCardHTML(td);
+  }
+  html+=`<div class="wl-today-card"><div class="wl-tc-title"><span>Today's meal</span><span class="wl-tc-meal">${parts.mealName}</span></div>${parts.foods}</div>`;
+  if(parts.pills)html+=`<div class="wl-today-card"><div class="wl-tc-title"><span>Today's habits</span></div><div class="wl-checks">${parts.pills}</div></div>`;
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+function renderWLPlans(p,mon,elId){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const plan=WL_PEOPLE[p].plans()[mon];
+  if(!plan){el.innerHTML=`<div class="wl-empty">No plan for this week yet.</div>`;return;}
   const wasOpen=[...el.querySelectorAll('details.wl-plan-section')].map(d=>d.open);
-  const state=wlWeekState(wlViewMon);
+  const state=personWeek(p,mon);
   const renderList=(items,prefix)=>{
     let out='', lastSection=null;
     for(const it of items){
-      // Insert a section header whenever item.section changes (store aisle order).
-      if(it.section&&it.section!==lastSection){
-        out+=`<div class="wl-plan-section-hdr">${it.section}</div>`;
-        lastSection=it.section;
-      }
-      const k=prefix+'_'+it.id;
-      const on=!!state[k];
-      out+=`<div class="wl-plan-item${on?' on':''}" onclick="wlToggleWeekItem('${wlViewMon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
+      if(it.section&&it.section!==lastSection){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSection=it.section; }
+      const k=prefix+'_'+it.id, on=!!state[k];
+      out+=`<div class="wl-plan-item${on?' on':''}" onclick="wlToggleWeekItem('${p}','${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
     }
     return out;
   };
   const shopDone=plan.shopping.filter(it=>state['shop_'+it.id]).length;
   const prepDone=plan.prep.filter(it=>state['prep_'+it.id]).length;
   el.innerHTML=`
-    <details class="wl-plan-section">
+    <details class="wl-plan-section" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Shopping list</span><span class="wl-plan-count">${shopDone}/${plan.shopping.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderList(plan.shopping,'shop')}</div>
     </details>
-    <details class="wl-plan-section">
+    <details class="wl-plan-section" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Sunday prep</span><span class="wl-plan-count">${prepDone}/${plan.prep.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderList(plan.prep,'prep')}</div>
     </details>`;
-  el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i])d.open=true;});
+  el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i]===false)d.open=false;});
+}
+
+function renderCoord(mon,elId){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const aPlan=WL_WEEK_PLANS[mon], kPlan=KARA_WEEK_PLANS[mon];
+  if(!aPlan&&!kPlan){el.innerHTML=`<div class="wl-empty">No plans for this week yet — add Ash's and Kara's meal plans to coordinate.</div>`;return;}
+  const wasOpen=[...el.querySelectorAll('details.wl-plan-section')].map(d=>d.open);
+  if(!D.coord)D.coord={weeks:{}};
+  if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
+  const cstate=D.coord.weeks[mon];
+  const slug=s=>s.replace(/[^a-z0-9]+/gi,'_').slice(0,48);
+  const merge=(aArr,kArr)=>{
+    const map=new Map();
+    const add=(it,who)=>{
+      const key=(it.section||'Other')+'||'+it.label;
+      if(map.has(key))map.get(key).who.add(who);
+      else map.set(key,{section:it.section||'Other',icon:it.icon,label:it.label,who:new Set([who])});
+    };
+    (aArr||[]).forEach(it=>add(it,'A')); (kArr||[]).forEach(it=>add(it,'K'));
+    return [...map.values()];
+  };
+  const renderMerged=(arr,prefix)=>{
+    if(!arr.length)return `<div class="wl-empty">Nothing yet.</div>`;
+    let out='', lastSec=null;
+    for(const it of arr){
+      if(it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
+      const k=prefix+'_'+slug((it.section||'')+it.label), on=!!cstate[k];
+      const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
+      out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
+    }
+    return out;
+  };
+  const shopArr=merge(aPlan&&aPlan.shopping, kPlan&&kPlan.shopping);
+  const prepArr=merge(aPlan&&aPlan.prep, kPlan&&kPlan.prep);
+  const shopDone=shopArr.filter(it=>cstate['cshop_'+slug((it.section||'')+it.label)]).length;
+  const prepDone=prepArr.filter(it=>cstate['cprep_'+slug((it.section||'')+it.label)]).length;
+  el.innerHTML=`
+    <details class="wl-plan-section" open>
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping</span><span class="wl-plan-count">${shopDone}/${shopArr.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderMerged(shopArr,'cshop')}</div>
+    </details>
+    <details class="wl-plan-section" open>
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderMerged(prepArr,'cprep')}</div>
+    </details>`;
+  el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i]===false)d.open=false;});
+}
+
+function renderWeightLoss(){
+  const panel=document.getElementById('wlPanel');
+  if(!panel)return;
+  document.querySelectorAll('#wlSeg [data-wlview]').forEach(b=>b.classList.toggle('on',b.dataset.wlview===wlView));
+  if(wlView==='today'){
+    panel.innerHTML=`<div id="wlToday"></div>`;
+    renderWLToday('ash','wlToday');
+  }else if(wlView==='week'){
+    panel.innerHTML=wlWeekNavHTML('ash',"This week")+`<div id="wlWeekBanner"></div><div id="wlWeekDays" class="wl-day-list"></div>`;
+    renderWLBanner(wlViewMon,'wlWeekBanner');
+    renderWLDays('ash',wlViewMon,'wlWeekDays');
+  }else if(wlView==='shop'){
+    panel.innerHTML=wlWeekNavHTML('ash',"Prep & shop")+`<div id="wlWeekPlans"></div>`;
+    renderWLPlans('ash',wlViewMon,'wlWeekPlans');
+  }else{
+    panel.innerHTML=`<div class="wl-hero" id="wlHero"></div>
+      <div class="pattern-section"><div class="section-label">Weight progress <span class="section-sub">actual vs plan</span></div><div id="wlChart"></div></div>
+      <div class="pattern-section"><div class="section-label">All weekly targets</div><div id="wlTargetsTbl"></div></div>
+      <div class="pattern-section"><div class="section-label">Plan reference</div><div class="wl-refs" id="wlRefs"></div></div>`;
+    renderWLHero(); renderWLChart(); renderWLTargetsTbl(); renderWLRefs();
+  }
+}
+
+function renderKara(){
+  const panel=document.getElementById('karaPanel');
+  if(!panel)return;
+  document.querySelectorAll('#karaSeg [data-karaview]').forEach(b=>b.classList.toggle('on',b.dataset.karaview===karaView));
+  if(karaView==='today'){
+    panel.innerHTML=`<div id="karaToday"></div>`;
+    renderWLToday('kara','karaToday');
+  }else if(karaView==='week'){
+    panel.innerHTML=wlWeekNavHTML('kara',"Kara's week")+`<div id="karaWeekDays" class="wl-day-list"></div>`;
+    renderWLDays('kara',karaViewMon,'karaWeekDays');
+  }else{
+    panel.innerHTML=wlWeekNavHTML('kara',"Coordinate prep & shopping")+`<div id="karaCoord"></div>`;
+    renderCoord(karaViewMon,'karaCoord');
+  }
 }
 
 function renderWLHero(){
@@ -3396,134 +3696,6 @@ function renderWLHero(){
       <div class="wl-sub">${trackSub} (wk ${currentTarget.wk} target ${currentTarget.goal})</div>
     </div>
   `;
-}
-
-function renderWLWeek(){
-  const banner=document.getElementById('wlWeekBanner');
-  const list=document.getElementById('wlWeekDays');
-  if(!banner||!list)return;
-  // Preserve which day rows were expanded — re-rendering the innerHTML wipes
-  // <details> open state, which makes a row snap shut every time the user
-  // clicks a habit pill or food checkbox.
-  const wasOpen={};
-  list.querySelectorAll('details.wl-day-row[data-date]').forEach(d=>{wasOpen[d.dataset.date]=d.open;});
-  const mon=wlViewMon;
-  const sun=addDays(mon,6);                    // Sunday weigh-in is day 7 of a Mon-start week
-  const target=wlTargetForDate(sun);
-  const wi=D.weight&&D.weight.weighIns&&D.weight.weighIns[sun];
-  const td=today();
-  // Banner
-  let bannerHtml='';
-  if(target){
-    const milestone=target.milestone?` <span class="wl-week-phase" style="border-color:var(--ylw);color:var(--ylw)">${target.milestone}</span>`:'';
-    const wiVal=wi?wi:'';
-    const wiDelta=wi?Math.round((wi-target.goal)*10)/10:null;
-    const deltaStr=wiDelta!==null
-      ? (wiDelta<=0
-         ?'<span style="color:var(--grn);font-weight:700">'+(wiDelta).toFixed(1)+' lb vs goal</span>'
-         :'<span style="color:var(--red);font-weight:700">+'+wiDelta.toFixed(1)+' lb vs goal</span>')
-      :'';
-    bannerHtml=`
-      <div class="wl-week-banner">
-        <div class="wl-week-title">Week ${target.wk} · ${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div>
-        <span class="wl-week-phase">${target.phase}</span>${milestone}
-        <div class="wl-week-goal">
-          <span>Sun ${fmtShort(sun)} weigh-in goal <strong>${target.goal} lb</strong></span>
-          <input class="wl-weighin-inp" type="number" step="0.1" min="0" placeholder="—" value="${wiVal}" onchange="wlSetWeighIn('${sun}',this.value)">
-          ${deltaStr}
-        </div>
-      </div>`;
-  }else{
-    bannerHtml=`<div class="wl-week-banner"><div class="wl-week-title">${fmtShort(mon)} – ${fmtShort(addDays(mon,6))}</div><span class="wl-week-phase">Outside plan window</span></div>`;
-  }
-  banner.innerHTML=bannerHtml;
-  // Days Mon-Sun
-  let html='';
-  for(let i=0;i<7;i++){
-    const d=addDays(mon,i);
-    const dt=new Date(d+'T00:00:00');
-    const dow=dt.getDay();
-    const dayName=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
-    const isToday=d===td;
-    const isFuture=d>td;
-    // Saturday is brunch out — no planned meal, no habit pills tied to food
-    const isBrunch=(dow===6);
-    const meal=isBrunch?null:WL_MEALS[dow];
-    // Per-date override (custom food list + optional cal/protein totals) beats the WL_MEALS default.
-    const override=isBrunch?null:WL_MEAL_OVERRIDES[d];
-    const dayCal=(override&&override.cal!=null)?override.cal:(meal&&meal.cal);
-    const dayProtein=(override&&override.protein!=null)?override.protein:(meal&&meal.protein);
-    const dayState=(D.weight&&D.weight.daily&&D.weight.daily[d])||{};
-    const showStrength=!isBrunch&&WL_STRENGTH_DOW.includes(dow);
-    let pills='';
-    if(!isBrunch){
-      for(const h of WL_HABITS){
-        const on=!!dayState[h.key];
-        // Protein target varies by day — override.protein wins so Mon's bigger
-        // egg-salad day shows ~71g instead of the 50g OMAD anchor.
-        const label=(h.key==='protein'&&dayProtein!=null)?(dayProtein+'g protein'):h.label;
-        pills+=`<button class="wl-chk${on?' on':''}" onclick="wlToggleHabit('${d}','${h.key}')"><span class="wl-chk-icon">${h.icon}</span>${label}</button>`;
-      }
-      if(showStrength){
-        const on=!!dayState.strength;
-        pills+=`<button class="wl-chk strength${on?' on':''}" onclick="wlToggleHabit('${d}','strength')"><span class="wl-chk-icon">💪</span>Strength</button>`;
-      }
-    }
-    // Food items checklist for the day — per-date override beats the default.
-    // Saturday brunch days never show a planned-food list.
-    const items=isBrunch?[]:((override&&override.items)||WL_MEAL_ITEMS[dow]||[]);
-    let foodsHtml='';
-    if(isBrunch){
-      foodsHtml=`<div class="wl-foods"><div class="wl-foods-label">Saturday brunch out — no plan</div></div>`;
-    }
-    if(items.length){
-      let rows='';
-      for(let idx=0;idx<items.length;idx++){
-        const it=items[idx];
-        const fkey='food_'+idx;
-        const on=!!dayState[fkey];
-        rows+=`<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${d}','${fkey}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span></div>`;
-      }
-      const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
-      // Hide totals box for holiday/out-of-plan days (cal:0, protein:0).
-      const hasTotals=(dayCal!=null||dayProtein!=null)&&(dayCal||dayProtein);
-      const totalsHtml=hasTotals?`<div class="wl-day-totals">plan: ~${dayCal??'—'} cal · ${dayProtein??'—'}g P</div>`:'';
-      foodsHtml=`<div class="wl-foods"><div class="wl-foods-label">Eat today</div>${noteHtml}${rows}${totalsHtml}</div>`;
-    }
-    const cls=isToday?' today':(isFuture?' future':'');
-    // Progress: count of checked food items + habit pills (helpful in collapsed view).
-    // Saturday brunch days have nothing to check, so the bar/count are hidden.
-    const totalChecks=isBrunch?0:(items.length+WL_HABITS.length+(showStrength?1:0));
-    let doneChecks=0;
-    if(!isBrunch){
-      for(const h of WL_HABITS)if(dayState[h.key])doneChecks++;
-      if(showStrength&&dayState.strength)doneChecks++;
-      for(let idx=0;idx<items.length;idx++)if(dayState['food_'+idx])doneChecks++;
-    }
-    const progressPct=totalChecks?Math.round((doneChecks/totalChecks)*100):0;
-    // Open if it's today by default, or if the user had it open before this re-render.
-    const openAttr=(wasOpen[d]!==undefined?wasOpen[d]:isToday)?' open':'';
-    html+=`
-      <details class="wl-day-row${cls}" data-date="${d}"${openAttr}>
-        <summary class="wl-day-summary">
-          <div class="wl-day-lbl">
-            <span class="wl-day-name">${dayName}</span>
-            <span class="wl-day-date">${fmtShort(d)}</span>
-            <span class="wl-day-meal">${isBrunch?'Brunch out':(meal?meal.name:'')}</span>
-          </div>
-          <div class="wl-day-progress">
-            ${isBrunch?'':`<span class="wl-day-count">${doneChecks}/${totalChecks}</span>
-            <div class="wl-day-bar"><div class="wl-day-bar-fill" style="width:${progressPct}%"></div></div>`}
-            <span class="wl-day-caret">▾</span>
-          </div>
-        </summary>
-        <div class="wl-day-content">
-          <div class="wl-checks">${pills}</div>
-          ${foodsHtml}
-        </div>
-      </details>`;
-  }
-  list.innerHTML=html;
 }
 
 function renderWLChart(){
