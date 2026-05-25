@@ -991,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v121</div>
+      <div class="mark-v">v122</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1861,11 +1861,11 @@ const WL_WEEK_PLANS={
       {id:'hummus',      section:'Pantry',  icon:'🫘', label:'Hummus — 120g (Tue+Thu)', key:'hummus', baseLabel:'Hummus', qty:{n:120,u:'g'}}
     ],
     prep:[
-      {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 of the boiled eggs + 1 tbsp mayo + 5g mustard + S&P'},
-      {id:'chop_nuts',   icon:'🥜', label:'Chop nuts ahead: 84g almonds + 56g cashews into one container'},
-      {id:'peanut_sauce',icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
-      {id:'portion_chx', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
-      {id:'bake_salmon', icon:'🐟', label:'Bake Saturday salmon fresh (or Fri night, reheat)'}
+      {id:'egg_salad',   when:'Sunday', icon:'🥚', label:'Make Tue egg salad: 4 of the boiled eggs + 1 tbsp mayo + 5g mustard + S&P'},
+      {id:'chop_nuts',   when:'Sunday', icon:'🥜', label:'Chop nuts ahead: 84g almonds + 56g cashews into one container'},
+      {id:'peanut_sauce',when:'Sunday', icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
+      {id:'portion_chx', when:'Sunday', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
+      {id:'bake_salmon', when:'Sat',    icon:'🐟', label:'Bake Saturday salmon fresh — 340g for both (or Fri night, reheat)'}
     ]
   }
 };
@@ -1966,9 +1966,9 @@ const KARA_WEEK_PLANS={
       {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
     ],
     prep:[
-      {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
-      {id:'chicken',  icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
-      {id:'oats',     icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
+      {id:'quinoa',   when:'Sunday',    icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
+      {id:'chicken',  when:'Sunday',    icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
+      {id:'oats',     when:'Tue night', icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
     ]
   }
 };
@@ -3784,17 +3784,21 @@ function renderCoord(mon,elId){
   // Canonical aisle order so both people's items fall under one header per section.
   const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Have at home','Other'];
   const secRank=s=>{const i=SECTION_ORDER.indexOf(s||'Other');return i<0?SECTION_ORDER.length:i;};
+  // Prep timeline buckets, in the order you'd actually do them.
+  const WHEN_ORDER=['Sunday','Mon night','Tue night','Wed night','Thu night','Fri night','Sat','Sun','Anytime'];
+  const whenRank=w=>{const i=WHEN_ORDER.indexOf(w||'Anytime');return i<0?WHEN_ORDER.length:i;};
   // Items sharing a canonical `key` collapse into one line; quantities sum by unit.
   const merge=(aArr,kArr)=>{
     const map=new Map();
     const add=(it,who)=>{
       const mk=it.key?('k:'+it.key):((it.section||'Other')+'||'+it.label);
       let e=map.get(mk);
-      if(!e){ e={key:it.key||null,section:it.section||'Other',icon:it.icon,baseLabel:it.baseLabel||it.label,label:it.label,who:new Set(),qtys:[]}; map.set(mk,e); }
+      if(!e){ e={key:it.key||null,section:it.section||'Other',when:it.when||'Anytime',icon:it.icon,baseLabel:it.baseLabel||it.label,label:it.label,who:new Set(),qtys:[]}; map.set(mk,e); }
       e.who.add(who);
       if(it.qty)e.qtys.push(it.qty);
-      // Prefer the more canonical (earlier-aisle) section when the two disagree.
+      // Prefer the more canonical (earlier-aisle) section / earliest prep slot when they disagree.
       if(secRank(it.section)<secRank(e.section))e.section=it.section;
+      if(it.when&&whenRank(it.when)<whenRank(e.when))e.when=it.when;
     };
     (aArr||[]).forEach(it=>add(it,'A')); (kArr||[]).forEach(it=>add(it,'K'));
     return [...map.values()].sort((a,b)=>secRank(a.section)-secRank(b.section));
@@ -3810,11 +3814,14 @@ function renderCoord(mon,elId){
     return e.label;
   };
   const ckey=(prefix,it)=>prefix+'_'+slug(it.key||it.label);
-  const renderMerged=(arr,prefix,grouped)=>{
+  // groupBy: 'section' → aisle headers; 'when' → prep-timeline headers; null → flat.
+  const renderMerged=(arr,prefix,groupBy)=>{
     if(!arr.length)return `<div class="wl-empty">Nothing yet.</div>`;
-    let out='', lastSec=null;
+    if(groupBy==='when')arr=arr.slice().sort((a,b)=>whenRank(a.when)-whenRank(b.when));
+    let out='', last=null;
     for(const it of arr){
-      if(grouped&&it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
+      const grp=groupBy==='section'?it.section:(groupBy==='when'?it.when:null);
+      if(grp&&grp!==last){ out+=`<div class="wl-plan-section-hdr">${grp}</div>`; last=grp; }
       const k=ckey(prefix,it), on=!!cstate[k];
       const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
       out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${mergedLabel(it)}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
@@ -3876,8 +3883,8 @@ function renderCoord(mon,elId){
       <div class="wl-plan-body">${renderHave()}</div>
     </details>
     <details class="wl-plan-section" open>
-      <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderMerged(prepArr,'cprep',false)}</div>
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep timeline</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderMerged(prepArr,'cprep','when')}</div>
     </details>`;
   el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i]===false)d.open=false;});
 }
