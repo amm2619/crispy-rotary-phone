@@ -988,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v114</div>
+      <div class="mark-v">v115</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1839,30 +1839,30 @@ const WL_WEEK_PLANS={
     label:'Week 4 — May 25–31 · Tue–Sat OMAD (small trip — pantry stocked)',
     shopping:[
       // Produce
-      {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz (raspberry/blackberry/blueberry)'},
-      {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2'},
-      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)'},
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz (raspberry/blackberry/blueberry)', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
+      {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
       {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 1× 3-pack'},
       {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
-      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag'},
-      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2'},
-      {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)'},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
+      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       // Seafood
       {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
       // Dairy
-      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 1 dozen large'},
-      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2× 16 oz tubs (latest use-by)'},
-      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — restock 1× 32 oz if low'},
+      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 1 dozen large', key:'eggs', baseLabel:'Eggs', qty:{n:12,u:''}},
+      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2× 16 oz tubs (latest use-by)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:32,u:'oz'}},
+      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — restock 1× 32 oz if low', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
       // Check at home
-      {id:'avocado',     section:'Check at home', icon:'🥑', label:'Avocados — only if under 2 left'},
-      {id:'romaine',     section:'Check at home', icon:'🥬', label:'Romaine hearts — should have from wk 2–3'}
+      {id:'avocado',     section:'Check at home', icon:'🥑', label:'Avocados — only if under 2 left', key:'avocado', baseLabel:'Avocados'},
+      {id:'romaine',     section:'Check at home', icon:'🥬', label:'Romaine hearts — should have from wk 2–3', key:'romaine', baseLabel:'Romaine'}
     ],
     prep:[
-      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil 8 eggs (4 for Tue egg salad + 4 buffer)'},
+      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil 8 eggs (4 for Tue egg salad + 4 buffer)', key:'hb_eggs', baseLabel:'Hard-boil eggs', qty:{n:8,u:'eggs'}},
       {id:'chop_nuts',   icon:'🥜', label:'Chop nuts ahead: 84g almonds + 56g cashews into one container'},
       {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 eggs + 1 tbsp mayo + 5g mustard + S&P'},
       {id:'peanut_sauce',icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
-      {id:'portion_chx', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)'},
+      {id:'portion_chx', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
       {id:'bake_salmon', icon:'🐟', label:'Bake Saturday salmon fresh (or Fri night, reheat)'}
     ]
   }
@@ -1922,25 +1922,25 @@ const KARA_WEEK_PLANS={
     label:"Kara — Week of May 25 · Tue–Sun (breakfast + lunch)",
     shopping:[
       // Produce
-      {id:'romaine',  section:'Produce', icon:'🥬', label:'Romaine — 1 head (Tue/Thu/Sat)'},
+      {id:'romaine',  section:'Produce', icon:'🥬', label:'Romaine — 1 head (Tue/Thu/Sat)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
       {id:'spinach',  section:'Produce', icon:'🥬', label:'Spinach — 5 oz bag'},
-      {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)'},
-      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium'},
-      {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (mixed ripeness)'},
+      {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
+      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (mixed ripeness)', key:'avocado', baseLabel:'Avocados', qty:{n:3,u:''}},
       {id:'banana',   section:'Produce', icon:'🍌', label:'Bananas — 2'},
       {id:'frozenber',section:'Produce', icon:'🫐', label:'Frozen berries — 1 bag'},
-      {id:'freshber', section:'Produce', icon:'🍓', label:'Fresh berries — small container'},
+      {id:'freshber', section:'Produce', icon:'🍓', label:'Fresh berries — small container', key:'freshberries', baseLabel:'Fresh berries', qty:{n:6,u:'oz'}},
       {id:'lemon',    section:'Produce', icon:'🍋', label:'Lemons — 2'},
-      {id:'lime',     section:'Produce', icon:'🍋', label:'Lime — 1'},
+      {id:'lime',     section:'Produce', icon:'🍋', label:'Lime — 1', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       {id:'cilantro', section:'Produce', icon:'🌿', label:'Cilantro — small bunch'},
       {id:'celery',   section:'Produce', icon:'🥬', label:'Celery — small bunch'},
       // Protein
       {id:'chicken',  section:'Protein', icon:'🍗', label:'Pulled rotisserie chicken — 1 pkg (~12 oz)'},
       {id:'tuna',     section:'Protein', icon:'🐟', label:'Canned tuna in water — 1'},
       {id:'salmoncan',section:'Protein', icon:'🐟', label:'Canned salmon — 1'},
-      {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — ½ dozen'},
-      {id:'yogurt',   section:'Protein', icon:'🥛', label:'Plain Greek yogurt — 32 oz'},
-      {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 16 oz'},
+      {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — ½ dozen', key:'eggs', baseLabel:'Eggs', qty:{n:6,u:''}},
+      {id:'yogurt',   section:'Protein', icon:'🥛', label:'Plain Greek yogurt — 32 oz', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
+      {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 16 oz', key:'cottage', baseLabel:'Cottage cheese', qty:{n:16,u:'oz'}},
       // Dairy
       {id:'feta',     section:'Dairy',   icon:'🧀', label:'Feta — small block (light use)'},
       // Bread
@@ -1965,9 +1965,9 @@ const KARA_WEEK_PLANS={
       {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
     ],
     prep:[
-      {id:'hb_eggs',  icon:'🥚', label:'Hard-boil 4 eggs (covers Thu + Sun lunch)'},
+      {id:'hb_eggs',  icon:'🥚', label:'Hard-boil 4 eggs (covers Thu + Sun lunch)', key:'hb_eggs', baseLabel:'Hard-boil eggs', qty:{n:4,u:'eggs'}},
       {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
-      {id:'chicken',  icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)'},
+      {id:'chicken',  icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
       {id:'oats',     icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
     ]
   }
@@ -3761,40 +3761,55 @@ function renderCoord(mon,elId){
   // Canonical aisle order so both people's items fall under one header per section.
   const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Other'];
   const secRank=s=>{const i=SECTION_ORDER.indexOf(s||'Other');return i<0?SECTION_ORDER.length:i;};
+  // Items sharing a canonical `key` collapse into one line; quantities sum by unit.
   const merge=(aArr,kArr)=>{
     const map=new Map();
     const add=(it,who)=>{
-      const key=(it.section||'Other')+'||'+it.label;
-      if(map.has(key))map.get(key).who.add(who);
-      else map.set(key,{section:it.section||'Other',icon:it.icon,label:it.label,who:new Set([who])});
+      const mk=it.key?('k:'+it.key):((it.section||'Other')+'||'+it.label);
+      let e=map.get(mk);
+      if(!e){ e={key:it.key||null,section:it.section||'Other',icon:it.icon,baseLabel:it.baseLabel||it.label,label:it.label,who:new Set(),qtys:[]}; map.set(mk,e); }
+      e.who.add(who);
+      if(it.qty)e.qtys.push(it.qty);
+      // Prefer the more canonical (earlier-aisle) section when the two disagree.
+      if(secRank(it.section)<secRank(e.section))e.section=it.section;
     };
     (aArr||[]).forEach(it=>add(it,'A')); (kArr||[]).forEach(it=>add(it,'K'));
-    // Stable-sort by aisle so all produce (etc.) groups under a single header.
     return [...map.values()].sort((a,b)=>secRank(a.section)-secRank(b.section));
   };
-  const renderMerged=(arr,prefix)=>{
+  // Combined display label: sum quantities by unit when present, else raw label.
+  const mergedLabel=e=>{
+    if(e.key&&e.qtys.length){
+      const byU={};
+      for(const q of e.qtys){const u=q.u||'';byU[u]=(byU[u]||0)+q.n;}
+      const parts=Object.entries(byU).map(([u,n])=>{const v=Math.round(n*100)/100;return u?`${v} ${u}`:`${v}`;});
+      return `${e.baseLabel} — ${parts.join(' + ')}`;
+    }
+    return e.label;
+  };
+  const ckey=(prefix,it)=>prefix+'_'+slug(it.key||it.label);
+  const renderMerged=(arr,prefix,grouped)=>{
     if(!arr.length)return `<div class="wl-empty">Nothing yet.</div>`;
     let out='', lastSec=null;
     for(const it of arr){
-      if(it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
-      const k=prefix+'_'+slug((it.section||'')+it.label), on=!!cstate[k];
+      if(grouped&&it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
+      const k=ckey(prefix,it), on=!!cstate[k];
       const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
-      out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.label}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
+      out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${mergedLabel(it)}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
     }
     return out;
   };
   const shopArr=merge(aPlan&&aPlan.shopping, kPlan&&kPlan.shopping);
   const prepArr=merge(aPlan&&aPlan.prep, kPlan&&kPlan.prep);
-  const shopDone=shopArr.filter(it=>cstate['cshop_'+slug((it.section||'')+it.label)]).length;
-  const prepDone=prepArr.filter(it=>cstate['cprep_'+slug((it.section||'')+it.label)]).length;
+  const shopDone=shopArr.filter(it=>cstate[ckey('cshop',it)]).length;
+  const prepDone=prepArr.filter(it=>cstate[ckey('cprep',it)]).length;
   el.innerHTML=`
     <details class="wl-plan-section" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping</span><span class="wl-plan-count">${shopDone}/${shopArr.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderMerged(shopArr,'cshop')}</div>
+      <div class="wl-plan-body">${renderMerged(shopArr,'cshop',true)}</div>
     </details>
     <details class="wl-plan-section" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderMerged(prepArr,'cprep')}</div>
+      <div class="wl-plan-body">${renderMerged(prepArr,'cprep',false)}</div>
     </details>`;
   el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i]===false)d.open=false;});
 }
