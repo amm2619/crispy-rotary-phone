@@ -432,6 +432,9 @@ canvas { width:100%!important; height:165px!important; }
 .coord-who.A { background:var(--accD); color:var(--acc); }
 .coord-who.K { background:var(--skyD); color:var(--sky); }
 .coord-who.AK { background:var(--grnD); color:var(--grn); }
+.coord-note { display:block; font-size:10px; color:var(--t3); font-weight:500; margin-top:2px; }
+.wl-plan-item.have { cursor:default; opacity:0.72; }
+.wl-plan-item.have:hover { border-color:var(--bdr); }
 .wl-day-list { display:flex; flex-direction:column; gap:6px; }
 .wl-day-row { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); overflow:hidden; }
 .wl-day-row.today { border-color:var(--acc); }
@@ -988,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v117</div>
+      <div class="mark-v">v118</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1838,27 +1841,26 @@ const WL_WEEK_PLANS={
   '2026-05-25':{
     label:'Week 4 — May 25–31 · Tue–Sat OMAD (small trip — pantry stocked)',
     shopping:[
-      // Produce — buy
-      {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz (raspberry/blackberry/blueberry)', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
+      // Quantities are this person's consumption need; the Coordinate view nets them
+      // against the shared on-hand inventory (WL_ONHAND) to compute what to actually buy.
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
       {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
-      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 small (½ pint already on hand)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'small'}},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
       {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
-      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag (or use the romaine on hand)', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 5 oz', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
+      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2 (wrap slices)', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
+      {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell pepper — 1 (Thu plate)', key:'peppers', baseLabel:'Bell peppers', qty:{n:1,u:''}},
+      {id:'avocado',     section:'Produce', icon:'🥑', label:'Avocado — 1 (Fri+Sat halves)', key:'avocado', baseLabel:'Avocados', qty:{n:1,u:''}},
+      {id:'romaine',     section:'Produce', icon:'🥬', label:'Romaine — 1 head (wraps)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
       // Seafood
       {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
       // Dairy
-      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2× 16 oz tubs (latest use-by)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:32,u:'oz'}},
-      // Have at home — don't buy
-      {id:'h_peppers',   section:'Have at home', icon:'🫑', label:'Bell peppers ✓ (2 orange + 1 red)'},
-      {id:'h_roma',      section:'Have at home', icon:'🍅', label:'Roma tomatoes ✓ (2)'},
-      {id:'h_romaine',   section:'Have at home', icon:'🥬', label:'Romaine ✓ (3 hearts)'},
-      {id:'h_eggs',      section:'Have at home', icon:'🥚', label:'Eggs ✓ (8 already boiled)'},
-      {id:'h_yogurt',    section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (32 oz Oikos + 16 oz Chobani)'},
-      {id:'h_cabbage',   section:'Have at home', icon:'🥬', label:'Cabbage ✓ (bag)'},
-      {id:'h_cheese',    section:'Have at home', icon:'🧀', label:'Feta + blue cheese ✓ (all cheeses on hand)'},
-      {id:'h_avocado',   section:'Have at home', icon:'🥑', label:'Avocados ✓ (3 on hand)'},
-      {id:'h_lime',      section:'Have at home', icon:'🍋', label:'Limes ✓ (4 on hand)'},
-      {id:'h_hummus',    section:'Have at home', icon:'🫘', label:'Hummus — only ¼ container left; buy 1 if short for Tue+Thu'}
+      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 3 cups (Tue/Thu/Sat)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:24,u:'oz'}},
+      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — 2 cups (Wed/Fri)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:16,u:'oz'}},
+      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 4 (Tue egg salad)', key:'eggs', baseLabel:'Eggs', qty:{n:4,u:''}},
+      // Pantry
+      {id:'hummus',      section:'Pantry',  icon:'🫘', label:'Hummus — 120g (Tue+Thu)', key:'hummus', baseLabel:'Hummus', qty:{n:120,u:'g'}}
     ],
     prep:[
       {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 of the boiled eggs + 1 tbsp mayo + 5g mustard + S&P'},
@@ -1923,10 +1925,13 @@ const KARA_WEEK_PLANS={
   '2026-05-25':{
     label:"Kara — Week of May 25 · Tue–Sun (breakfast + lunch)",
     shopping:[
-      // Produce
+      // Produce (consumption needs; netted against shared on-hand in Coordinate view)
       {id:'spinach',  section:'Produce', icon:'🥬', label:'Spinach — 5 oz bag'},
       {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
-      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium (2 roma on hand may cover)', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'romaine',  section:'Produce', icon:'🥬', label:'Romaine — 1 head (Tue/Thu/Sat)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
+      {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (Wed/Thu/Sun)', key:'avocado', baseLabel:'Avocados', qty:{n:3,u:''}},
+      {id:'lime',     section:'Produce', icon:'🍋', label:'Lime — 1', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       {id:'banana',   section:'Produce', icon:'🍌', label:'Bananas — 2'},
       {id:'frozenber',section:'Produce', icon:'🫐', label:'Frozen berries — 1 bag'},
       {id:'freshber', section:'Produce', icon:'🍓', label:'Fresh berries — small container', key:'freshberries', baseLabel:'Fresh berries', qty:{n:6,u:'oz'}},
@@ -1937,7 +1942,10 @@ const KARA_WEEK_PLANS={
       {id:'chicken',  section:'Protein', icon:'🍗', label:'Pulled rotisserie chicken — 1 pkg (~12 oz)'},
       {id:'tuna',     section:'Protein', icon:'🐟', label:'Canned tuna in water — 1'},
       {id:'salmoncan',section:'Protein', icon:'🐟', label:'Canned salmon — 1'},
-      {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 16 oz', key:'cottage', baseLabel:'Cottage cheese', qty:{n:16,u:'oz'}},
+      {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — 4 (Thu + Sun)', key:'eggs', baseLabel:'Eggs', qty:{n:4,u:''}},
+      {id:'yogurt',   section:'Protein', icon:'🥛', label:'Greek yogurt — 2 cups (Tue/Sun)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:16,u:'oz'}},
+      {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 1 cup (Fri)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:8,u:'oz'}},
+      {id:'feta',     section:'Dairy',   icon:'🧀', label:'Feta — small block (light use)', key:'cheese', baseLabel:'Cheese'},
       // Bread
       {id:'bread',    section:'Bread',   icon:'🍞', label:'Whole-grain sandwich bread — 1 loaf'},
       // Pantry
@@ -1957,14 +1965,7 @@ const KARA_WEEK_PLANS={
       {id:'olives',   section:'Pantry',  icon:'🫒', label:'Olives'},
       {id:'evrything',section:'Pantry',  icon:'🧂', label:'Everything bagel seasoning'},
       {id:'cinnamon', section:'Pantry',  icon:'🧂', label:'Cinnamon'},
-      {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'},
-      // Have at home — don't buy
-      {id:'h_romaine',section:'Have at home', icon:'🥬', label:'Romaine ✓ (3 hearts)'},
-      {id:'h_eggs',   section:'Have at home', icon:'🥚', label:'Eggs ✓ (8 already boiled)'},
-      {id:'h_yogurt', section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (48 oz on hand)'},
-      {id:'h_feta',   section:'Have at home', icon:'🧀', label:'Feta ✓ (cheeses on hand)'},
-      {id:'h_avocado',section:'Have at home', icon:'🥑', label:'Avocados ✓ (3 on hand)'},
-      {id:'h_lime',   section:'Have at home', icon:'🍋', label:'Limes ✓ (4 on hand)'}
+      {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
     ],
     prep:[
       {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
@@ -1972,6 +1973,28 @@ const KARA_WEEK_PLANS={
       {id:'oats',     icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
     ]
   }
+};
+
+// Shared on-hand inventory, keyed by week's Monday. A single pool (not per-person) —
+// the Coordinate view subtracts these from the combined need to compute what to buy.
+// Match `key` to the shopping items; `qty {n,u}` enables netting when units agree.
+const WL_ONHAND={
+  '2026-05-25':[
+    {key:'peppers',   icon:'🫑', label:'Bell peppers (2 orange + 1 red)', qty:{n:3,u:''}},
+    {key:'tomato',    icon:'🍅', label:'Roma tomatoes (2)', qty:{n:2,u:''}},
+    {key:'cherry_tom',icon:'🍅', label:'Cherry tomatoes (½ pint)', qty:{n:0.5,u:'pint'}},
+    {key:'romaine',   icon:'🥬', label:'Romaine (3 hearts)', qty:{n:3,u:'head'}},
+    {key:'eggs',      icon:'🥚', label:'Boiled eggs (8)', qty:{n:8,u:''}},
+    {key:'yogurt',    icon:'🥛', label:'Greek yogurt (Oikos 32oz + Chobani 16oz)', qty:{n:48,u:'oz'}},
+    {key:'avocado',   icon:'🥑', label:'Avocados (3)', qty:{n:3,u:''}},
+    {key:'lime',      icon:'🍋', label:'Limes (4)', qty:{n:4,u:''}},
+    {key:'hummus',    icon:'🫘', label:'Hummus (¼ container ≈ 70g)', qty:{n:70,u:'g'}},
+    {key:'cheese',    icon:'🧀', label:'All cheeses (feta, blue, etc.)'},
+    {key:'cabbage',   icon:'🥬', label:'Cabbage (bag)'},
+    {key:'greenbeans',icon:'🫛', label:'Green beans (1.5 lb)'},
+    {key:'grapes',    icon:'🍇', label:'Black grapes (bag)'},
+    {key:'herbs',     icon:'🌿', label:'Fresh mint, oregano, basil'}
+  ]
 };
 
 // Person registry. Ash tracks weight (weigh-ins/chart/targets); Kara is meals+prep only.
@@ -3801,12 +3824,57 @@ function renderCoord(mon,elId){
   };
   const shopArr=merge(aPlan&&aPlan.shopping, kPlan&&kPlan.shopping);
   const prepArr=merge(aPlan&&aPlan.prep, kPlan&&kPlan.prep);
-  const shopDone=shopArr.filter(it=>cstate[ckey('cshop',it)]).length;
+  // Shared on-hand pool for this week (single pool, not per person).
+  const onhand=new Map();
+  for(const it of (WL_ONHAND[mon]||[])){
+    if(!onhand.has(it.key))onhand.set(it.key,{byU:{},label:it.label,icon:it.icon});
+    if(it.qty){const e=onhand.get(it.key);e.byU[it.qty.u||'']=(e.byU[it.qty.u||'']||0)+it.qty.n;}
+  }
+  // Net combined need against the shared pool → buy only the shortfall.
+  const buy=[], covered=[];
+  for(const e of shopArr){
+    const oh=e.key?onhand.get(e.key):null;
+    if(!oh){ buy.push({...e, disp:mergedLabel(e)}); continue; }
+    if(!e.qtys.length){ covered.push({...e, disp:`${e.baseLabel} — covered (have ${oh.label})`}); continue; }
+    const needU={}; for(const q of e.qtys){const u=q.u||'';needU[u]=(needU[u]||0)+q.n;}
+    let remain=false; const remU={};
+    for(const [u,n] of Object.entries(needU)){const have=oh.byU[u]||0;const r=Math.round((n-have)*100)/100;remU[u]=r;if(r>0.001)remain=true;}
+    if(remain){
+      const parts=Object.entries(remU).filter(([u,r])=>r>0.001).map(([u,r])=>u?`${r} ${u}`:`${r}`);
+      buy.push({...e, disp:`${e.baseLabel} — buy ${parts.join(' + ')}`, note:`need ${Object.entries(needU).map(([u,n])=>u?`${n} ${u}`:`${n}`).join('+')}, have ${oh.label}`});
+    }else{
+      covered.push({...e, disp:`${e.baseLabel} — covered (have ${oh.label})`});
+    }
+  }
+  const neededKeys=new Set(shopArr.map(e=>e.key).filter(Boolean));
+  const extras=(WL_ONHAND[mon]||[]).filter(it=>!neededKeys.has(it.key));
+  const renderBuy=arr=>{
+    if(!arr.length)return `<div class="wl-empty">Nothing to buy — all covered by what's on hand!</div>`;
+    let out='', lastSec=null;
+    for(const it of arr){
+      if(it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
+      const k=ckey('cshop',it), on=!!cstate[k];
+      const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
+      const note=it.note?`<span class="coord-note">${it.note}</span>`:'';
+      out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}${note}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
+    }
+    return out;
+  };
+  const renderHave=()=>{
+    const rows=[...covered.map(it=>`<div class="wl-plan-item have"><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}</span></div>`),
+      ...extras.map(it=>`<div class="wl-plan-item have"><span class="wl-food-icon">${it.icon||'✓'}</span><span class="wl-food-text">${it.label}</span></div>`)];
+    return rows.length?rows.join(''):`<div class="wl-empty">Nothing on hand.</div>`;
+  };
+  const buyDone=buy.filter(it=>cstate[ckey('cshop',it)]).length;
   const prepDone=prepArr.filter(it=>cstate[ckey('cprep',it)]).length;
   el.innerHTML=`
     <details class="wl-plan-section" open>
-      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping</span><span class="wl-plan-count">${shopDone}/${shopArr.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderMerged(shopArr,'cshop',true)}</div>
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping (to buy)</span><span class="wl-plan-count">${buyDone}/${buy.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderBuy(buy)}</div>
+    </details>
+    <details class="wl-plan-section">
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">🏠</span><span class="wl-plan-title">Already on hand (shared)</span><span class="wl-plan-count">${covered.length+extras.length}</span><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderHave()}</div>
     </details>
     <details class="wl-plan-section" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
