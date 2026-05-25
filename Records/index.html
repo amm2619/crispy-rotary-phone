@@ -991,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v122</div>
+      <div class="mark-v">v123</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1861,11 +1861,21 @@ const WL_WEEK_PLANS={
       {id:'hummus',      section:'Pantry',  icon:'🫘', label:'Hummus — 120g (Tue+Thu)', key:'hummus', baseLabel:'Hummus', qty:{n:120,u:'g'}}
     ],
     prep:[
-      {id:'egg_salad',   when:'Sunday', icon:'🥚', label:'Make Tue egg salad: 4 of the boiled eggs + 1 tbsp mayo + 5g mustard + S&P'},
-      {id:'chop_nuts',   when:'Sunday', icon:'🥜', label:'Chop nuts ahead: 84g almonds + 56g cashews into one container'},
-      {id:'peanut_sauce',when:'Sunday', icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
-      {id:'portion_chx', when:'Sunday', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
-      {id:'bake_salmon', when:'Sat',    icon:'🐟', label:'Bake Saturday salmon fresh — 340g for both (or Fri night, reheat)'}
+      // Sunday batch — pre-make / pre-portion everything that keeps
+      {id:'portion_chx', when:'Sunday', key:'chicken', baseLabel:'Pull & portion chicken — Ash: 113g Wed + 113g Thu (season Thu w/ lemon·oregano·garlic) · Kara: Tue + Wed', icon:'🍗', label:'Portion chicken: 113g Wed + 113g Thu (season Thu w/ lemon/oregano/garlic)'},
+      {id:'egg_salad',   when:'Sunday', icon:'🥚', label:'Make Tue egg salad: 4 boiled eggs + 1 tbsp mayo + 5g mustard + S&P (split wrap/side)'},
+      {id:'chop_nuts',   when:'Sunday', icon:'🥜', label:'Chop nuts: 84g almonds + 56g cashews into one container'},
+      {id:'peanut_sauce',when:'Sunday', icon:'🥄', label:'Mix Wed Thai peanut sauce (PB + soy + lime + ginger + garlic)'},
+      {id:'slaw',        when:'Sunday', icon:'🥬', label:'Shred cabbage + mix Wed slaw (cabbage + cucumber)'},
+      {id:'portion_cot', when:'Sunday', icon:'🥣', label:'Portion cottage cheese ×3 (Tue/Thu/Sat) + ½ cup berries into each'},
+      {id:'portion_yog', when:'Sunday', icon:'🥛', label:'Portion Greek yogurt + berries ×2 (Wed/Fri)'},
+      {id:'portion_hum', when:'Sunday', icon:'🫘', label:'Portion hummus ×2 (Tue 60g + Thu 60g)'},
+      {id:'wash_greens', when:'Sunday', icon:'🥗', label:'Wash + dry greens for Sat salad'},
+      // Mid-week — make fresh so it doesn\'t go soggy
+      {id:'thu_veg',     when:'Wed night', icon:'🥒', label:'Cut Thu raw veg (cucumber + bell pepper + cherry tomato)'},
+      {id:'fri_tuna',    when:'Thu night', icon:'🐟', label:'Mix Fri Buffalo tuna (tuna + mayo + Frank’s) — keeps it fresh'},
+      // Saturday
+      {id:'bake_salmon', when:'Sat', key:'bake_salmon', baseLabel:'Bake 340g salmon for both — Ash plate + Kara salad (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon — Ash 170g plate'}
     ]
   }
 };
@@ -1966,9 +1976,20 @@ const KARA_WEEK_PLANS={
       {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
     ],
     prep:[
+      // Sunday batch
+      {id:'chicken',  when:'Sunday',    key:'chicken', baseLabel:'Pull & portion chicken — Ash: 113g Wed + 113g Thu (season Thu w/ lemon·oregano·garlic) · Kara: Tue + Wed', icon:'🍗', label:'Portion chicken: Tue salad + Wed quinoa bowl'},
       {id:'quinoa',   when:'Sunday',    icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
-      {id:'chicken',  when:'Sunday',    icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
-      {id:'oats',     when:'Tue night', icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
+      {id:'beans',    when:'Sunday',    icon:'🫘', label:'Drain + portion white beans ×3 (Tue/Thu/Sat); black beans (Wed); chickpeas (Fri)'},
+      {id:'nuts_seed',when:'Sunday',    icon:'🥜', label:'Portion walnuts + ground flax for Tue & Fri breakfasts'},
+      {id:'romaine',  when:'Sunday',    icon:'🥬', label:'Wash + chop romaine (Tue/Thu/Sat salads)'},
+      {id:'tue_salad',when:'Sunday',    icon:'🥗', label:'Assemble Tue chicken salad (dress day-of)'},
+      {id:'smoothie', when:'Sunday',    icon:'🧊', label:'Pre-bag Sun smoothie (spinach + frozen berries + chia)'},
+      // Tue night
+      {id:'oats',     when:'Tue night', icon:'🥣', label:'Make overnight oats (for Wed)'},
+      // Wed night
+      {id:'thu_tuna', when:'Wed night', icon:'🐟', label:'Make Thu tuna salad (tuna + olive oil + lemon + celery + dijon + white beans)'},
+      // Saturday
+      {id:'bake_salmon',when:'Sat', key:'bake_salmon', baseLabel:'Bake 340g salmon for both — Ash plate + Kara salad (400°F, 12–14 min)', icon:'🐟', label:'Salmon baked with Ash’s — 170g for the salad'}
     ]
   }
 };
@@ -3811,6 +3832,7 @@ function renderCoord(mon,elId){
       const parts=Object.entries(byU).map(([u,n])=>{const v=Math.round(n*100)/100;return u?`${v} ${u}`:`${v}`;});
       return `${e.baseLabel} — ${parts.join(' + ')}`;
     }
+    if(e.key)return e.baseLabel; // shared keyed task w/o qty (e.g. prep) → use the combined description
     return e.label;
   };
   const ckey=(prefix,it)=>prefix+'_'+slug(it.key||it.label);
