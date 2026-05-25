@@ -991,7 +991,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v124</div>
+      <div class="mark-v">v125</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1313,8 +1313,9 @@ canvas { width:100%!important; height:165px!important; }
    FIREBASE SETUP — config lives in the <script type="module"> above.
    ───────────────────────────────────────────────────────────────
    Data model:
-     users/{uid}/state/main   → single JSON blob (the whole D object)
-   Security rules: see firestore.rules at repo root.
+     households/{HOUSEHOLD_ID}/state/main → single JSON blob (the whole D object),
+       shared by Ash + Kara (each signs in with their own Google account).
+   Security rules: see firestore.rules at repo root (UID allowlist).
 
    Google Calendar sync reuses the OAuth access token returned from the
    Firebase Google-Auth popup. No separate GIS client is needed.
@@ -4222,6 +4223,8 @@ function onFbReady(){
     fbUser=user||null;
     if(user){
       userEmail=user.email||'';
+      // Log the uid so it can be added to the Firestore rules allowlist (households).
+      console.log('Records — signed-in Firebase uid:', user.uid, '('+(user.email||'')+')');
       renderAuthState();
       attachCloudListener(user.uid);
     } else {
@@ -4238,12 +4241,22 @@ if(window.fb){onFbReady();}
 else{window.addEventListener('fb-ready',onFbReady,{once:true});}
 
 // ── Cloud sync (Firestore) ─────────────────────────────────
-// Single-doc model: users/{uid}/state/main holds the full D object under
-// `D`, plus a serverTimestamp `updatedAt`. Later we can shard per-day.
+// Shared household model: both Ash and Kara sign in with their own Google
+// accounts and read/write ONE shared doc at households/{HOUSEHOLD_ID}/state/main.
+// firestore.rules locks that doc to the two allowed uids. (Was users/{uid}/...)
+const HOUSEHOLD_ID='records-ash-kara';
+function cloudDocRef(){const {db,doc}=window.fb;return doc(db,'households',HOUSEHOLD_ID,'state','main');}
+// True when local D actually holds data worth seeding the shared doc with —
+// prevents a fresh/empty account (e.g. Kara's first sign-in) from creating the
+// shared doc and clobbering the other person's data. Ash should open first.
+function hasLocalData(){
+  return (D.days&&Object.keys(D.days).length>0)
+    || (D.weight&&D.weight.weighIns&&Object.keys(D.weight.weighIns).length>0);
+}
 function attachCloudListener(uid){
   const {db,doc,onSnapshot,setDoc,serverTimestamp}=window.fb;
   detachCloudListener();
-  const ref=doc(db,'users',uid,'state','main');
+  const ref=cloudDocRef();
   setSyncState('syncing');
   // Only auto-seed on the very first snapshot event. If the doc is deleted
   // later (e.g. manually via Firebase console), DON'T re-upload — that lets
@@ -4262,7 +4275,13 @@ function attachCloudListener(uid){
         return;
       }
       firstSnapshot=false;
-      // First-time sign-in on this account: seed from local D.
+      // First-time on the shared doc: only seed if this device actually has
+      // data, so an empty account can't create/clobber the shared doc.
+      if(!hasLocalData()){
+        console.warn('Shared doc empty and no local data to seed — waiting for the other device to populate it.');
+        setSyncState('synced');
+        return;
+      }
       setDoc(ref,{D,updatedAt:serverTimestamp()}).catch(e=>{
         console.error('Initial cloud seed failed:',e);setSyncState('error');
       });
@@ -4299,7 +4318,7 @@ async function cloudSave(){
   const {db,doc,setDoc,serverTimestamp}=window.fb;
   setSyncState('syncing');
   try{
-    const ref=doc(db,'users',fbUser.uid,'state','main');
+    const ref=cloudDocRef();
     pendingRemote=JSON.stringify(D);
     await setDoc(ref,{D,updatedAt:serverTimestamp()});
     setSyncState('synced');

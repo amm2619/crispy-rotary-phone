@@ -201,9 +201,10 @@ Day notes use a tag-based system with emoji pills:
 
 ## Cloud Sync (Firestore)
 - **Auth:** Firebase Auth with Google provider (`signInWithPopup`). Same popup requests Calendar scopes, so one sign-in covers identity + Calendar.
-- **Storage:** Firestore single-doc model at `users/{uid}/state/main` holding `{ D, updatedAt }`. Writes are debounced (~1.1s) and queued offline via Firestore's built-in IndexedDB persistence.
-- **Real-time:** `onSnapshot` listener on the user's doc — edits on one device appear on another without manual refresh. `pendingRemote` stringified JSON is used to skip echoing our own writes.
-- **Rules:** `firestore.rules` at repo root — `users/{uid}/**` locked to `request.auth.uid == uid`. Deploy via Firebase console → Firestore → Rules.
+- **Shared household model:** Ash + Kara each sign in with their **own** Google account and read/write ONE shared doc at `households/{HOUSEHOLD_ID}/state/main` (`HOUSEHOLD_ID='records-ash-kara'`, set in `Records/index.html`). Holds `{ D, updatedAt }`. Writes debounced (~1.1s), queued offline via IndexedDB persistence.
+- **Seed guard:** the shared doc only auto-seeds from a device whose local `D` has real data (`hasLocalData()`), so a fresh/empty account can't clobber the shared doc. Ash should open the app first after the cutover.
+- **Real-time:** `onSnapshot` listener on the shared doc — edits on one device appear on the other. `pendingRemote` stringified JSON skips echoing our own writes.
+- **Rules:** `firestore.rules` at repo root — `households/{hid}/**` locked to an explicit UID allowlist (`request.auth.uid in [ASH_UID, KARA_UID]`). **The two UIDs must be filled in and the rules published** (Firebase console → Firestore → Rules). Each user's uid is logged to the browser console on sign-in. Legacy `users/{uid}/**` rule kept for back-compat.
 - **Firebase config:** inline in the `<script type="module">` block at the top of `Records/index.html`. The modular SDK is imported via CDN (`gstatic.com/firebasejs/...`).
 
 ## Google Calendar Sync

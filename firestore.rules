@@ -1,11 +1,31 @@
 rules_version = '2';
 
-// Security rules for Records — each signed-in user can only read/write
-// documents under their own users/{uid}/... subtree. No cross-user access.
+// Security rules for Records.
+//
+// Legacy single-user data lived under users/{uid}/... (kept for back-compat).
+// Ash + Kara now share ONE household document at households/{hid}/state/main.
+// Access to the shared doc is restricted to an explicit allowlist of UIDs.
+//
+// SETUP — fill in the two real Firebase Auth UIDs below, then deploy
+// (Firebase console -> Firestore -> Rules -> Publish):
+//   1. Ash signs in to Records, opens the browser console, copies the line
+//      "Records - signed-in Firebase uid: <uid> (email)".
+//   2. Kara signs in on her device and copies her uid the same way.
+//   3. Replace ASH_UID_HERE and KARA_UID_HERE below with those values.
+//   4. Publish. Ash should open the app first so the shared doc seeds from
+//      his data before Kara connects.
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Per-user private docs (legacy / anything still keyed to a single user).
     match /users/{uid}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Shared household doc - both Ash and Kara read/write the same state.
+    match /households/{hid}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid in ['ASH_UID_HERE', 'KARA_UID_HERE'];
     }
   }
 }
