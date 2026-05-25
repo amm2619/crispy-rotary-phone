@@ -988,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v116</div>
+      <div class="mark-v">v117</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1844,7 +1844,6 @@ const WL_WEEK_PLANS={
       {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 small (½ pint already on hand)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'small'}},
       {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
       {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag (or use the romaine on hand)', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
-      {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       // Seafood
       {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
       // Dairy
@@ -1857,7 +1856,8 @@ const WL_WEEK_PLANS={
       {id:'h_yogurt',    section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (32 oz Oikos + 16 oz Chobani)'},
       {id:'h_cabbage',   section:'Have at home', icon:'🥬', label:'Cabbage ✓ (bag)'},
       {id:'h_cheese',    section:'Have at home', icon:'🧀', label:'Feta + blue cheese ✓ (all cheeses on hand)'},
-      {id:'h_avocado',   section:'Have at home', icon:'🥑', label:'Avocados — check; buy only if under 2'},
+      {id:'h_avocado',   section:'Have at home', icon:'🥑', label:'Avocados ✓ (3 on hand)'},
+      {id:'h_lime',      section:'Have at home', icon:'🍋', label:'Limes ✓ (4 on hand)'},
       {id:'h_hummus',    section:'Have at home', icon:'🫘', label:'Hummus — only ¼ container left; buy 1 if short for Tue+Thu'}
     ],
     prep:[
@@ -1927,12 +1927,10 @@ const KARA_WEEK_PLANS={
       {id:'spinach',  section:'Produce', icon:'🥬', label:'Spinach — 5 oz bag'},
       {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
       {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium (2 roma on hand may cover)', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
-      {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (mixed ripeness)', key:'avocado', baseLabel:'Avocados', qty:{n:3,u:''}},
       {id:'banana',   section:'Produce', icon:'🍌', label:'Bananas — 2'},
       {id:'frozenber',section:'Produce', icon:'🫐', label:'Frozen berries — 1 bag'},
       {id:'freshber', section:'Produce', icon:'🍓', label:'Fresh berries — small container', key:'freshberries', baseLabel:'Fresh berries', qty:{n:6,u:'oz'}},
       {id:'lemon',    section:'Produce', icon:'🍋', label:'Lemons — 2'},
-      {id:'lime',     section:'Produce', icon:'🍋', label:'Lime — 1', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       {id:'cilantro', section:'Produce', icon:'🌿', label:'Cilantro — small bunch'},
       {id:'celery',   section:'Produce', icon:'🥬', label:'Celery — small bunch'},
       // Protein
@@ -1964,7 +1962,9 @@ const KARA_WEEK_PLANS={
       {id:'h_romaine',section:'Have at home', icon:'🥬', label:'Romaine ✓ (3 hearts)'},
       {id:'h_eggs',   section:'Have at home', icon:'🥚', label:'Eggs ✓ (8 already boiled)'},
       {id:'h_yogurt', section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (48 oz on hand)'},
-      {id:'h_feta',   section:'Have at home', icon:'🧀', label:'Feta ✓ (cheeses on hand)'}
+      {id:'h_feta',   section:'Have at home', icon:'🧀', label:'Feta ✓ (cheeses on hand)'},
+      {id:'h_avocado',section:'Have at home', icon:'🥑', label:'Avocados ✓ (3 on hand)'},
+      {id:'h_lime',   section:'Have at home', icon:'🍋', label:'Limes ✓ (4 on hand)'}
     ],
     prep:[
       {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
