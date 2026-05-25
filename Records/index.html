@@ -988,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v113</div>
+      <div class="mark-v">v114</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -3758,6 +3758,9 @@ function renderCoord(mon,elId){
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   const cstate=D.coord.weeks[mon];
   const slug=s=>s.replace(/[^a-z0-9]+/gi,'_').slice(0,48);
+  // Canonical aisle order so both people's items fall under one header per section.
+  const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Other'];
+  const secRank=s=>{const i=SECTION_ORDER.indexOf(s||'Other');return i<0?SECTION_ORDER.length:i;};
   const merge=(aArr,kArr)=>{
     const map=new Map();
     const add=(it,who)=>{
@@ -3766,7 +3769,8 @@ function renderCoord(mon,elId){
       else map.set(key,{section:it.section||'Other',icon:it.icon,label:it.label,who:new Set([who])});
     };
     (aArr||[]).forEach(it=>add(it,'A')); (kArr||[]).forEach(it=>add(it,'K'));
-    return [...map.values()];
+    // Stable-sort by aisle so all produce (etc.) groups under a single header.
+    return [...map.values()].sort((a,b)=>secRank(a.section)-secRank(b.section));
   };
   const renderMerged=(arr,prefix)=>{
     if(!arr.length)return `<div class="wl-empty">Nothing yet.</div>`;
