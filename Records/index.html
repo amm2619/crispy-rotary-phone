@@ -988,7 +988,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v115</div>
+      <div class="mark-v">v116</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1838,29 +1838,31 @@ const WL_WEEK_PLANS={
   '2026-05-25':{
     label:'Week 4 — May 25–31 · Tue–Sat OMAD (small trip — pantry stocked)',
     shopping:[
-      // Produce
+      // Produce — buy
       {id:'berries',     section:'Produce', icon:'🫐', label:'Fresh berries — 2× 6 oz (raspberry/blackberry/blueberry)', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
       {id:'cucumber',    section:'Produce', icon:'🥒', label:'English cucumbers — 2', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
-      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (~340g)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
-      {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 1× 3-pack'},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 small (½ pint already on hand)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'small'}},
       {id:'carrots',     section:'Produce', icon:'🥕', label:'Carrots — small bag'},
-      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
-      {id:'roma',        section:'Produce', icon:'🍅', label:'Roma tomatoes — 2', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 1× 5 oz bag (or use the romaine on hand)', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
       {id:'lime',        section:'Produce', icon:'🍋', label:'Lime — 1 (Wed Thai sauce)', key:'lime', baseLabel:'Limes', qty:{n:1,u:''}},
       // Seafood
       {id:'salmon',      section:'Seafood', icon:'🐟', label:'Atlantic salmon fillet — 1× 170g (Sat)'},
       // Dairy
-      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 1 dozen large', key:'eggs', baseLabel:'Eggs', qty:{n:12,u:''}},
       {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2× 16 oz tubs (latest use-by)', key:'cottage', baseLabel:'Cottage cheese', qty:{n:32,u:'oz'}},
-      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — restock 1× 32 oz if low', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
-      // Check at home
-      {id:'avocado',     section:'Check at home', icon:'🥑', label:'Avocados — only if under 2 left', key:'avocado', baseLabel:'Avocados'},
-      {id:'romaine',     section:'Check at home', icon:'🥬', label:'Romaine hearts — should have from wk 2–3', key:'romaine', baseLabel:'Romaine'}
+      // Have at home — don't buy
+      {id:'h_peppers',   section:'Have at home', icon:'🫑', label:'Bell peppers ✓ (2 orange + 1 red)'},
+      {id:'h_roma',      section:'Have at home', icon:'🍅', label:'Roma tomatoes ✓ (2)'},
+      {id:'h_romaine',   section:'Have at home', icon:'🥬', label:'Romaine ✓ (3 hearts)'},
+      {id:'h_eggs',      section:'Have at home', icon:'🥚', label:'Eggs ✓ (8 already boiled)'},
+      {id:'h_yogurt',    section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (32 oz Oikos + 16 oz Chobani)'},
+      {id:'h_cabbage',   section:'Have at home', icon:'🥬', label:'Cabbage ✓ (bag)'},
+      {id:'h_cheese',    section:'Have at home', icon:'🧀', label:'Feta + blue cheese ✓ (all cheeses on hand)'},
+      {id:'h_avocado',   section:'Have at home', icon:'🥑', label:'Avocados — check; buy only if under 2'},
+      {id:'h_hummus',    section:'Have at home', icon:'🫘', label:'Hummus — only ¼ container left; buy 1 if short for Tue+Thu'}
     ],
     prep:[
-      {id:'hb_eggs',     icon:'🥚', label:'Hard-boil 8 eggs (4 for Tue egg salad + 4 buffer)', key:'hb_eggs', baseLabel:'Hard-boil eggs', qty:{n:8,u:'eggs'}},
+      {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 of the boiled eggs + 1 tbsp mayo + 5g mustard + S&P'},
       {id:'chop_nuts',   icon:'🥜', label:'Chop nuts ahead: 84g almonds + 56g cashews into one container'},
-      {id:'egg_salad',   icon:'🥚', label:'Make Tue egg salad: 4 eggs + 1 tbsp mayo + 5g mustard + S&P'},
       {id:'peanut_sauce',icon:'🥜', label:'Mix Wed Thai peanut sauce: PB + soy + lime + ginger + garlic'},
       {id:'portion_chx', icon:'🍗', label:'Portion home rotisserie chicken: 113g (Wed) + 113g (Thu)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
       {id:'bake_salmon', icon:'🐟', label:'Bake Saturday salmon fresh (or Fri night, reheat)'}
@@ -1922,10 +1924,9 @@ const KARA_WEEK_PLANS={
     label:"Kara — Week of May 25 · Tue–Sun (breakfast + lunch)",
     shopping:[
       // Produce
-      {id:'romaine',  section:'Produce', icon:'🥬', label:'Romaine — 1 head (Tue/Thu/Sat)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
       {id:'spinach',  section:'Produce', icon:'🥬', label:'Spinach — 5 oz bag'},
       {id:'cucumber', section:'Produce', icon:'🥒', label:'Cucumbers — 2 (whole week)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
-      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
+      {id:'tomato',   section:'Produce', icon:'🍅', label:'Tomatoes — 2 medium (2 roma on hand may cover)', key:'tomato', baseLabel:'Tomatoes', qty:{n:2,u:''}},
       {id:'avocado',  section:'Produce', icon:'🥑', label:'Avocados — 3 (mixed ripeness)', key:'avocado', baseLabel:'Avocados', qty:{n:3,u:''}},
       {id:'banana',   section:'Produce', icon:'🍌', label:'Bananas — 2'},
       {id:'frozenber',section:'Produce', icon:'🫐', label:'Frozen berries — 1 bag'},
@@ -1938,11 +1939,7 @@ const KARA_WEEK_PLANS={
       {id:'chicken',  section:'Protein', icon:'🍗', label:'Pulled rotisserie chicken — 1 pkg (~12 oz)'},
       {id:'tuna',     section:'Protein', icon:'🐟', label:'Canned tuna in water — 1'},
       {id:'salmoncan',section:'Protein', icon:'🐟', label:'Canned salmon — 1'},
-      {id:'eggs',     section:'Protein', icon:'🥚', label:'Eggs — ½ dozen', key:'eggs', baseLabel:'Eggs', qty:{n:6,u:''}},
-      {id:'yogurt',   section:'Protein', icon:'🥛', label:'Plain Greek yogurt — 32 oz', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
       {id:'cottage',  section:'Protein', icon:'🥣', label:'Low-fat cottage cheese — 16 oz', key:'cottage', baseLabel:'Cottage cheese', qty:{n:16,u:'oz'}},
-      // Dairy
-      {id:'feta',     section:'Dairy',   icon:'🧀', label:'Feta — small block (light use)'},
       // Bread
       {id:'bread',    section:'Bread',   icon:'🍞', label:'Whole-grain sandwich bread — 1 loaf'},
       // Pantry
@@ -1962,10 +1959,14 @@ const KARA_WEEK_PLANS={
       {id:'olives',   section:'Pantry',  icon:'🫒', label:'Olives'},
       {id:'evrything',section:'Pantry',  icon:'🧂', label:'Everything bagel seasoning'},
       {id:'cinnamon', section:'Pantry',  icon:'🧂', label:'Cinnamon'},
-      {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'}
+      {id:'crackers', section:'Pantry',  icon:'🍘', label:'Whole-grain crackers'},
+      // Have at home — don't buy
+      {id:'h_romaine',section:'Have at home', icon:'🥬', label:'Romaine ✓ (3 hearts)'},
+      {id:'h_eggs',   section:'Have at home', icon:'🥚', label:'Eggs ✓ (8 already boiled)'},
+      {id:'h_yogurt', section:'Have at home', icon:'🥛', label:'Greek yogurt ✓ (48 oz on hand)'},
+      {id:'h_feta',   section:'Have at home', icon:'🧀', label:'Feta ✓ (cheeses on hand)'}
     ],
     prep:[
-      {id:'hb_eggs',  icon:'🥚', label:'Hard-boil 4 eggs (covers Thu + Sun lunch)', key:'hb_eggs', baseLabel:'Hard-boil eggs', qty:{n:4,u:'eggs'}},
       {id:'quinoa',   icon:'🌾', label:'Cook 1 batch quinoa (covers Wed + Fri)'},
       {id:'chicken',  icon:'🍗', label:'Pulled chicken handles Tue + Wed (finishes by Wed)', key:'chicken', baseLabel:'Pull & portion rotisserie chicken (shared)'},
       {id:'oats',     icon:'🥣', label:'Make overnight oats Tue night (for Wed)'}
@@ -3759,7 +3760,7 @@ function renderCoord(mon,elId){
   const cstate=D.coord.weeks[mon];
   const slug=s=>s.replace(/[^a-z0-9]+/gi,'_').slice(0,48);
   // Canonical aisle order so both people's items fall under one header per section.
-  const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Other'];
+  const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Have at home','Other'];
   const secRank=s=>{const i=SECTION_ORDER.indexOf(s||'Other');return i<0?SECTION_ORDER.length:i;};
   // Items sharing a canonical `key` collapse into one line; quantities sum by unit.
   const merge=(aArr,kArr)=>{
