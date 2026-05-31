@@ -969,6 +969,10 @@ canvas { width:100%!important; height:165px!important; }
 .g-email { font-size:12px; color:var(--t3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .g-signout { background:none; border:none; color:var(--t3); cursor:pointer; font-size:14px; padding:2px 4px; border-radius:4px; transition:color 0.15s; line-height:1; }
 .g-signout:hover { color:var(--red); }
+.mob-meta-row { display:flex; align-items:center; justify-content:space-between; padding:6px 16px 4px; border-bottom:1px solid var(--bdr); }
+.mob-ver { font-size:10px; font-weight:600; color:var(--t3); letter-spacing:0.5px; }
+.mob-signin-btn { background:var(--accD); border:1px solid var(--accB); border-radius:var(--rs); color:var(--acc); font-size:11px; font-weight:600; padding:4px 10px; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.mob-signin-btn:hover { background:var(--accB); }
 .dot.syncing { animation:pulse 1s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
 .dc-cal-ev { font-size:10px; color:var(--sky); margin-top:2px; line-height:1.3; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
@@ -997,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v135</div>
+      <div class="mark-v">v136</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1282,6 +1286,10 @@ canvas { width:100%!important; height:165px!important; }
 
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
+  <div class="mob-meta-row">
+    <span class="mob-ver">Records v136</span>
+    <div id="mobAuthRow"></div>
+  </div>
   <div class="mobile-nav-inner">
     <button class="mob-nav-btn on" data-tab="week" onclick="showTab('week');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -4458,14 +4466,17 @@ function setSyncState(state){
 
 function renderAuthState(){
   const el=document.getElementById('authRow');
-  if(!el)return;
+  const mob=document.getElementById('mobAuthRow');
   if(fbUser&&userEmail){
     const initial=userEmail.charAt(0).toUpperCase();
-    el.innerHTML=`<div class="g-chip"><div class="g-avatar">${initial}</div><div class="g-email" title="${userEmail}">${userEmail}</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
+    if(el)el.innerHTML=`<div class="g-chip"><div class="g-avatar">${initial}</div><div class="g-email" title="${userEmail}">${userEmail}</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
+    if(mob)mob.innerHTML=`<div class="g-chip"><div class="g-avatar">${initial}</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
   } else if(fbUser){
-    el.innerHTML=`<div class="g-chip"><div class="g-avatar">G</div><div class="g-email">Connected</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
+    if(el)el.innerHTML=`<div class="g-chip"><div class="g-avatar">G</div><div class="g-email">Connected</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
+    if(mob)mob.innerHTML=`<div class="g-chip"><div class="g-avatar">G</div><button class="g-signout" onclick="signOut()" title="Sign out">↩</button></div>`;
   } else {
-    el.innerHTML=`<button class="g-connect-btn" onclick="signIn()">Connect Google</button>`;
+    if(el)el.innerHTML=`<button class="g-connect-btn" onclick="signIn()">Connect Google</button>`;
+    if(mob)mob.innerHTML=`<button class="mob-signin-btn" onclick="signIn()">Sign in</button>`;
   }
   // Show/hide cal sync button — requires a Calendar access token, not just Firebase auth.
   const csb=document.getElementById('calSyncBtn');
