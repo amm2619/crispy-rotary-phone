@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v136</div>
+      <div class="mark-v">v137</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v136</span>
+    <span class="mob-ver">Records v137</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -3180,6 +3180,7 @@ function showTab(id){
   if(id==='settings')renderSettings();
   if(id==='wl')renderWeightLoss();
   if(id==='kara')renderKara();
+  D.settings.lastTab=id; sched();
 }
 
 // ── Location toggle ────────────────────────────────────────
@@ -3896,14 +3897,14 @@ function wlChangeWeek(dir){
 }
 function wlJumpToNow(){wlViewMon=thisMonday();renderWeightLoss();}
 function wlToggleAllTargets(){wlShowAllTargets=!wlShowAllTargets;renderWeightLoss();}
-function wlSetView(v){wlView=v;renderWeightLoss();}
+function wlSetView(v){wlView=v;D.settings.wlView=v;sched();renderWeightLoss();}
 function karaChangeWeek(dir){
   const cand=addDays(karaViewMon,dir*7);
   if(cand<'2026-05-04'||cand>'2027-01-04')return;
   karaViewMon=cand; renderKara();
 }
 function karaJumpToNow(){karaViewMon=thisMonday();renderKara();}
-function karaSetView(v){karaView=v;renderKara();}
+function karaSetView(v){karaView=v;D.settings.karaView=v;sched();renderKara();}
 
 // ── Shared status helper (Ash weight tracking) ──
 function wlStatus(){
@@ -5081,7 +5082,11 @@ function removeNoteTag(idx){
 // ── Boot ───────────────────────────────────────────────────
 applyTheme(D.settings.theme||'amber');
 applyFontSize(D.settings.fontSize||'normal');
+wlView=D.settings.wlView||'today';
+karaView=D.settings.karaView||'today';
 renderWeek();
+const _lastTab=D.settings.lastTab||'week';
+if(_lastTab!=='week')showTab(_lastTab);
 applySidebarState();
 initMobile();
 renderAuthState(); // show "Connect Google" button immediately (updated again on auth state change)
