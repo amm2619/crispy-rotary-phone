@@ -4122,8 +4122,7 @@ function renderWeightLoss(){
     panel.innerHTML=`<div id="wlToday"></div>`;
     renderWLToday('ash','wlToday');
   }else if(wlView==='week'){
-    panel.innerHTML=wlWeekNavHTML('ash',"This week")+`<div id="wlWeekBanner"></div><div id="wlWeekDays" class="wl-day-list"></div>`;
-    renderWLBanner(wlViewMon,'wlWeekBanner');
+    panel.innerHTML=wlWeekNavHTML('ash',"This week")+`<div id="wlWeekDays" class="wl-day-list"></div>`;
     renderWLDays('ash',wlViewMon,'wlWeekDays');
   }else{
     panel.innerHTML=`<div class="wl-hero" id="wlHero"></div>
