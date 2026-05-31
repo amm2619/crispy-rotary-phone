@@ -997,7 +997,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v134</div>
+      <div class="mark-v">v135</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1967,6 +1967,7 @@ const WL_WEEK_PLANS={
       {id:'peppers',    section:'Produce', icon:'🫑', label:'Bell pepper — 1', key:'peppers', baseLabel:'Bell peppers', qty:{n:1,u:''}},
       {id:'dill',       section:'Produce', icon:'🌿', label:'Fresh dill — small bunch'},
       {id:'ginger',     section:'Produce', icon:'🫚', label:'Fresh ginger — small knob'},
+      {id:'lemon',      section:'Produce', icon:'🍋', label:'Lemons — 2'},
       {id:'greens',     section:'Produce', icon:'🥬', label:'Mixed greens — 2 bags', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
       {id:'orange',     section:'Produce', icon:'🍊', label:'Orange — 1'},
       {id:'berries',    section:'Produce', icon:'🫐', label:'Raspberries + berries — 2 containers', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
@@ -1985,10 +1986,16 @@ const WL_WEEK_PLANS={
       {id:'almonds',    section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~112g for the week)'},
       {id:'tuna',       section:'Pantry',  icon:'🐟', label:'Tuna — 1 can (Kara has 2 on hand)', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
       {id:'whitebean',  section:'Pantry',  icon:'🫘', label:'White beans — 1 can (Kara has 1 on hand)', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
-      {id:'soy',        section:'Pantry',  icon:'🍶', label:'Soy sauce — check pantry'},
-      {id:'sesame',     section:'Pantry',  icon:'🫙', label:'Sesame oil — check pantry'},
-      {id:'honey',      section:'Pantry',  icon:'🍯', label:'Honey — check pantry'},
-      {id:'dijon',      section:'Pantry',  icon:'🟡', label:'Dijon mustard — check pantry'}
+      {id:'soy',        section:'Pantry',  icon:'🍶', label:'Soy sauce', checked:true},
+      {id:'sesame',     section:'Pantry',  icon:'🫙', label:'Sesame oil', checked:true},
+      {id:'honey',      section:'Pantry',  icon:'🍯', label:'Honey', checked:true},
+      {id:'dijon',      section:'Pantry',  icon:'🟡', label:'Dijon mustard', checked:true},
+      {id:'garlic',     section:'Pantry',  icon:'🧄', label:'Garlic — fresh head', checked:true},
+      {id:'oregano',    section:'Pantry',  icon:'🫙', label:'Dried oregano', checked:true},
+      {id:'thyme',      section:'Pantry',  icon:'🫙', label:'Dried thyme', checked:true},
+      {id:'cumin',      section:'Pantry',  icon:'🫙', label:'Ground cumin', checked:true},
+      {id:'chili_pwd',  section:'Pantry',  icon:'🌶️', label:'Chili powder', checked:true},
+      {id:'oliveoil',   section:'Pantry',  icon:'🫙', label:'Olive oil', checked:true}
     ],
     prep:[
       {id:'portion_chx',when:'Sunday', icon:'🍗', label:'Season + portion chicken — Ash Mon (oregano+garlic+lemon) + Wed (honey-dijon); Kara Mon + Wed plain'},
@@ -4117,6 +4124,9 @@ function renderCoord(mon,elId){
   if(!D.coord)D.coord={weeks:{}};
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   const cstate=D.coord.weeks[mon];
+  for(const it of [...(aPlan?.shopping||[]),...(kPlan?.shopping||[])]){
+    if(it.checked){const k=coordCkey('cshop',it);if(!(k in cstate))cstate[k]=true;}
+  }
   const ckey=coordCkey;
   // Canonical aisle order so both people's items fall under one header per section.
   const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Have at home','Other'];
