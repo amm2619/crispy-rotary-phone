@@ -436,6 +436,8 @@ canvas { width:100%!important; height:165px!important; }
 .coord-who.K { background:var(--skyD); color:var(--sky); }
 .coord-who.AK { background:var(--grnD); color:var(--grn); }
 .coord-note { display:block; font-size:10px; color:var(--t3); font-weight:500; margin-top:2px; }
+.coord-copy-btn { font-size:11px; font-weight:600; padding:2px 8px; border:1px solid var(--bdr2); border-radius:10px; background:var(--sur3); color:var(--t3); cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.12s; flex-shrink:0; }
+.coord-copy-btn:hover { color:var(--acc); border-color:var(--acc); }
 .wl-plan-item.have { cursor:default; opacity:0.72; }
 .wl-plan-item.have:hover { border-color:var(--bdr); }
 .wl-day-list { display:flex; flex-direction:column; gap:6px; }
@@ -995,7 +997,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v130</div>
+      <div class="mark-v">v131</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -2407,6 +2409,49 @@ let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', sa
 let wlViewMon=thisMonday(), wlShowAllTargets=false, wlView='today';
 let karaViewMon=thisMonday(), karaView='today';
 let coordUiState={};
+let coordBuyCache=null; // {mon, buy} for partial shopping re-render
+const coordSlug=s=>s.replace(/[^a-z0-9]+/gi,'_').slice(0,48);
+function coordCkey(prefix,it){return prefix+'_'+coordSlug(it.key||it.label);}
+function renderBuyHTML(buy,cstate,mon){
+  if(!buy.length)return `<div class="wl-empty">Nothing to buy — all covered by what's on hand!</div>`;
+  const unchecked=buy.filter(it=>!cstate[coordCkey('cshop',it)]);
+  const checked=buy.filter(it=>!!cstate[coordCkey('cshop',it)]);
+  let out='';
+  if(unchecked.length){
+    let lastSec=null;
+    for(const it of unchecked){
+      if(it.section!==lastSec){out+=`<div class="wl-plan-section-hdr">${it.section}</div>`;lastSec=it.section;}
+      const k=coordCkey('cshop',it);
+      const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
+      const note=it.note?`<span class="coord-note">${it.note}</span>`:'';
+      out+=`<div class="wl-plan-item" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}${note}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
+    }
+  }else{
+    out+=`<div class="wl-empty" style="padding:6px 9px">All done! 🎉</div>`;
+  }
+  if(checked.length){
+    out+=`<div class="wl-plan-section-hdr">Done ✓</div>`;
+    for(const it of checked){
+      const k=coordCkey('cshop',it);
+      const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
+      out+=`<div class="wl-plan-item on" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
+    }
+  }
+  return out;
+}
+function coordCopyList(mon,e){
+  e.stopPropagation();
+  if(!coordBuyCache||coordBuyCache.mon!==mon)return;
+  const cstate=D.coord?.weeks[mon]||{};
+  const unchecked=coordBuyCache.buy.filter(it=>!cstate[coordCkey('cshop',it)]);
+  const text=unchecked.map(it=>`${it.icon} ${it.disp}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=e.currentTarget;
+    const orig=btn.textContent;
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent=orig;},1500);
+  });
+}
 
 // ── Sidebar collapse ───────────────────────────────────────
 let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
@@ -3810,18 +3855,30 @@ function coordToggle(mon,key){
   // survives natively. Fall back to full re-render only if the coord container is gone.
   const root=document.getElementById('karaCoord');
   if(!root||karaView!=='coord'){renderKara();return;}
-  const now=!!D.coord.weeks[mon][key];
-  root.querySelectorAll('.wl-plan-item').forEach(el=>{
-    const oc=el.getAttribute('onclick')||'';
-    if(oc.includes(`'${key}'`))el.classList.toggle('on',now);
-  });
-  root.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{
-    const cnt=d.querySelector('.wl-plan-count'), body=d.querySelector('.wl-plan-body');
-    if(!cnt||!body)return;
-    const total=body.querySelectorAll('.wl-plan-item').length;
-    const done=body.querySelectorAll('.wl-plan-item.on').length;
-    cnt.textContent=`${done}/${total}`;
-  });
+  if(key.startsWith('cshop_')&&coordBuyCache&&coordBuyCache.mon===mon){
+    // Re-render shopping body so checked items sink to the Done section
+    const bodyEl=root.querySelector('details[data-skey="shopping"] .wl-plan-body');
+    const cntEl=root.querySelector('details[data-skey="shopping"] .wl-plan-count');
+    if(bodyEl){
+      const cstate=D.coord.weeks[mon]||{};
+      bodyEl.innerHTML=renderBuyHTML(coordBuyCache.buy,cstate,mon);
+      if(cntEl){const done=coordBuyCache.buy.filter(it=>cstate[coordCkey('cshop',it)]).length;cntEl.textContent=`${done}/${coordBuyCache.buy.length}`;}
+    }
+  }else{
+    // Minimal update for prep items — no reordering needed
+    const now=!!D.coord.weeks[mon][key];
+    root.querySelectorAll('.wl-plan-item').forEach(el=>{
+      const oc=el.getAttribute('onclick')||'';
+      if(oc.includes(`'${key}'`))el.classList.toggle('on',now);
+    });
+    root.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{
+      const cnt=d.querySelector('.wl-plan-count'),body=d.querySelector('.wl-plan-body');
+      if(!cnt||!body)return;
+      const total=body.querySelectorAll('.wl-plan-item').length;
+      const done=body.querySelectorAll('.wl-plan-item.on').length;
+      cnt.textContent=`${done}/${total}`;
+    });
+  }
 }
 function wlChangeWeek(dir){
   const cand=addDays(wlViewMon,dir*7);
@@ -4066,7 +4123,7 @@ function renderCoord(mon,elId){
   if(!D.coord)D.coord={weeks:{}};
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   const cstate=D.coord.weeks[mon];
-  const slug=s=>s.replace(/[^a-z0-9]+/gi,'_').slice(0,48);
+  const ckey=coordCkey;
   // Canonical aisle order so both people's items fall under one header per section.
   const SECTION_ORDER=['Produce','Deli','Seafood','Meat','Protein','Dairy','Bread','Bakery','Frozen','Pantry','Check at home','Have at home','Other'];
   const secRank=s=>{const i=SECTION_ORDER.indexOf(s||'Other');return i<0?SECTION_ORDER.length:i;};
@@ -4139,26 +4196,13 @@ function renderCoord(mon,elId){
       covered.push({...e, disp:`${e.baseLabel} — covered (have ${oh.label})`});
     }
   }
-  const neededKeys=new Set(shopArr.map(e=>e.key).filter(Boolean));
-  const extras=(WL_ONHAND[mon]||[]).filter(it=>!neededKeys.has(it.key));
-  const renderBuy=arr=>{
-    if(!arr.length)return `<div class="wl-empty">Nothing to buy — all covered by what's on hand!</div>`;
-    let out='', lastSec=null;
-    for(const it of arr){
-      if(it.section!==lastSec){ out+=`<div class="wl-plan-section-hdr">${it.section}</div>`; lastSec=it.section; }
-      const k=ckey('cshop',it), on=!!cstate[k];
-      const who=it.who.has('A')&&it.who.has('K')?'AK':(it.who.has('A')?'A':'K');
-      const note=it.note?`<span class="coord-note">${it.note}</span>`:'';
-      out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}${note}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
-    }
-    return out;
-  };
+  coordBuyCache={mon,buy};
   const buyDone=buy.filter(it=>cstate[ckey('cshop',it)]).length;
   const prepDone=prepArr.filter(it=>cstate[ckey('cprep',it)]).length;
   el.innerHTML=`
     <details class="wl-plan-section" data-skey="shopping" open>
-      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping (to buy)</span><span class="wl-plan-count">${buyDone}/${buy.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderBuy(buy)}</div>
+      <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Shopping</span><span class="wl-plan-count">${buyDone}/${buy.length}</span><button class="coord-copy-btn" onclick="coordCopyList('${mon}',event)">Copy</button><span class="wl-day-caret">▾</span></summary>
+      <div class="wl-plan-body">${renderBuyHTML(buy,cstate,mon)}</div>
     </details>
     <details class="wl-plan-section" data-skey="prep" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep timeline</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
