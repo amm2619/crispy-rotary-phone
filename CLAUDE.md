@@ -3,6 +3,9 @@
 ## What This Is
 A single-file HTML timekeeping app for a federal contractor (Nightwing). Tracks work sessions, comp time, leave, and holidays against a biweekly pay period target. Dark warm-amber aesthetic (Inter + Playfair Display). No external dependencies except Google Fonts.
 
+## Git
+- **Always push directly to `main`** — no feature branches, no PRs for this repo.
+
 ## File Locations
 - App: `Records/index.html` (single canonical file — no more `records_vN.html` copies)
 - Root redirect: `index.html` (redirects to `Records/` for GitHub Pages)
