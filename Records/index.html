@@ -62,6 +62,9 @@
 .mi-xs { font-size:12px; }
 html { height:100%; }
 body { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; line-height:1.5; background:var(--bg); color:var(--t1); height:100vh; height:100dvh; overflow:hidden; }
+body.font-small  { zoom:0.9; }
+body.font-large  { zoom:1.12; }
+body.font-xlarge { zoom:1.25; }
 
 /* Shell — locks to viewport; internal .body scrolls if content overflows */
 .shell { display:flex; height:100vh; height:100dvh; }
@@ -992,7 +995,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v129</div>
+      <div class="mark-v">v130</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1223,6 +1226,19 @@ canvas { width:100%!important; height:165px!important; }
         <div class="s-group">
           <div class="s-title">Theme</div>
           <div class="theme-picker" id="themePicker"></div>
+        </div>
+        <div class="s-group">
+          <div class="s-title">Font Size</div>
+          <div class="s-row">
+            <div class="s-field"><div class="s-label">Display size</div>
+              <select class="s-inp" id="sFont" onchange="applyFontSize(this.value);sched();">
+                <option value="small">Small</option>
+                <option value="normal">Normal</option>
+                <option value="large">Large</option>
+                <option value="xlarge">Extra Large</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="s-group">
           <div class="s-title">Pay Period</div>
@@ -1796,7 +1812,10 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥛', label:'120g nonfat Greek yogurt, 60g raspberries, 28g almonds'},
       {icon:'🧀', label:'1 string cheese'}
     ]
-  }
+  },
+  '2026-06-05':{skip:true}, // Fri — out of town
+  '2026-06-06':{skip:true}, // Sat — out of town
+  '2026-06-07':{skip:true}  // Sun — out of town
 };
 
 // Per-week shopping lists and prep checklists, keyed by Monday date.
@@ -1938,50 +1957,50 @@ const WL_WEEK_PLANS={
     label:'Week 5 — Jun 1–4 · Mon–Thu only (out of town Fri+)',
     shopping:[
       // Produce
-      {id:'zucchini',   section:'Produce', icon:'🥒', label:'Zucchini — 1 medium (Wed roasted)'},
-      {id:'broccoli',   section:'Produce', icon:'🥦', label:'Broccoli — 1 crown (Tue)'},
-      {id:'snapeas',    section:'Produce', icon:'🫛', label:'Snap peas — 1 small bag (Tue)'},
-      {id:'cherry_tom', section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint (Mon+Thu + Kara Tue)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
-      {id:'cucumber',   section:'Produce', icon:'🥒', label:'English cucumbers — 2 (Mon tzatziki 50g + Thu plate 100g + Kara Tue)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
-      {id:'peppers',    section:'Produce', icon:'🫑', label:'Bell pepper — 1 (Wed roasted)', key:'peppers', baseLabel:'Bell peppers', qty:{n:1,u:''}},
-      {id:'dill',       section:'Produce', icon:'🌿', label:'Fresh dill — small bunch (Mon tzatziki)'},
-      {id:'ginger',     section:'Produce', icon:'🫚', label:'Fresh ginger — small knob (Tue soy glaze)'},
-      {id:'greens',     section:'Produce', icon:'🥬', label:'Mixed greens — 5 oz (Mon + Kara Tue+Thu)', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
-      {id:'grapes',     section:'Produce', icon:'🍇', label:'Grapes — 150g (Mon side)', key:'grapes', baseLabel:'Grapes', qty:{n:150,u:'g'}},
-      {id:'orange',     section:'Produce', icon:'🍊', label:'Orange — 1 (Wed side)'},
-      {id:'berries',    section:'Produce', icon:'🫐', label:'Raspberries + berries — 2× 6 oz (Mon/Tue/Wed/Thu sides)', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
-      {id:'avocado',    section:'Produce', icon:'🥑', label:'Avocados — 2 (Kara Mon–Thu)', key:'avocado', baseLabel:'Avocados', qty:{n:0,u:''}},
-      {id:'lime',       section:'Produce', icon:'🍋', label:'Limes — 4 (Kara all days)', key:'lime', baseLabel:'Limes', qty:{n:0,u:''}},
-      {id:'cilantro',   section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch (Kara all days)'},
+      {id:'zucchini',   section:'Produce', icon:'🥒', label:'Zucchini — 1 medium'},
+      {id:'broccoli',   section:'Produce', icon:'🥦', label:'Broccoli — 1 crown'},
+      {id:'snapeas',    section:'Produce', icon:'🫛', label:'Snap peas — 1 small bag'},
+      {id:'cherry_tom', section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
+      {id:'cucumber',   section:'Produce', icon:'🥒', label:'English cucumbers — 2', key:'cucumber', baseLabel:'Cucumbers', qty:{n:2,u:''}},
+      {id:'peppers',    section:'Produce', icon:'🫑', label:'Bell pepper — 1', key:'peppers', baseLabel:'Bell peppers', qty:{n:1,u:''}},
+      {id:'dill',       section:'Produce', icon:'🌿', label:'Fresh dill — small bunch'},
+      {id:'ginger',     section:'Produce', icon:'🫚', label:'Fresh ginger — small knob'},
+      {id:'greens',     section:'Produce', icon:'🥬', label:'Mixed greens — 1 bag', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
+      {id:'grapes',     section:'Produce', icon:'🍇', label:'Grapes — small bunch', key:'grapes', baseLabel:'Grapes', qty:{n:150,u:'g'}},
+      {id:'orange',     section:'Produce', icon:'🍊', label:'Orange — 1'},
+      {id:'berries',    section:'Produce', icon:'🫐', label:'Raspberries + berries — 2 containers', key:'freshberries', baseLabel:'Fresh berries', qty:{n:12,u:'oz'}},
+      {id:'avocado',    section:'Produce', icon:'🥑', label:'Avocados — 2', key:'avocado', baseLabel:'Avocados', qty:{n:0,u:''}},
+      {id:'lime',       section:'Produce', icon:'🍋', label:'Limes — 4', key:'lime', baseLabel:'Limes', qty:{n:0,u:''}},
+      {id:'cilantro',   section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch'},
       // Deli / Seafood
-      {id:'chicken',    section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — ~680g / 1.5 lbs (Ash Mon 140g + Wed 140g + Kara Mon 150g + Wed 150g)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:280,u:'g'}},
-      {id:'salmon',     section:'Seafood', icon:'🐟', label:'Salmon fillet — 170g (Tue, on hand)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
+      {id:'chicken',    section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 1 (1.5 lb)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:280,u:'g'}},
+      {id:'salmon',     section:'Seafood', icon:'🐟', label:'Salmon fillet — 1 (on hand)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
       // Dairy
-      {id:'eggs',       section:'Dairy',   icon:'🥚', label:'Eggs — 4 (Wed 2 HB + Thu 2 HB)', key:'eggs', baseLabel:'Eggs', qty:{n:4,u:''}},
-      {id:'cottage',    section:'Dairy',   icon:'🥣', label:'Cottage cheese — 1× 24 oz (Mon/Tue/Wed sides)'},
-      {id:'yogurt',     section:'Dairy',   icon:'🥛', label:'Greek yogurt — 1× 32 oz (Mon tzatziki + Thu side + Kara)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
-      {id:'feta',       section:'Dairy',   icon:'🧀', label:'Crumbled feta — 4 oz / 113g (Ash Mon+Thu + Kara Wed+Thu)', key:'feta', baseLabel:'Feta', qty:{n:113,u:'g'}},
-      {id:'string_chz', section:'Dairy',   icon:'🧀', label:'String cheese — 4 (Mon–Thu)'},
+      {id:'eggs',       section:'Dairy',   icon:'🥚', label:'Eggs — 1 carton', key:'eggs', baseLabel:'Eggs', qty:{n:4,u:''}},
+      {id:'cottage',    section:'Dairy',   icon:'🥣', label:'Cottage cheese — 1 tub'},
+      {id:'yogurt',     section:'Dairy',   icon:'🥛', label:'Greek yogurt — 1 large tub', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
+      {id:'feta',       section:'Dairy',   icon:'🧀', label:'Crumbled feta — 1 container', key:'feta', baseLabel:'Feta', qty:{n:113,u:'g'}},
+      {id:'string_chz', section:'Dairy',   icon:'🧀', label:'String cheese — 4'},
       // Pantry
-      {id:'edamame',    section:'Pantry',  icon:'🫛', label:'Frozen shelled edamame — 1 bag (Tue)'},
-      {id:'olives',     section:'Pantry',  icon:'🫒', label:'Kalamata olives — small jar (Mon)', key:'olives', baseLabel:'Olives', qty:{n:30,u:'g'}},
-      {id:'almonds',    section:'Pantry',  icon:'🥜', label:'Almonds — 3 oz (Tue/Wed/Thu sides)'},
-      {id:'cashews',    section:'Pantry',  icon:'🥜', label:'Cashews — 1 oz (Mon side)'},
-      {id:'tuna',       section:'Pantry',  icon:'🐟', label:'Tuna — 1 can (Thu, check Kara pantry 2 cans on hand)', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
-      {id:'whitebean',  section:'Pantry',  icon:'🫘', label:'White beans — 90g (Thu smashed, from Kara pantry can)', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
-      {id:'soy',        section:'Pantry',  icon:'🍶', label:'Soy sauce (Tue glaze — check if on hand)'},
-      {id:'sesame',     section:'Pantry',  icon:'🫙', label:'Sesame oil (Tue glaze — check if on hand)'},
-      {id:'honey',      section:'Pantry',  icon:'🍯', label:'Honey (Wed glaze — check if on hand)'},
-      {id:'dijon',      section:'Pantry',  icon:'🟡', label:'Dijon mustard (Wed glaze — check if on hand)'},
-      {id:'corn_k',     section:'Pantry',  icon:'🌽', label:'Frozen corn — small bag (Kara Mon burrito bowl)'}
+      {id:'edamame',    section:'Pantry',  icon:'🫛', label:'Frozen shelled edamame — 1 bag'},
+      {id:'olives',     section:'Pantry',  icon:'🫒', label:'Kalamata olives — small jar', key:'olives', baseLabel:'Olives', qty:{n:30,u:'g'}},
+      {id:'almonds',    section:'Pantry',  icon:'🥜', label:'Almonds — small bag'},
+      {id:'cashews',    section:'Pantry',  icon:'🥜', label:'Cashews — small bag'},
+      {id:'tuna',       section:'Pantry',  icon:'🐟', label:'Tuna — 1 can (Kara has 2 on hand)', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
+      {id:'whitebean',  section:'Pantry',  icon:'🫘', label:'White beans — 1 can (Kara has 1 on hand)', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
+      {id:'soy',        section:'Pantry',  icon:'🍶', label:'Soy sauce — check pantry'},
+      {id:'sesame',     section:'Pantry',  icon:'🫙', label:'Sesame oil — check pantry'},
+      {id:'honey',      section:'Pantry',  icon:'🍯', label:'Honey — check pantry'},
+      {id:'dijon',      section:'Pantry',  icon:'🟡', label:'Dijon mustard — check pantry'},
+      {id:'corn_k',     section:'Pantry',  icon:'🌽', label:'Frozen corn — small bag'}
     ],
     prep:[
-      {id:'portion_chx',when:'Sunday', icon:'🍗', label:'Season + portion chicken: Mon 140g (oregano+garlic+lemon) + Wed 140g (honey-dijon blend); Kara Mon 150g + Wed 150g plain'},
-      {id:'hb_eggs',    when:'Sunday', icon:'🥚', label:'Hard-boil 4 eggs (Wed 2 + Thu 2) — store in shell in fridge'},
-      {id:'tzatziki',   when:'Sunday', icon:'🥛', label:'Make Mon tzatziki: ½ cup Greek yogurt + 50g grated squeezed cucumber + dill + garlic + lemon — store covered'},
+      {id:'portion_chx',when:'Sunday', icon:'🍗', label:'Season + portion chicken — Ash Mon (oregano+garlic+lemon) + Wed (honey-dijon); Kara Mon + Wed plain'},
+      {id:'hb_eggs',    when:'Sunday', icon:'🥚', label:'Hard-boil 4 eggs (Wed + Thu) — store in shell in fridge'},
+      {id:'tzatziki',   when:'Sunday', icon:'🥛', label:'Make Mon tzatziki: Greek yogurt + grated squeezed cucumber + dill + garlic + lemon — store covered'},
       {id:'portion_cot',when:'Sunday', icon:'🥣', label:'Portion cottage cheese ×3 (Mon/Tue/Wed) + berries into each'},
-      {id:'quinoa_k',   when:'Sunday', icon:'🌾', label:'Cook Kara quinoa batch: ~120g dry → ~360g cooked (Mon 140g + Tue 100g + Thu 100g)'},
-      {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake 340g salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake Ash + Kara salmon together Tue (170g each) — Ash: soy-ginger · Kara: lime+cilantro+garlic'},
+      {id:'quinoa_k',   when:'Sunday', icon:'🌾', label:"Cook Kara's quinoa batch for the week (~1 cup dry)"},
+      {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake Ash + Kara salmon together Tue — Ash: soy-ginger · Kara: lime+cilantro+garlic'},
       {id:'wed_veg',    when:'Wednesday', icon:'🥒', label:'Roast zucchini + bell pepper fresh Wed (400°F, 20 min) — quick, skip ahead'},
       {id:'thu_beans',  when:'Thursday', icon:'🐟', label:'Thu morning: smash white beans w/ olive oil + garlic + lemon, toss with tuna'}
     ]
@@ -2147,33 +2166,33 @@ const KARA_WEEK_PLANS={
     label:"Kara — Week of Jun 1 · Mon–Thu (lunch only)",
     shopping:[
       // Produce
-      {id:'avocado',   section:'Produce', icon:'🥑', label:'Avocados — 2 (Mon ¼ + Tue ½ + Wed ¼ + Thu ¼)', key:'avocado', baseLabel:'Avocados', qty:{n:2,u:''}},
-      {id:'lime',      section:'Produce', icon:'🍋', label:'Limes — 4 (Mon+Tue+Wed+Thu)', key:'lime', baseLabel:'Limes', qty:{n:4,u:''}},
-      {id:'cilantro',  section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch (all days)'},
-      {id:'cucumber',  section:'Produce', icon:'🥒', label:'Cucumber — 1 (Tue bowl)', key:'cucumber', baseLabel:'Cucumbers', qty:{n:1,u:''}},
-      {id:'romaine',   section:'Produce', icon:'🥬', label:'Romaine — 1 head (Wed tostada)', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
-      {id:'greens',    section:'Produce', icon:'🥬', label:'Mixed greens — 5 oz (Tue+Thu)', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
-      {id:'tomato',    section:'Produce', icon:'🍅', label:'Tomato — 1 medium (Wed diced)'},
-      {id:'cherry_tom',section:'Produce', icon:'🍅', label:'Cherry tomatoes — ½ pint (Tue bowl)', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:0.5,u:'pint'}},
-      {id:'corn',      section:'Produce', icon:'🌽', label:'Frozen corn — small bag (Mon)'},
-      {id:'pico',      section:'Produce', icon:'🍅', label:'Pico de gallo — fresh tub ~150g (Mon–Thu)'},
+      {id:'avocado',   section:'Produce', icon:'🥑', label:'Avocados — 2', key:'avocado', baseLabel:'Avocados', qty:{n:2,u:''}},
+      {id:'lime',      section:'Produce', icon:'🍋', label:'Limes — 4', key:'lime', baseLabel:'Limes', qty:{n:4,u:''}},
+      {id:'cilantro',  section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch'},
+      {id:'cucumber',  section:'Produce', icon:'🥒', label:'Cucumber — 1', key:'cucumber', baseLabel:'Cucumbers', qty:{n:1,u:''}},
+      {id:'romaine',   section:'Produce', icon:'🥬', label:'Romaine — 1 head', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
+      {id:'greens',    section:'Produce', icon:'🥬', label:'Mixed greens — 1 bag', key:'greens', baseLabel:'Mixed greens', qty:{n:5,u:'oz'}},
+      {id:'tomato',    section:'Produce', icon:'🍅', label:'Tomato — 1 medium'},
+      {id:'cherry_tom',section:'Produce', icon:'🍅', label:'Cherry tomatoes — ½ pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:0.5,u:'pint'}},
+      {id:'corn',      section:'Produce', icon:'🌽', label:'Frozen corn — small bag'},
+      {id:'pico',      section:'Produce', icon:'🍅', label:'Pico de gallo — 1 fresh tub'},
       // Seafood
-      {id:'salmon',    section:'Seafood', icon:'🐟', label:'Salmon fillet — 170g (Tue)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
+      {id:'salmon',    section:'Seafood', icon:'🐟', label:'Salmon fillet — 1', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
       // Deli
-      {id:'chicken',   section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — Mon 150g + Wed 150g (shared purchase)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:300,u:'g'}},
+      {id:'chicken',   section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 1 (shared)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:300,u:'g'}},
       // Dairy
-      {id:'yogurt',    section:'Dairy',   icon:'🥛', label:'Greek yogurt — Wed crema 75g + Thu crema 50g (shared purchase)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:4,u:'oz'}},
-      {id:'feta',      section:'Dairy',   icon:'🧀', label:'Feta — Wed 28g + Thu 28g (shared purchase)', key:'feta', baseLabel:'Feta', qty:{n:56,u:'g'}},
+      {id:'yogurt',    section:'Dairy',   icon:'🥛', label:'Greek yogurt — small tub (shared)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:4,u:'oz'}},
+      {id:'feta',      section:'Dairy',   icon:'🧀', label:'Feta — 1 container (shared)', key:'feta', baseLabel:'Feta', qty:{n:56,u:'g'}},
       // Pantry on-hand (listed for Coordinate view netting)
-      {id:'tuna',      section:'Pantry',  icon:'🐟', label:'Tuna — 1.5 cans Thu (2 cans on hand)', key:'tuna', baseLabel:'Tuna', qty:{n:1.5,u:'can'}},
-      {id:'blackbean', section:'Pantry',  icon:'🫘', label:'Black beans — Mon 90g + Thu 90g (Goya can on hand)', key:'blackbean', baseLabel:'Black beans', qty:{n:180,u:'g'}},
-      {id:'whitebean', section:'Pantry',  icon:'🫘', label:'White beans — Wed 90g (Great Northern can on hand)', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}}
+      {id:'tuna',      section:'Pantry',  icon:'🐟', label:'Tuna — 2 cans on hand', key:'tuna', baseLabel:'Tuna', qty:{n:1.5,u:'can'}},
+      {id:'blackbean', section:'Pantry',  icon:'🫘', label:'Black beans — 1 can on hand', key:'blackbean', baseLabel:'Black beans', qty:{n:180,u:'g'}},
+      {id:'whitebean', section:'Pantry',  icon:'🫘', label:'White beans — 1 can on hand', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}}
     ],
     prep:[
-      {id:'quinoa',    when:'Sunday',   icon:'🌾', label:'Cook quinoa batch: ~120g dry → ~360g cooked (Mon 140g + Tue 100g + Thu 100g)'},
-      {id:'chicken',   when:'Sunday',   key:'chicken', baseLabel:'Pull & portion chicken — Ash: 140g Mon (oregano+garlic+lemon) + 140g Wed (honey-dijon) · Kara: 150g Mon + 150g Wed (cumin-chili)', icon:'🍗', label:'Portion chicken: 150g Mon (plain) + 150g Wed (season cumin-chili at serving)'},
+      {id:'quinoa',    when:'Sunday',   icon:'🌾', label:'Cook quinoa batch for the week (~1 cup dry)'},
+      {id:'chicken',   when:'Sunday',   key:'chicken', baseLabel:'Pull & portion chicken — Ash Mon (oregano+garlic+lemon) + Wed (honey-dijon) · Kara Mon (plain) + Wed (cumin-chili)', icon:'🍗', label:'Portion chicken — Mon (plain) + Wed (season cumin-chili at serving)'},
       {id:'pico_avoc', when:'Daily',    icon:'🥑', label:'Slice avocado + portion pico fresh each day (avocado browns quickly)'},
-      {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake 340g salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon with Ash — 170g, lime + cilantro + garlic crust'}
+      {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon with Ash — lime + cilantro + garlic crust'}
     ]
   }
 };
@@ -2274,6 +2293,13 @@ function applyTheme(key){
   if(D&&D.settings)D.settings.theme=key;
   document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('on',c.dataset.theme===key));
   updateFavicon(key,t);
+}
+const FONT_SIZES=['small','normal','large','xlarge'];
+function applyFontSize(size){
+  if(!FONT_SIZES.includes(size))size='normal';
+  document.body.classList.remove('font-small','font-normal','font-large','font-xlarge');
+  if(size!=='normal')document.body.classList.add('font-'+size);
+  if(D&&D.settings)D.settings.fontSize=size;
 }
 const THEME_FAVICONS={
   amber:(bg,ac,acL)=>`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='${bg}'/><path d='M16 4C13 4 9 8 8 13C7 18 8 25 11 28C12 29 14 30 16 30C18 30 20 29 21 28C24 25 25 18 24 13C23 8 19 4 16 4Z' fill='${ac}' opacity='0.9'/><ellipse cx='13' cy='14' rx='2.5' ry='4' fill='${acL}' opacity='0.3' transform='rotate(-15 13 14)'/><circle cx='12' cy='11' r='1' fill='white' opacity='0.25'/></svg>`,
@@ -3707,6 +3733,8 @@ function renderSettings(){
   document.getElementById('sSB').value=D.settings.startingLeaveBalance;
   document.getElementById('sWFH').value=D.settings.wfhLimit||16;
   document.getElementById('sOfficeDays').value=D.settings.wfhExemptOfficeDays||3;
+  const fontEl=document.getElementById('sFont');
+  if(fontEl)fontEl.value=D.settings.fontSize||'normal';
   renderThemePicker();
 }
 function saveSetting(k,v){D.settings[k]=v;sched();}
@@ -3778,7 +3806,22 @@ function coordToggle(mon,key){
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   D.coord.weeks[mon][key]=!D.coord.weeks[mon][key];
   sched();
-  renderKara();
+  // Minimal in-place DOM update — avoid wiping innerHTML so <details> open/close state
+  // survives natively. Fall back to full re-render only if the coord container is gone.
+  const root=document.getElementById('karaCoord');
+  if(!root||karaView!=='coord'){renderKara();return;}
+  const now=!!D.coord.weeks[mon][key];
+  root.querySelectorAll('.wl-plan-item').forEach(el=>{
+    const oc=el.getAttribute('onclick')||'';
+    if(oc.includes(`'${key}'`))el.classList.toggle('on',now);
+  });
+  root.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{
+    const cnt=d.querySelector('.wl-plan-count'), body=d.querySelector('.wl-plan-body');
+    if(!cnt||!body)return;
+    const total=body.querySelectorAll('.wl-plan-item').length;
+    const done=body.querySelectorAll('.wl-plan-item.on').length;
+    cnt.textContent=`${done}/${total}`;
+  });
 }
 function wlChangeWeek(dir){
   const cand=addDays(wlViewMon,dir*7);
@@ -3905,8 +3948,11 @@ function renderWLDays(p,mon,listId){
   list.querySelectorAll('details.wl-day-row[data-date]').forEach(d=>{wasOpen[d.dataset.date]=d.open;});
   const td=today();
   let html='';
+  const cfg=WL_PEOPLE[p];
   for(let i=0;i<7;i++){
     const d=addDays(mon,i);
+    const override=cfg.overrides()[d]||null;
+    if(override&&override.skip)continue;
     const dow=new Date(d+'T00:00:00').getDay();
     const dayName=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
     const isToday=d===td, isFuture=d>td;
@@ -4106,11 +4152,6 @@ function renderCoord(mon,elId){
       out+=`<div class="wl-plan-item${on?' on':''}" onclick="coordToggle('${mon}','${k}')"><span class="wl-food-box">✓</span><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}${note}</span><span class="coord-who ${who}">${who==='AK'?'A+K':who}</span></div>`;
     }
     return out;
-  };
-  const renderHave=()=>{
-    const rows=[...covered.map(it=>`<div class="wl-plan-item have"><span class="wl-food-icon">${it.icon}</span><span class="wl-food-text">${it.disp}</span></div>`),
-      ...extras.map(it=>`<div class="wl-plan-item have"><span class="wl-food-icon">${it.icon||'✓'}</span><span class="wl-food-text">${it.label}</span></div>`)];
-    return rows.length?rows.join(''):`<div class="wl-empty">Nothing on hand.</div>`;
   };
   const buyDone=buy.filter(it=>cstate[ckey('cshop',it)]).length;
   const prepDone=prepArr.filter(it=>cstate[ckey('cprep',it)]).length;
@@ -4513,6 +4554,7 @@ function attachCloudListener(uid){
     D=applyMigrations(remote);
     localStorage.setItem('rec_v101',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
+    applyFontSize(D.settings.fontSize||'normal');
     renderWeek();
     setSyncState('synced');
   },(err)=>{
@@ -4980,6 +5022,7 @@ function removeNoteTag(idx){
 
 // ── Boot ───────────────────────────────────────────────────
 applyTheme(D.settings.theme||'amber');
+applyFontSize(D.settings.fontSize||'normal');
 renderWeek();
 applySidebarState();
 initMobile();
