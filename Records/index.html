@@ -1003,7 +1003,7 @@ canvas { width:100%!important; height:165px!important; }
     </button>
     <button class="nav-btn" data-tab="wl" onclick="showTab('wl')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
-      <span class="nav-text">Weight Loss</span>
+      <span class="nav-text">Ash</span>
     </button>
     <button class="nav-btn" data-tab="kara" onclick="showTab('kara')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 18c0-3 3-5 7-5s7 2 7 5"/><circle cx="10" cy="7" r="3.2"/></svg>
@@ -1073,12 +1073,12 @@ canvas { width:100%!important; height:165px!important; }
             <div class="add-row" id="addRow">
               <div class="add-field">
                 <div class="add-lbl">Start</div>
-                <input class="add-inp" id="inStart" placeholder="8.5 or 8:30am" oninput="parsePrev('inStart','pStart')">
+                <input class="add-inp" id="inStart" placeholder="8.5 or 8:30am" oninput="parsePrev('inStart','pStart');updateSessPreview()">
                 <div class="add-parsed" id="pStart"></div>
               </div>
               <div class="add-field">
                 <div class="add-lbl">End</div>
-                <input class="add-inp" id="inEnd" placeholder="17 or 5pm" oninput="parsePrev('inEnd','pEnd')">
+                <input class="add-inp" id="inEnd" placeholder="17 or 5pm" oninput="parsePrev('inEnd','pEnd');updateSessPreview()">
                 <div class="add-parsed" id="pEnd"></div>
               </div>
               <div class="add-field">
@@ -1090,7 +1090,8 @@ canvas { width:100%!important; height:165px!important; }
                 </div>
                 <div style="height:17px"></div>
               </div>
-              <div class="add-field" style="justify-content:flex-end;padding-bottom:17px">
+              <div class="add-field" style="justify-content:flex-end;align-items:flex-end;padding-bottom:17px;gap:6px">
+                <div class="fast-preview" id="sessHoursPreview" style="margin:0;line-height:1"></div>
                 <button class="btn btn-acc btn-sm" onclick="addSession()">+ Add</button>
               </div>
             </div>
@@ -1191,12 +1192,11 @@ canvas { width:100%!important; height:165px!important; }
 
     <!-- WEIGHT LOSS TAB -->
     <div class="tab" id="tab-wl">
-      <div class="page-title">Weight Loss</div>
-      <div class="page-sub" id="wlSub">208.1 → 140 lbs · main goal 167 by Sept 22</div>
+      <div class="page-title">Ash</div>
+      <div class="page-sub" id="wlSub">202 → 139 lbs · 1.5 lbs/wk · goal Mar 2027</div>
       <div class="seg" id="wlSeg">
         <button class="seg-btn on" data-wlview="today" onclick="wlSetView('today')">Today</button>
         <button class="seg-btn" data-wlview="week" onclick="wlSetView('week')">Week</button>
-        <button class="seg-btn" data-wlview="shop" onclick="wlSetView('shop')">Prep &amp; Shop</button>
         <button class="seg-btn" data-wlview="progress" onclick="wlSetView('progress')">Progress</button>
       </div>
       <div id="wlPanel"></div>
@@ -1274,7 +1274,7 @@ canvas { width:100%!important; height:165px!important; }
     </button>
     <button class="mob-nav-btn" data-tab="wl" onclick="showTab('wl');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 17l4-7 3 4 4-7 3 5"/><path d="M3 17h14"/></svg>
-      Weight
+      Ash
     </button>
     <button class="mob-nav-btn" data-tab="kara" onclick="showTab('kara');setMobNav(this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><path d="M3 18c0-3 3-5 7-5s7 2 7 5"/><circle cx="10" cy="7" r="3.2"/></svg>
@@ -2198,7 +2198,7 @@ const WL_ONHAND={
 
 // Person registry. Ash tracks weight (weigh-ins/chart/targets); Kara is meals+prep only.
 const WL_PEOPLE={
-  ash:{ name:'Ash', tracking:true,  habits:WL_HABITS, strengthDow:WL_STRENGTH_DOW,
+  ash:{ name:'Ash', tracking:true,  habits:[], strengthDow:WL_STRENGTH_DOW,
         overrides:()=>WL_MEAL_OVERRIDES, plans:()=>WL_WEEK_PLANS, dayMeals:WL_MEALS, dayItems:WL_MEAL_ITEMS },
   kara:{ name:'Kara', tracking:false, habits:[], strengthDow:[],
         overrides:()=>KARA_MEAL_OVERRIDES, plans:()=>KARA_WEEK_PLANS, dayMeals:null, dayItems:null }
@@ -2368,6 +2368,7 @@ let D=loadData(), viewSat=thisSaturday(), activeDay=today(), addLoc='office', sa
 // Plan weeks run Mon→Sun with the Saturday weigh-in on day 6.
 let wlViewMon=thisMonday(), wlShowAllTargets=false, wlView='today';
 let karaViewMon=thisMonday(), karaView='today';
+let coordUiState={};
 
 // ── Sidebar collapse ───────────────────────────────────────
 let sideCollapsed=localStorage.getItem('sideCollapsed')==='true';
@@ -2621,6 +2622,14 @@ function fmtHrs(v,alwaysSign){
 function parsePrev(inId,prevId){
   const v=parseTime(document.getElementById(inId).value);
   document.getElementById(prevId).textContent=v!==null?fmtDec(v):(document.getElementById(inId).value.trim()?'?':'');
+}
+function updateSessPreview(){
+  const s=parseTime(document.getElementById('inStart')?.value||'');
+  const e=parseTime(document.getElementById('inEnd')?.value||'');
+  const el=document.getElementById('sessHoursPreview');
+  if(!el)return;
+  if(s!==null&&e!==null){let h=e-s;if(h<=0)h+=24;el.textContent=fmtDec(h)+' hrs';}
+  else el.textContent='';
 }
 
 // ── Day data ───────────────────────────────────────────────
@@ -3831,10 +3840,22 @@ function wlDayParts(p,d){
       pills+=`<button class="wl-chk strength${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','strength')"><span class="wl-chk-icon">💪</span>Strength</button>`;
     }
   }
+  const singleMeal=(p==='ash');
   const items=isBrunch?[]:((override&&override.items)||(cfg.dayItems?cfg.dayItems[dow]:null)||[]);
   let foods='';
   if(isBrunch){
     foods=`<div class="wl-foods"><div class="wl-foods-label">Saturday brunch out — no plan</div></div>`;
+  }else if(singleMeal){
+    const hasMeal=!!(override||(cfg.dayMeals&&cfg.dayMeals[dow]));
+    if(hasMeal){
+      const on=!!dayState['meal_done'];
+      const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
+      const hasTotals=(cal!=null||protein!=null)&&(cal||protein);
+      const totalsHtml=hasTotals?`<div class="wl-day-totals">plan: ~${cal??'—'} cal · ${protein??'—'}g P</div>`:'';
+      foods=`<div class="wl-foods">${noteHtml}<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','meal_done')"><span class="wl-food-box">✓</span><span class="wl-food-icon">🍽️</span><span class="wl-food-text">${mealName}</span></div>${totalsHtml}</div>`;
+    }else{
+      foods=`<div class="wl-foods"><div class="wl-foods-label">No meal planned</div></div>`;
+    }
   }else if(items.length){
     let rows='';
     for(let idx=0;idx<items.length;idx++){
@@ -3850,9 +3871,16 @@ function wlDayParts(p,d){
   }
   let total=0,done=0;
   if(!isBrunch){
-    total=items.length+(cfg.tracking?cfg.habits.length+(showStrength?1:0):0);
-    for(let idx=0;idx<items.length;idx++)if(dayState['food_'+idx])done++;
-    if(cfg.tracking){ for(const h of cfg.habits)if(dayState[h.key])done++; if(showStrength&&dayState.strength)done++; }
+    if(singleMeal){
+      const hasMeal=!!(override||(cfg.dayMeals&&cfg.dayMeals[dow]));
+      total=(hasMeal?1:0)+(showStrength?1:0);
+      if(hasMeal&&dayState['meal_done'])done++;
+      if(showStrength&&dayState.strength)done++;
+    }else{
+      total=items.length+(cfg.tracking?cfg.habits.length+(showStrength?1:0):0);
+      for(let idx=0;idx<items.length;idx++)if(dayState['food_'+idx])done++;
+      if(cfg.tracking){ for(const h of cfg.habits)if(dayState[h.key])done++; if(showStrength&&dayState.strength)done++; }
+    }
   }
   return {dow,isBrunch,mealName,cal,protein,pills,foods,done,total};
 }
@@ -3872,7 +3900,7 @@ function renderWLDays(p,mon,listId){
     const parts=wlDayParts(p,d);
     const cls=isToday?' today':(isFuture?' future':'');
     const pct=parts.total?Math.round((parts.done/parts.total)*100):0;
-    const openAttr=(wasOpen[d]!==undefined?wasOpen[d]:isToday)?' open':'';
+    const openAttr=(wasOpen[d]!==undefined?wasOpen[d]:true)?' open':'';
     html+=`<details class="wl-day-row${cls}" data-date="${d}"${openAttr}>
       <summary class="wl-day-summary">
         <div class="wl-day-lbl"><span class="wl-day-name">${dayName}</span><span class="wl-day-date">${fmtShort(d)}</span><span class="wl-day-meal">${parts.mealName}</span></div>
@@ -3976,7 +4004,7 @@ function renderCoord(mon,elId){
   if(!el)return;
   const aPlan=WL_WEEK_PLANS[mon], kPlan=KARA_WEEK_PLANS[mon];
   if(!aPlan&&!kPlan){el.innerHTML=`<div class="wl-empty">No plans for this week yet — add Ash's and Kara's meal plans to coordinate.</div>`;return;}
-  const wasOpen=[...el.querySelectorAll('details.wl-plan-section')].map(d=>d.open);
+  el.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{coordUiState[d.dataset.skey]=d.open;});
   if(!D.coord)D.coord={weeks:{}};
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   const cstate=D.coord.weeks[mon];
@@ -4075,19 +4103,15 @@ function renderCoord(mon,elId){
   const buyDone=buy.filter(it=>cstate[ckey('cshop',it)]).length;
   const prepDone=prepArr.filter(it=>cstate[ckey('cprep',it)]).length;
   el.innerHTML=`
-    <details class="wl-plan-section" open>
+    <details class="wl-plan-section" data-skey="shopping" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">🛒</span><span class="wl-plan-title">Combined shopping (to buy)</span><span class="wl-plan-count">${buyDone}/${buy.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderBuy(buy)}</div>
     </details>
-    <details class="wl-plan-section">
-      <summary class="wl-plan-summary"><span class="wl-plan-icon">🏠</span><span class="wl-plan-title">Already on hand (shared)</span><span class="wl-plan-count">${covered.length+extras.length}</span><span class="wl-day-caret">▾</span></summary>
-      <div class="wl-plan-body">${renderHave()}</div>
-    </details>
-    <details class="wl-plan-section" open>
+    <details class="wl-plan-section" data-skey="prep" open>
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep timeline</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderMerged(prepArr,'cprep','when')}</div>
     </details>`;
-  el.querySelectorAll('details.wl-plan-section').forEach((d,i)=>{if(wasOpen[i]===false)d.open=false;});
+  el.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{if(coordUiState[d.dataset.skey]===false)d.open=false;});
 }
 
 function renderWeightLoss(){
@@ -4101,9 +4125,6 @@ function renderWeightLoss(){
     panel.innerHTML=wlWeekNavHTML('ash',"This week")+`<div id="wlWeekBanner"></div><div id="wlWeekDays" class="wl-day-list"></div>`;
     renderWLBanner(wlViewMon,'wlWeekBanner');
     renderWLDays('ash',wlViewMon,'wlWeekDays');
-  }else if(wlView==='shop'){
-    panel.innerHTML=wlWeekNavHTML('ash',"Prep & shop")+`<div id="wlWeekPlans"></div>`;
-    renderWLPlans('ash',wlViewMon,'wlWeekPlans');
   }else{
     panel.innerHTML=`<div class="wl-hero" id="wlHero"></div>
       <div class="pattern-section"><div class="section-label">Weight progress <span class="section-sub">actual vs plan</span></div><div id="wlChart"></div></div>
