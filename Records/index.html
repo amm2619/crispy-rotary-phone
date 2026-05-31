@@ -2198,7 +2198,7 @@ const WL_ONHAND={
 
 // Person registry. Ash tracks weight (weigh-ins/chart/targets); Kara is meals+prep only.
 const WL_PEOPLE={
-  ash:{ name:'Ash', tracking:true,  habits:[], strengthDow:WL_STRENGTH_DOW,
+  ash:{ name:'Ash', tracking:true,  habits:[], strengthDow:[],
         overrides:()=>WL_MEAL_OVERRIDES, plans:()=>WL_WEEK_PLANS, dayMeals:WL_MEALS, dayItems:WL_MEAL_ITEMS },
   kara:{ name:'Kara', tracking:false, habits:[], strengthDow:[],
         overrides:()=>KARA_MEAL_OVERRIDES, plans:()=>KARA_WEEK_PLANS, dayMeals:null, dayItems:null }
@@ -3852,7 +3852,8 @@ function wlDayParts(p,d){
       const noteHtml=(override&&override.note)?`<div class="wl-foods-note">⚠ ${override.note}</div>`:'';
       const hasTotals=(cal!=null||protein!=null)&&(cal||protein);
       const totalsHtml=hasTotals?`<div class="wl-day-totals">plan: ~${cal??'—'} cal · ${protein??'—'}g P</div>`:'';
-      foods=`<div class="wl-foods">${noteHtml}<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','meal_done')"><span class="wl-food-box">✓</span><span class="wl-food-icon">🍽️</span><span class="wl-food-text">${mealName}</span></div>${totalsHtml}</div>`;
+      const ingList=items.length?items.map(it=>it.label).join(' + '):mealName;
+      foods=`<div class="wl-foods">${noteHtml}<div class="wl-food${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','meal_done')"><span class="wl-food-box">✓</span><span class="wl-food-icon">🍽️</span><span class="wl-food-text">${ingList}</span></div>${totalsHtml}</div>`;
     }else{
       foods=`<div class="wl-foods"><div class="wl-foods-label">No meal planned</div></div>`;
     }
@@ -4004,7 +4005,6 @@ function renderCoord(mon,elId){
   if(!el)return;
   const aPlan=WL_WEEK_PLANS[mon], kPlan=KARA_WEEK_PLANS[mon];
   if(!aPlan&&!kPlan){el.innerHTML=`<div class="wl-empty">No plans for this week yet — add Ash's and Kara's meal plans to coordinate.</div>`;return;}
-  el.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{coordUiState[d.dataset.skey]=d.open;});
   if(!D.coord)D.coord={weeks:{}};
   if(!D.coord.weeks[mon])D.coord.weeks[mon]={};
   const cstate=D.coord.weeks[mon];
@@ -4111,7 +4111,10 @@ function renderCoord(mon,elId){
       <summary class="wl-plan-summary"><span class="wl-plan-icon">📋</span><span class="wl-plan-title">Shared prep timeline</span><span class="wl-plan-count">${prepDone}/${prepArr.length}</span><span class="wl-day-caret">▾</span></summary>
       <div class="wl-plan-body">${renderMerged(prepArr,'cprep','when')}</div>
     </details>`;
-  el.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{if(coordUiState[d.dataset.skey]===false)d.open=false;});
+  el.querySelectorAll('details.wl-plan-section[data-skey]').forEach(d=>{
+    if(coordUiState[d.dataset.skey]===false)d.open=false;
+    d.addEventListener('toggle',()=>{coordUiState[d.dataset.skey]=d.open;});
+  });
 }
 
 function renderWeightLoss(){
