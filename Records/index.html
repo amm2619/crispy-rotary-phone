@@ -2503,7 +2503,7 @@ function applyV77DataMigration(data){
 function loadData(){
   try{
     // v100 is the current key; fall back to older keys so a version bump doesn't wipe data.
-    const r=localStorage.getItem('rec_v100')||localStorage.getItem('rec_v99')||localStorage.getItem('rec_v98')||localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86');
+    const r=localStorage.getItem('rec_v101')||localStorage.getItem('rec_v100')||localStorage.getItem('rec_v99')||localStorage.getItem('rec_v98')||localStorage.getItem('rec_v97')||localStorage.getItem('rec_v96')||localStorage.getItem('rec_v95')||localStorage.getItem('rec_v94')||localStorage.getItem('rec_v93')||localStorage.getItem('rec_v92')||localStorage.getItem('rec_v91')||localStorage.getItem('rec_v90')||localStorage.getItem('rec_v89')||localStorage.getItem('rec_v88')||localStorage.getItem('rec_v87')||localStorage.getItem('rec_v86');
     if(r){
       const stored=JSON.parse(r);
       // Patch known-stale settings without wiping user customization.
@@ -2530,7 +2530,7 @@ function loadData(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function save(){
-  localStorage.setItem('rec_v100',JSON.stringify(D));
+  localStorage.setItem('rec_v101',JSON.stringify(D));
   const t=new Date();
   document.getElementById('saveTime').textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   if(!fbUser)setSyncState('offline');
@@ -4499,7 +4499,7 @@ function attachCloudListener(uid){
     // Remote is authoritative — replace local and rerender.
     if(!remote.fasting)remote.fasting={};
     D=applyMigrations(remote);
-    localStorage.setItem('rec_v100',JSON.stringify(D));
+    localStorage.setItem('rec_v101',JSON.stringify(D));
     applyTheme(D.settings.theme||'amber');
     renderWeek();
     setSyncState('synced');
