@@ -438,7 +438,8 @@ canvas { width:100%!important; height:165px!important; }
 .wl-day-list { display:flex; flex-direction:column; gap:6px; }
 .wl-day-row { background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); overflow:hidden; }
 .wl-day-row.today { border-color:var(--acc); }
-.wl-day-row.future { opacity:0.7; }
+.wl-day-row.future { border-style:dashed; border-color:var(--bdr2); }
+.wl-day-row.future .wl-day-name::after { content:'· upcoming'; font-size:10px; font-weight:600; color:var(--t3); margin-left:6px; letter-spacing:0.04em; text-transform:uppercase; }
 .wl-day-summary { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; padding:10px 12px; cursor:pointer; list-style:none; -webkit-tap-highlight-color:transparent; user-select:none; }
 .wl-day-summary::-webkit-details-marker { display:none; }
 .wl-day-row.today .wl-day-summary { background:var(--accD); }
@@ -487,7 +488,7 @@ canvas { width:100%!important; height:165px!important; }
 .wl-plan-item.on { background:var(--grnD); border-color:var(--grn); color:var(--t1); }
 .wl-plan-item.on .wl-food-box { background:var(--grn); border-color:var(--grn); color:#1a1814; }
 .wl-day-row.today { border-color:var(--acc); background:var(--accD); }
-.wl-day-row.future { opacity:0.55; }
+.wl-day-row.future { border-style:dashed; border-color:var(--bdr2); }
 .wl-checks { display:flex; flex-wrap:wrap; gap:4px; }
 .wl-chk { display:inline-flex; align-items:center; gap:4px; padding:5px 9px; border:1px solid var(--bdr); border-radius:20px; background:var(--sur3); color:var(--t3); font-size:11px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.12s; -webkit-tap-highlight-color:transparent; user-select:none; }
 .wl-chk:hover { border-color:var(--bdr2); color:var(--t2); }
@@ -772,7 +773,7 @@ canvas { width:100%!important; height:165px!important; }
   .wl-day-list { gap:8px; }
   .wl-day-row { background:var(--sur); border-color:var(--bdr2); border-width:1.5px; }
   .wl-day-row.today { border-color:var(--acc); border-width:2px; box-shadow:0 0 0 2px var(--accD); }
-  .wl-day-row.future { opacity:0.85; }
+  .wl-day-row.future { border-style:dashed; border-color:var(--bdr2); }
   .wl-day-summary { padding:13px 14px; gap:8px; }
   .wl-day-row .wl-day-name { font-size:15px; color:var(--t1); }
   .wl-day-row .wl-day-date { font-size:13px; color:var(--t2); }
@@ -991,7 +992,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v126</div>
+      <div class="mark-v">v127</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
