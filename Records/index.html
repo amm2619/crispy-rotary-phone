@@ -992,7 +992,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v128</div>
+      <div class="mark-v">v129</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -2040,25 +2040,43 @@ const KARA_MEAL_OVERRIDES={
   '2026-06-01':{ // Mon — Burrito Bowl
     name:'Burrito Bowl', cal:615, protein:56,
     items:[
-      {icon:'🥗', label:'140g cooked quinoa + 90g black beans + 150g pulled chicken + 50g avocado (¼) + 40g pico de gallo + 30g corn + cilantro + lime'}
+      {icon:'🍗', label:'150g pulled chicken (1g cumin, 1g chili powder, 15g lime juice)'},
+      {icon:'🌾', label:'140g cooked quinoa'},
+      {icon:'🫘', label:'90g black beans'},
+      {icon:'🥑', label:'50g avocado, 40g pico de gallo, 30g corn'},
+      {icon:'🌿', label:'Fresh cilantro + lime wedge'}
     ]
   },
   '2026-06-02':{ // Tue — Citrus Salmon Quinoa Bowl
     name:'Citrus Salmon Quinoa Bowl', cal:625, protein:44,
     items:[
-      {icon:'🥗', label:'170g salmon (lime + cilantro + garlic crust) + 100g cooked quinoa + 60g mixed greens + 60g cherry tomatoes + 50g cucumber + ½ avocado (75g) + 30g pico de gallo + lime'}
+      {icon:'🐟', label:'170g salmon (3g minced garlic, 15g lime juice, fresh cilantro crust)'},
+      {icon:'🌾', label:'100g cooked quinoa'},
+      {icon:'🥗', label:'60g mixed greens, 60g cherry tomatoes, 50g cucumber'},
+      {icon:'🥑', label:'75g avocado, 30g pico de gallo'},
+      {icon:'🌿', label:'Lime wedge'}
     ]
   },
   '2026-06-03':{ // Wed — Chicken White Bean Tostada Bowl
     name:'Chicken White Bean Tostada Bowl', cal:565, protein:62,
     items:[
-      {icon:'🥗', label:'150g chicken (cumin-chili rub) + 90g white beans + 60g romaine + 60g tomato + 50g avocado + 40g pico de gallo + 28g feta + 75g Greek yogurt crema (yogurt + lime + cumin) + cilantro'}
+      {icon:'🍗', label:'150g chicken (2g cumin, 1g chili powder, 3g minced garlic)'},
+      {icon:'🫘', label:'90g white beans'},
+      {icon:'🥗', label:'60g romaine, 60g tomato, 50g avocado, 40g pico de gallo'},
+      {icon:'🧀', label:'28g crumbled feta'},
+      {icon:'🥛', label:'Crema*: 75g nonfat Greek yogurt, 15g lime juice, 1g cumin'},
+      {icon:'🌿', label:'Fresh cilantro'}
     ]
   },
   '2026-06-04':{ // Thu — Tuna Taco Salad
     name:'Tuna Taco Salad', cal:550, protein:53,
     items:[
-      {icon:'🥗', label:'165g tuna (1.5 cans, cumin + lime) + 90g black beans + 80g mixed greens + 50g avocado + 30g pico de gallo + 28g feta + 100g cooked quinoa + cilantro + lime'}
+      {icon:'🐟', label:'165g tuna (1.5 cans, 1g cumin, 15g lime juice)'},
+      {icon:'🫘', label:'90g black beans'},
+      {icon:'🌾', label:'100g cooked quinoa'},
+      {icon:'🥗', label:'80g mixed greens, 50g avocado, 40g pico de gallo'},
+      {icon:'🧀', label:'28g crumbled feta'},
+      {icon:'🌿', label:'Fresh cilantro + lime wedge'}
     ]
   }
 };
