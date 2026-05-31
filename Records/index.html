@@ -992,7 +992,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v127</div>
+      <div class="mark-v">v128</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1759,48 +1759,41 @@ const WL_MEAL_OVERRIDES={
   '2026-06-01':{ // Mon — Greek Tzatziki Chicken Bowl
     name:'Greek Tzatziki Chicken Bowl', cal:960, protein:93,
     items:[
-      {icon:'🍗', label:'140g chicken seasoned w/ oregano + garlic + lemon'},
-      {icon:'🥛', label:'Tzatziki: ½ cup Greek yogurt + 50g grated cucumber + dill + garlic + lemon'},
-      {icon:'🥗', label:'60g mixed greens + 75g cherry tomatoes'},
-      {icon:'🧀', label:'28g crumbled feta + ~30g Kalamata olives'},
-      {icon:'🥣', label:'1 cup cottage cheese + 60g raspberries'},
-      {icon:'🍇', label:'1 cup grapes (150g)'},
-      {icon:'🥜', label:'1 oz cashews (28g)'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🍗', label:'140g chicken (1g dried oregano, 3g minced garlic, 15g lemon juice, served w/ Tzatziki*)'},
+      {icon:'🥗', label:'Greek Salad: 60g mixed greens, 75g cherry tomatoes, 28g crumbled feta, 30g Kalamata olives'},
+      {icon:'🥣', label:'170g cottage cheese, 60g raspberries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'},
+      {icon:'🥛', label:'*Tzatziki: 120g nonfat Greek yogurt, 50g grated cucumber, 1g dried dill, 3g minced garlic, 15g lemon juice'}
     ]
   },
   '2026-06-02':{ // Tue — Soy-Ginger Salmon + Edamame Plate
     name:'Soy-Ginger Salmon + Edamame Plate', cal:905, protein:84,
     items:[
-      {icon:'🐟', label:'170g salmon w/ soy-ginger-garlic glaze (soy sauce + fresh ginger + garlic + sesame oil drizzle)'},
-      {icon:'🥦', label:'150g roasted broccoli + snap peas'},
-      {icon:'🫛', label:'80g shelled edamame (frozen, thawed)'},
-      {icon:'🥣', label:'1 cup cottage cheese + 60g berries'},
-      {icon:'🥜', label:'1 oz almonds (28g)'},
+      {icon:'🐟', label:'170g salmon (15g soy sauce, 5g fresh grated ginger, 3g minced garlic, 5g sesame oil)'},
+      {icon:'🥦', label:'150g roasted broccoli + snap peas (5g olive oil, salt + pepper)'},
+      {icon:'🫛', label:'80g shelled edamame'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
       {icon:'🧀', label:'1 string cheese'}
     ]
   },
   '2026-06-03':{ // Wed — Honey Dijon Chicken + Roasted Zucchini
     name:'Honey Dijon Chicken + Roasted Zucchini', cal:975, protein:91,
     items:[
-      {icon:'🍗', label:'140g chicken w/ honey-dijon glaze (dijon + honey + garlic + thyme)'},
-      {icon:'🥒', label:'150g roasted zucchini + bell peppers (1 tsp olive oil, 400°F, 20 min)'},
+      {icon:'🍗', label:'140g chicken (15g Dijon mustard, 10g honey, 3g minced garlic, 1g dried thyme)'},
+      {icon:'🥒', label:'150g roasted zucchini + bell peppers (5g olive oil, salt + pepper, 400°F 20 min)'},
       {icon:'🥚', label:'2 hard-boiled eggs'},
-      {icon:'🍊', label:'1 orange'},
-      {icon:'🥣', label:'1 cup cottage cheese + 60g berries'},
-      {icon:'🥜', label:'1 oz almonds (28g)'},
+      {icon:'🍊', label:'1 orange (~130g)'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
       {icon:'🧀', label:'1 string cheese'}
     ]
   },
   '2026-06-04':{ // Thu — Lemon White Bean Tuna Plate
     name:'Lemon White Bean Tuna Plate', cal:895, protein:83,
     items:[
-      {icon:'🐟', label:'110g tuna + 90g white beans smashed w/ olive oil + garlic + lemon'},
-      {icon:'🥒', label:'100g cucumber + 50g cherry tomatoes'},
-      {icon:'🧀', label:'28g crumbled feta'},
+      {icon:'🐟', label:'110g tuna + 90g white beans (smashed w/ 5g olive oil, 3g minced garlic, 15g lemon juice)'},
+      {icon:'🥒', label:'100g cucumber, 50g cherry tomatoes, 28g crumbled feta'},
       {icon:'🥚', label:'2 hard-boiled eggs'},
-      {icon:'🥛', label:'1 cup Greek yogurt + 60g raspberries'},
-      {icon:'🥜', label:'1 oz almonds (28g)'},
+      {icon:'🥛', label:'120g nonfat Greek yogurt, 60g raspberries, 28g almonds'},
       {icon:'🧀', label:'1 string cheese'}
     ]
   }
@@ -3841,7 +3834,7 @@ function wlDayParts(p,d){
       pills+=`<button class="wl-chk strength${on?' on':''}" onclick="wlToggleHabit('${p}','${d}','strength')"><span class="wl-chk-icon">💪</span>Strength</button>`;
     }
   }
-  const singleMeal=(p==='ash');
+  const singleMeal=false;
   const items=isBrunch?[]:((override&&override.items)||(cfg.dayItems?cfg.dayItems[dow]:null)||[]);
   let foods='';
   if(isBrunch){
