@@ -2720,7 +2720,7 @@ function updateSessPreview(){
   const e=parseTime(document.getElementById('inEnd')?.value||'');
   const el=document.getElementById('sessHoursPreview');
   if(!el)return;
-  if(s!==null&&e!==null){let h=e-s;if(h<=0)h+=24;el.textContent=fmtDec(h)+' hrs';}
+  if(s!==null&&e!==null){let h=e-s;if(h<=0)h+=24;el.textContent=fmtHrs(h);}
   else el.textContent='';
 }
 
