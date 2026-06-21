@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v137</div>
+      <div class="mark-v">v138</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v137</span>
+    <span class="mob-ver">Records v138</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -1825,7 +1825,56 @@ const WL_MEAL_OVERRIDES={
   },
   '2026-06-05':{skip:true}, // Fri — out of town
   '2026-06-06':{skip:true}, // Sat — out of town
-  '2026-06-07':{skip:true}  // Sun — out of town
+  '2026-06-07':{skip:true}, // Sun — out of town
+  '2026-06-22':{ // Mon — Smoky Paprika Chicken + Roasted Asparagus
+    name:'Smoky Paprika Chicken + Roasted Asparagus', cal:920, protein:88,
+    items:[
+      {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g cumin, 3g minced garlic, 5g olive oil)'},
+      {icon:'🌿', label:'150g roasted asparagus (5g olive oil, salt + pepper)'},
+      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-06-23':{ // Tue — Lemon Dill Shrimp + Zucchini
+    name:'Lemon Dill Shrimp + Zucchini', cal:960, protein:91,
+    items:[
+      {icon:'🦐', label:'200g large shrimp (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
+      {icon:'🥒', label:'150g roasted zucchini + snap peas (5g olive oil, salt + pepper)'},
+      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-06-24':{ // Wed — Chipotle Lime Chicken + Peppers & Onion
+    name:'Chipotle Lime Chicken + Peppers & Onion', cal:920, protein:88,
+    items:[
+      {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g chili powder, 1g cumin, 3g minced garlic, 15g lime juice)'},
+      {icon:'🫑', label:'150g roasted bell peppers + onion (5g olive oil, salt + pepper)'},
+      {icon:'🥗', label:'60g mixed greens'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-06-25':{ // Thu — Balsamic Tuna & White Bean Plate
+    name:'Balsamic Tuna & White Bean Plate', cal:960, protein:88,
+    items:[
+      {icon:'🐟', label:'110g tuna + 90g white beans (5g olive oil, 10g balsamic, 3g minced garlic, 15g lemon juice)'},
+      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta, 30g Kalamata olives'},
+      {icon:'🥛', label:'120g nonfat Greek yogurt, 60g berries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  },
+  '2026-06-26':{ // Fri — Herb Salmon + Green Beans
+    name:'Herb Salmon + Green Beans', cal:970, protein:90,
+    items:[
+      {icon:'🐟', label:'170g salmon (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
+      {icon:'🫛', label:'150g roasted green beans (5g olive oil, salt + pepper)'},
+      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
+      {icon:'🧀', label:'1 string cheese'}
+    ]
+  }
 };
 
 // Per-week shopping lists and prep checklists, keyed by Monday date.
@@ -2015,6 +2064,49 @@ const WL_WEEK_PLANS={
       {id:'wed_veg',    when:'Wednesday', icon:'🥒', label:'Roast zucchini + bell pepper fresh Wed (400°F, 20 min) — quick, skip ahead'},
       {id:'thu_beans',  when:'Thursday', icon:'🐟', label:'Thu morning: smash white beans w/ olive oil + garlic + lemon, toss with tuna'}
     ]
+  },
+  '2026-06-22':{
+    label:'Week 6 — Jun 22–26 · Full week (fresh start)',
+    shopping:[
+      // Produce
+      {id:'asparagus',   section:'Produce', icon:'🌿', label:'Asparagus — 1 bunch (~150g)'},
+      {id:'lemon',       section:'Produce', icon:'🍋', label:'Lemons — 2'},
+      {id:'zucchini',    section:'Produce', icon:'🥒', label:'Zucchini — 1 medium'},
+      {id:'snapeas',     section:'Produce', icon:'🫛', label:'Snap peas — 1 bag'},
+      {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 2', key:'peppers', baseLabel:'Bell peppers', qty:{n:2,u:''}},
+      {id:'onion',       section:'Produce', icon:'🧅', label:'Yellow onion — 1'},
+      {id:'green_beans', section:'Produce', icon:'🫛', label:'Green beans — 1 bag (~150g)'},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 2 bags', key:'greens', baseLabel:'Mixed greens', qty:{n:10,u:'oz'}},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — 1 pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:1,u:'pint'}},
+      {id:'dill',        section:'Produce', icon:'🌿', label:'Fresh dill — 1 bunch'},
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Berries — 3 containers', key:'freshberries', baseLabel:'Fresh berries', qty:{n:15,u:'oz'}},
+      // Deli / Seafood
+      {id:'chicken',     section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 280g (Ash)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:280,u:'g'}},
+      {id:'shrimp',      section:'Seafood', icon:'🦐', label:'Large shrimp — 200g (Ash)', key:'shrimp', baseLabel:'Shrimp', qty:{n:200,u:'g'}},
+      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Salmon fillet — 170g (Ash)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
+      // Dairy
+      {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2 tubs (24oz each, shared)'},
+      {id:'yogurt',      section:'Dairy',   icon:'🥛', label:'Greek yogurt — 1 large tub (32oz, shared)', key:'yogurt', baseLabel:'Greek yogurt', qty:{n:32,u:'oz'}},
+      {id:'feta',        section:'Dairy',   icon:'🧀', label:'Crumbled feta — 1 container (113g)', key:'feta', baseLabel:'Feta', qty:{n:113,u:'g'}},
+      {id:'string_chz',  section:'Dairy',   icon:'🧀', label:'String cheese — 5'},
+      // Pantry
+      {id:'almonds',     section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~140g)'},
+      {id:'olives',      section:'Pantry',  icon:'🫒', label:'Kalamata olives — small jar', key:'olives', baseLabel:'Olives', qty:{n:30,u:'g'}},
+      {id:'tuna',        section:'Pantry',  icon:'🐟', label:'Tuna — 1 can', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
+      {id:'whitebean',   section:'Pantry',  icon:'🫘', label:'White beans — 1 can', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
+      {id:'garlic',      section:'Pantry',  icon:'🧄', label:'Garlic — fresh head', checked:true},
+      {id:'smoked_pap',  section:'Pantry',  icon:'🫙', label:'Smoked paprika', checked:true},
+      {id:'cumin',       section:'Pantry',  icon:'🫙', label:'Ground cumin', checked:true},
+      {id:'chili_pwd',   section:'Pantry',  icon:'🌶️', label:'Chili powder', checked:true},
+      {id:'oliveoil',    section:'Pantry',  icon:'🫙', label:'Olive oil', checked:true},
+      {id:'balsamic',    section:'Pantry',  icon:'🫙', label:'Balsamic vinegar', checked:true}
+    ],
+    prep:[
+      {id:'portion_chx', when:'Sunday',   icon:'🍗', label:'Season + portion chicken — Ash Mon (smoked paprika+cumin+garlic) + Wed (chipotle-lime); Kara Mon (plain) + Wed (fajita: cumin+chili+paprika)'},
+      {id:'portion_cot', when:'Sunday',   icon:'🥣', label:'Portion Ash cottage cheese bowls ×4 (Mon/Tue/Wed/Fri) + berries in each'},
+      {id:'shrimp_tue',  when:'Tuesday',  key:'shrimp_tue', baseLabel:'Cook shrimp together — Ash lemon-dill + Kara lime-cumin-garlic (8–10 min pan-sear)', icon:'🦐', label:'Cook shrimp Tue — Ash: lemon+dill+garlic · Kara: lime+cumin+garlic (8–10 min pan)'},
+      {id:'bake_salmon', when:'Friday',   key:'bake_salmon', baseLabel:'Bake salmon together — Ash dill-lemon + Kara lime-cilantro (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon Fri — Ash: dill+lemon+garlic · Kara: lime+cilantro+garlic (400°F, 12–14 min)'}
+    ]
   }
 };
 
@@ -2107,6 +2199,41 @@ const KARA_MEAL_OVERRIDES={
       {icon:'🥗', label:'80g mixed greens, 50g avocado, 40g pico de gallo'},
       {icon:'🧀', label:'28g crumbled feta'},
       {icon:'🌿', label:'Fresh cilantro + lime wedge'}
+    ]
+  },
+  '2026-06-22':{ // Mon — Yogurt Berry Bowl | Chipotle Chicken Quinoa Bowl
+    name:'Yogurt Berry Bowl + Chipotle Chicken Quinoa Bowl', cal:895, protein:68,
+    items:[
+      {icon:'🍳', label:'Breakfast: 170g nonfat Greek yogurt, 60g mixed berries, 14g walnuts, 7g ground flax'},
+      {icon:'🥗', label:'Lunch: 150g chicken (1g cumin, 1g chili powder, 3g minced garlic, 15g lime juice) · 140g cooked quinoa · 90g black beans · 50g avocado · 40g pico de gallo · cilantro'}
+    ]
+  },
+  '2026-06-23':{ // Tue — Avocado Egg Toast | Shrimp & Black Bean Bowl
+    name:'Avocado Egg Toast + Shrimp & Black Bean Bowl', cal:815, protein:52,
+    items:[
+      {icon:'🍳', label:'Breakfast: 1 slice whole-grain toast (40g) · 50g avocado · 1 hard-boiled egg'},
+      {icon:'🥗', label:'Lunch: 150g shrimp (15g lime juice, 1g cumin, 3g minced garlic, 5g olive oil) · 90g black beans · 100g mixed greens · 50g avocado · 40g pico de gallo · cilantro'}
+    ]
+  },
+  '2026-06-24':{ // Wed — Cottage Cheese Bowl | Chicken Fajita Bowl
+    name:'Cottage Cheese Bowl + Chicken Fajita Bowl', cal:900, protein:62,
+    items:[
+      {icon:'🍳', label:'Breakfast: 150g cottage cheese, 60g berries, 14g walnuts, cinnamon'},
+      {icon:'🥗', label:'Lunch: 150g chicken (2g cumin, 1g chili powder, 1g smoked paprika, 3g minced garlic) · 140g cooked quinoa · 60g romaine · 50g avocado · 40g pico de gallo · corn · cilantro'}
+    ]
+  },
+  '2026-06-25':{ // Thu — Greek Yogurt Chia Bowl | Tuna Avocado Salad
+    name:'Greek Yogurt Chia Bowl + Tuna Avocado Salad', cal:840, protein:61,
+    items:[
+      {icon:'🍳', label:'Breakfast: 170g nonfat Greek yogurt, 60g berries, 14g walnuts, 15g chia seeds'},
+      {icon:'🥗', label:'Lunch: 110g tuna · 90g white beans (5g olive oil, 3g minced garlic, 15g lime juice) · 50g avocado · 60g mixed greens · 40g pico de gallo · lime wedge'}
+    ]
+  },
+  '2026-06-26':{ // Fri — PB Banana Overnight Oats | Salmon Citrus Bowl
+    name:'PB Banana Overnight Oats + Salmon Citrus Bowl', cal:905, protein:60,
+    items:[
+      {icon:'🍳', label:'Breakfast: 40g rolled oats + 120g unsweetened almond milk + 16g peanut butter + 60g banana (½) + 12g chia seeds + cinnamon — prep night before'},
+      {icon:'🥗', label:'Lunch: 170g salmon (15g lime juice, 3g minced garlic, fresh cilantro crust) · 100g mixed greens · 60g cherry tomatoes · 50g avocado · 40g pico de gallo'}
     ]
   }
 };
@@ -2204,6 +2331,49 @@ const KARA_WEEK_PLANS={
       {id:'chicken',   when:'Sunday',   key:'chicken', baseLabel:'Pull & portion chicken — Ash Mon (oregano+garlic+lemon) + Wed (honey-dijon) · Kara Mon (plain) + Wed (cumin-chili)', icon:'🍗', label:'Portion chicken — Mon (plain) + Wed (season cumin-chili at serving)'},
       {id:'pico_avoc', when:'Daily',    icon:'🥑', label:'Slice avocado + portion pico fresh each day (avocado browns quickly)'},
       {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon with Ash — lime + cilantro + garlic crust'}
+    ]
+  },
+  '2026-06-22':{
+    label:"Kara — Week of Jun 22 · Full week (breakfast + lunch)",
+    shopping:[
+      // Produce
+      {id:'lime',        section:'Produce', icon:'🍋', label:'Limes — 7 (6 Kara + 1 Ash Wed)', key:'lime', baseLabel:'Limes', qty:{n:7,u:''}},
+      {id:'cilantro',    section:'Produce', icon:'🌿', label:'Cilantro — 1 bunch'},
+      {id:'avocado',     section:'Produce', icon:'🥑', label:'Avocados — 3', key:'avocado', baseLabel:'Avocados', qty:{n:3,u:''}},
+      {id:'romaine',     section:'Produce', icon:'🥬', label:'Romaine — 1 heart', key:'romaine', baseLabel:'Romaine', qty:{n:1,u:'head'}},
+      {id:'greens',      section:'Produce', icon:'🥬', label:'Mixed greens — 2 bags', key:'greens', baseLabel:'Mixed greens', qty:{n:10,u:'oz'}},
+      {id:'cherry_tom',  section:'Produce', icon:'🍅', label:'Cherry tomatoes — ½ pint', key:'cherry_tom', baseLabel:'Cherry tomatoes', qty:{n:0.5,u:'pint'}},
+      {id:'pico',        section:'Produce', icon:'🍅', label:'Pico de gallo — 1 large tub'},
+      {id:'corn',        section:'Produce', icon:'🌽', label:'Frozen corn — small bag'},
+      {id:'banana',      section:'Produce', icon:'🍌', label:'Banana — 1'},
+      {id:'berries',     section:'Produce', icon:'🫐', label:'Berries — 2 containers', key:'freshberries', baseLabel:'Fresh berries', qty:{n:10,u:'oz'}},
+      // Seafood / Deli
+      {id:'salmon',      section:'Seafood', icon:'🐟', label:'Salmon fillet — 170g (Kara)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
+      {id:'shrimp',      section:'Seafood', icon:'🦐', label:'Shrimp — 150g (Kara)', key:'shrimp', baseLabel:'Shrimp', qty:{n:150,u:'g'}},
+      {id:'chicken',     section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 300g (Kara)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:300,u:'g'}},
+      // Dairy
+      {id:'eggs',        section:'Dairy',   icon:'🥚', label:'Eggs — 6-pack', key:'eggs', baseLabel:'Eggs', qty:{n:1,u:''}},
+      {id:'almond_milk', section:'Dairy',   icon:'🥛', label:'Almond milk — small carton (unsweetened)'},
+      // Bread
+      {id:'bread',       section:'Bread',   icon:'🍞', label:'Whole-grain bread — 1 loaf'},
+      // Pantry
+      {id:'tuna',        section:'Pantry',  icon:'🐟', label:'Tuna — 1 can', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
+      {id:'blackbean',   section:'Pantry',  icon:'🫘', label:'Black beans — 1 can', key:'blackbean', baseLabel:'Black beans', qty:{n:180,u:'g'}},
+      {id:'whitebean',   section:'Pantry',  icon:'🫘', label:'White beans — 90g', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
+      {id:'quinoa',      section:'Pantry',  icon:'🌾', label:'Quinoa — new bag (need ~170g dry)', key:'quinoa', baseLabel:'Quinoa'},
+      {id:'chia',        section:'Pantry',  icon:'🫙', label:'Chia seeds — small bag'},
+      {id:'flax',        section:'Pantry',  icon:'🫙', label:'Ground flax seeds — small bag'},
+      {id:'walnuts',     section:'Pantry',  icon:'🥜', label:'Walnuts — small bag'},
+      {id:'rolled_oats', section:'Pantry',  icon:'🫙', label:'Rolled oats — small container'},
+      {id:'pb',          section:'Pantry',  icon:'🥜', label:'Peanut butter — small jar'}
+    ],
+    prep:[
+      {id:'hb_egg',      when:'Sunday',    icon:'🥚', label:'Hard-boil 1 egg for Kara Tue breakfast — store in shell'},
+      {id:'quinoa_k',    when:'Sunday',    icon:'🌾', label:"Cook Kara's quinoa for the week (~170g dry → ~340g cooked; Mon + Wed lunches)"},
+      {id:'pico_avoc',   when:'Daily',     icon:'🥑', label:'Slice avocado fresh each day — browns quickly; portion pico from tub'},
+      {id:'oats_fri',    when:'Thu night', icon:'🍳', label:'Prep Fri overnight oats Thu night: oats + almond milk + PB + chia + cinnamon — add banana Fri morning'},
+      {id:'shrimp_tue',  when:'Tuesday',   key:'shrimp_tue', baseLabel:'Cook shrimp together — Ash lemon-dill + Kara lime-cumin-garlic (8–10 min pan-sear)', icon:'🦐', label:'Cook shrimp with Ash — lime + cumin + garlic (8–10 min pan)'},
+      {id:'bake_salmon', when:'Friday',    key:'bake_salmon', baseLabel:'Bake salmon together — Ash dill-lemon + Kara lime-cilantro (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon with Ash — lime + cilantro + garlic crust (400°F, 12–14 min)'}
     ]
   }
 };
