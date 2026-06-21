@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v139</div>
+      <div class="mark-v">v140</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v139</span>
+    <span class="mob-ver">Records v140</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -1856,12 +1856,13 @@ const WL_MEAL_OVERRIDES={
       {icon:'🧀', label:'1 string cheese'}
     ]
   },
-  '2026-06-25':{ // Thu — Balsamic Tuna & White Bean Plate
-    name:'Balsamic Tuna & White Bean Plate', cal:960, protein:88,
+  '2026-06-25':{ // Thu — Turkey & Zucchini Bowl
+    name:'Turkey & Zucchini Bowl', cal:940, protein:82,
     items:[
-      {icon:'🐟', label:'110g tuna + 90g white beans (5g olive oil, 10g balsamic, 3g minced garlic, 15g lemon juice)'},
-      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta, 30g Kalamata olives'},
-      {icon:'🥛', label:'120g nonfat Greek yogurt, 60g berries, 28g almonds'},
+      {icon:'🦃', label:'170g ground turkey (3g minced garlic, 1g dried oregano, 2g smoked paprika, 5g olive oil)'},
+      {icon:'🥒', label:'150g roasted zucchini (5g olive oil, salt + pepper)'},
+      {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta'},
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
       {icon:'🧀', label:'1 string cheese'}
     ]
   },
@@ -2071,7 +2072,7 @@ const WL_WEEK_PLANS={
       // Produce
       {id:'broccoli',    section:'Produce', icon:'🥦', label:'Broccoli — 1 crown (~150g)'},
       {id:'lemon',       section:'Produce', icon:'🍋', label:'Lemons — 2'},
-      {id:'zucchini',    section:'Produce', icon:'🥒', label:'Zucchini — 1 medium'},
+      {id:'zucchini',    section:'Produce', icon:'🥒', label:'Zucchini — 2 medium'},
 
       {id:'peppers',     section:'Produce', icon:'🫑', label:'Bell peppers — 2', key:'peppers', baseLabel:'Bell peppers', qty:{n:2,u:''}},
       {id:'onion',       section:'Produce', icon:'🧅', label:'Yellow onion — 1'},
@@ -2082,6 +2083,7 @@ const WL_WEEK_PLANS={
       {id:'berries',     section:'Produce', icon:'🫐', label:'Berries — 3 containers', key:'freshberries', baseLabel:'Fresh berries', qty:{n:15,u:'oz'}},
       // Deli / Seafood
       {id:'chicken',     section:'Deli',    icon:'🍗', label:'Pulled rotisserie chicken — 280g (Ash)', key:'chicken', baseLabel:'Pulled chicken', qty:{n:280,u:'g'}},
+      {id:'turkey',      section:'Deli',    icon:'🦃', label:'Ground turkey — 1 lb (93% lean)', key:'turkey', baseLabel:'Ground turkey', qty:{n:170,u:'g'}},
       {id:'shrimp',      section:'Seafood', icon:'🦐', label:'Large shrimp — 200g (Ash)', key:'shrimp', baseLabel:'Shrimp', qty:{n:200,u:'g'}},
       {id:'salmon',      section:'Seafood', icon:'🐟', label:'Salmon fillet — 170g (Ash)', key:'salmon', baseLabel:'Salmon fillet', qty:{n:170,u:'g'}},
       // Dairy
@@ -2091,15 +2093,12 @@ const WL_WEEK_PLANS={
       {id:'string_chz',  section:'Dairy',   icon:'🧀', label:'String cheese — 5'},
       // Pantry
       {id:'almonds',     section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~140g)'},
-      {id:'olives',      section:'Pantry',  icon:'🫒', label:'Kalamata olives — small jar', key:'olives', baseLabel:'Olives', qty:{n:30,u:'g'}},
-      {id:'tuna',        section:'Pantry',  icon:'🐟', label:'Tuna — 1 can', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
-      {id:'whitebean',   section:'Pantry',  icon:'🫘', label:'White beans — 1 can', key:'whitebean', baseLabel:'White beans', qty:{n:90,u:'g'}},
       {id:'garlic',      section:'Pantry',  icon:'🧄', label:'Garlic — fresh head', checked:true},
       {id:'smoked_pap',  section:'Pantry',  icon:'🫙', label:'Smoked paprika', checked:true},
+      {id:'oregano',     section:'Pantry',  icon:'🫙', label:'Dried oregano', checked:true},
       {id:'cumin',       section:'Pantry',  icon:'🫙', label:'Ground cumin', checked:true},
       {id:'chili_pwd',   section:'Pantry',  icon:'🌶️', label:'Chili powder', checked:true},
-      {id:'oliveoil',    section:'Pantry',  icon:'🫙', label:'Olive oil', checked:true},
-      {id:'balsamic',    section:'Pantry',  icon:'🫙', label:'Balsamic vinegar', checked:true}
+      {id:'oliveoil',    section:'Pantry',  icon:'🫙', label:'Olive oil', checked:true}
     ],
     prep:[
       {id:'portion_chx', when:'Sunday',   icon:'🍗', label:'Season + portion chicken — Ash Mon (smoked paprika+cumin+garlic) + Wed (chipotle-lime); Kara Mon (plain) + Wed (fajita: cumin+chili+paprika)'},
