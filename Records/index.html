@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v144</div>
+      <div class="mark-v">v145</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v144</span>
+    <span class="mob-ver">Records v145</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -1826,7 +1826,12 @@ const WL_MEAL_OVERRIDES={
   '2026-06-05':{skip:true}, // Fri — out of town
   '2026-06-06':{skip:true}, // Sat — out of town
   '2026-06-07':{skip:true}, // Sun — out of town
-  '2026-06-22':{ // Mon — Smoky Paprika Chicken + Roasted Broccoli
+  '2026-06-22':{skip:true}, // Mon — meal prep postponed to week of Jun 29
+  '2026-06-23':{skip:true}, // Tue
+  '2026-06-24':{skip:true}, // Wed
+  '2026-06-25':{skip:true}, // Thu
+  '2026-06-26':{skip:true}, // Fri
+  '2026-06-29':{ // Mon — Smoky Paprika Chicken + Roasted Broccoli
     name:'Smoky Paprika Chicken + Roasted Broccoli', cal:840, protein:82,
     items:[
       {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g cumin, 3g minced garlic, 5g olive oil)'},
@@ -1835,7 +1840,7 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
-  '2026-06-23':{ // Tue — Lemon Dill Shrimp + Zucchini
+  '2026-06-30':{ // Tue — Lemon Dill Shrimp + Zucchini
     name:'Lemon Dill Shrimp + Zucchini', cal:880, protein:85,
     items:[
       {icon:'🦐', label:'200g large shrimp (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
@@ -1844,7 +1849,7 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
-  '2026-06-24':{ // Wed — Chipotle Lime Chicken + Peppers & Onion
+  '2026-07-01':{ // Wed — Chipotle Lime Chicken + Peppers & Onion
     name:'Chipotle Lime Chicken + Peppers & Onion', cal:840, protein:82,
     items:[
       {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g chili powder, 1g cumin, 3g minced garlic, 15g lime juice)'},
@@ -1853,7 +1858,7 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
-  '2026-06-25':{ // Thu — Turkey & Zucchini Bowl
+  '2026-07-02':{ // Thu — Turkey & Zucchini Bowl
     name:'Turkey & Zucchini Bowl', cal:860, protein:76,
     items:[
       {icon:'🦃', label:'170g ground turkey (3g minced garlic, 1g dried oregano, 2g smoked paprika, 5g olive oil)'},
@@ -1862,7 +1867,7 @@ const WL_MEAL_OVERRIDES={
       {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
-  '2026-06-26':{ // Fri — Herb Salmon + Green Beans
+  '2026-07-03':{ // Fri — Herb Salmon + Green Beans (federal holiday — Independence Day observed)
     name:'Herb Salmon + Green Beans', cal:890, protein:84,
     items:[
       {icon:'🐟', label:'170g salmon (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
@@ -2061,8 +2066,8 @@ const WL_WEEK_PLANS={
       {id:'thu_beans',  when:'Thursday', icon:'🐟', label:'Thu morning: smash white beans w/ olive oil + garlic + lemon, toss with tuna'}
     ]
   },
-  '2026-06-22':{
-    label:'Week 6 — Jun 22–26 · Full week (fresh start)',
+  '2026-06-29':{
+    label:'Week 6 — Jun 29–Jul 3 · Full week (Fri Jul 3 holiday)',
     shopping:[
       // Produce
       {id:'broccoli',    section:'Produce', icon:'🥦', label:'Broccoli — 1 crown (~150g)'},
@@ -2193,31 +2198,36 @@ const KARA_MEAL_OVERRIDES={
       {icon:'🌿', label:'Fresh cilantro + lime wedge'}
     ]
   },
-  '2026-06-22':{ // Mon — Chipotle Chicken Quinoa Bowl (lunch only)
+  '2026-06-22':{skip:true}, // Mon — meal prep postponed to week of Jun 29
+  '2026-06-23':{skip:true}, // Tue
+  '2026-06-24':{skip:true}, // Wed
+  '2026-06-25':{skip:true}, // Thu
+  '2026-06-26':{skip:true}, // Fri
+  '2026-06-29':{ // Mon — Chipotle Chicken Quinoa Bowl (lunch only)
     name:'Chipotle Chicken Quinoa Bowl', cal:615, protein:55,
     items:[
       {icon:'🥗', label:'Lunch: 150g chicken (1g cumin, 1g chili powder, 3g minced garlic, 15g lime juice) · 140g cooked quinoa · 90g black beans · 50g avocado · 40g pico de gallo · cilantro'}
     ]
   },
-  '2026-06-23':{ // Tue — Shrimp & Black Bean Bowl (lunch only)
+  '2026-06-30':{ // Tue — Shrimp & Black Bean Bowl (lunch only)
     name:'Shrimp & Black Bean Bowl', cal:375, protein:31,
     items:[
       {icon:'🥗', label:'Lunch: 150g shrimp (15g lime juice, 1g cumin, 3g minced garlic, 5g olive oil) · 90g black beans · 100g mixed greens · 50g avocado · 40g pico de gallo · cilantro'}
     ]
   },
-  '2026-06-24':{ // Wed — Chicken Fajita Bowl (lunch only)
+  '2026-07-01':{ // Wed — Chicken Fajita Bowl (lunch only)
     name:'Chicken Fajita Bowl', cal:555, protein:51,
     items:[
       {icon:'🥗', label:'Lunch: 150g chicken (2g cumin, 1g chili powder, 1g smoked paprika, 3g minced garlic) · 140g cooked quinoa · 60g romaine · 50g avocado · 40g pico de gallo · corn · cilantro'}
     ]
   },
-  '2026-06-25':{ // Thu — Tuna Black Bean Salad (lunch only)
+  '2026-07-02':{ // Thu — Tuna Black Bean Salad (lunch only)
     name:'Tuna Black Bean Salad', cal:375, protein:32,
     items:[
       {icon:'🥗', label:'Lunch: 110g tuna · 90g black beans (5g olive oil, 3g minced garlic, 15g lime juice) · 50g avocado · 60g mixed greens · 40g pico de gallo · lime wedge'}
     ]
   },
-  '2026-06-26':{ // Fri — Salmon Citrus Bowl (lunch only)
+  '2026-07-03':{ // Fri — Salmon Citrus Bowl (lunch only, holiday)
     name:'Salmon Citrus Bowl', cal:465, protein:40,
     items:[
       {icon:'🥗', label:'Lunch: 170g salmon (15g lime juice, 3g minced garlic, fresh cilantro crust) · 100g mixed greens · 60g cherry tomatoes · 50g avocado · 40g pico de gallo'}
@@ -2320,8 +2330,8 @@ const KARA_WEEK_PLANS={
       {id:'bake_salmon',when:'Tuesday', key:'bake_salmon', baseLabel:'Bake salmon together — Ash soy-ginger plate + Kara citrus-cilantro bowl (400°F, 12–14 min)', icon:'🐟', label:'Bake salmon with Ash — lime + cilantro + garlic crust'}
     ]
   },
-  '2026-06-22':{
-    label:"Kara — Week of Jun 22 · Mon–Fri lunch only",
+  '2026-06-29':{
+    label:"Kara — Week of Jun 29 · Mon–Fri lunch only",
     shopping:[
       // Produce
       {id:'lime',        section:'Produce', icon:'🍋', label:'Limes — 5', key:'lime', baseLabel:'Limes', qty:{n:5,u:''}},
