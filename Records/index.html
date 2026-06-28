@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v142</div>
+      <div class="mark-v">v143</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v142</span>
+    <span class="mob-ver">Records v143</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -2089,9 +2089,9 @@ const WL_WEEK_PLANS={
       // Dairy
       {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2 tubs (24oz each)'},
       {id:'feta',        section:'Dairy',   icon:'🧀', label:'Crumbled feta — 1 container (113g)', key:'feta', baseLabel:'Feta', qty:{n:113,u:'g'}},
-      {id:'string_chz',  section:'Dairy',   icon:'🧀', label:'String cheese — 5'},
+      {id:'string_chz',  section:'Dairy',   icon:'🧀', label:'String cheese — 5', checked:true},
       // Pantry
-      {id:'almonds',     section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~140g)'},
+      {id:'almonds',     section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~140g)', checked:true},
       {id:'garlic',      section:'Pantry',  icon:'🧄', label:'Garlic — fresh head', checked:true},
       {id:'smoked_pap',  section:'Pantry',  icon:'🫙', label:'Smoked paprika', checked:true},
       {id:'oregano',     section:'Pantry',  icon:'🫙', label:'Dried oregano', checked:true},
@@ -2345,7 +2345,7 @@ const KARA_WEEK_PLANS={
       // Pantry
       {id:'tuna',        section:'Pantry',  icon:'🐟', label:'Tuna — 1 can', key:'tuna', baseLabel:'Tuna', qty:{n:1,u:'can'}},
       {id:'blackbean',   section:'Pantry',  icon:'🫘', label:'Black beans — 1 can (covers Mon/Tue/Thu, ~90g each)', key:'blackbean', baseLabel:'Black beans', qty:{n:270,u:'g'}},
-      {id:'quinoa',      section:'Pantry',  icon:'🌾', label:'Quinoa — new bag (need ~170g dry)', key:'quinoa', baseLabel:'Quinoa'}
+      {id:'quinoa',      section:'Pantry',  icon:'🌾', label:'Quinoa — need ~170g dry', key:'quinoa', baseLabel:'Quinoa', checked:true}
     ],
     prep:[
       {id:'quinoa_k',    when:'Sunday',    icon:'🌾', label:"Cook Kara's quinoa for the week (~170g dry → ~340g cooked; Mon + Wed lunches)"},
