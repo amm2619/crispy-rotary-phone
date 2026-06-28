@@ -1001,7 +1001,7 @@ canvas { width:100%!important; height:165px!important; }
         </svg>
       </div>
       <div class="mark-t">Records</div>
-      <div class="mark-v">v143</div>
+      <div class="mark-v">v144</div>
     </div>
     <button class="nav-btn on" data-tab="week" onclick="showTab('week')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20"><rect x="2" y="5" width="16" height="13" rx="2"/><path d="M6 2v3M14 2v3M2 9h16"/></svg>
@@ -1287,7 +1287,7 @@ canvas { width:100%!important; height:165px!important; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobileNav">
   <div class="mob-meta-row">
-    <span class="mob-ver">Records v143</span>
+    <span class="mob-ver">Records v144</span>
     <div id="mobAuthRow"></div>
   </div>
   <div class="mobile-nav-inner">
@@ -1826,54 +1826,49 @@ const WL_MEAL_OVERRIDES={
   '2026-06-05':{skip:true}, // Fri — out of town
   '2026-06-06':{skip:true}, // Sat — out of town
   '2026-06-07':{skip:true}, // Sun — out of town
-  '2026-06-22':{ // Mon — Smoky Paprika Chicken + Roasted Asparagus
-    name:'Smoky Paprika Chicken + Roasted Asparagus', cal:920, protein:88,
+  '2026-06-22':{ // Mon — Smoky Paprika Chicken + Roasted Broccoli
+    name:'Smoky Paprika Chicken + Roasted Broccoli', cal:840, protein:82,
     items:[
       {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g cumin, 3g minced garlic, 5g olive oil)'},
       {icon:'🌿', label:'150g roasted broccoli (5g olive oil, salt + pepper)'},
       {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta'},
-      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
   '2026-06-23':{ // Tue — Lemon Dill Shrimp + Zucchini
-    name:'Lemon Dill Shrimp + Zucchini', cal:960, protein:91,
+    name:'Lemon Dill Shrimp + Zucchini', cal:880, protein:85,
     items:[
       {icon:'🦐', label:'200g large shrimp (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
       {icon:'🥒', label:'150g roasted zucchini (5g olive oil, salt + pepper)'},
       {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes'},
-      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
   '2026-06-24':{ // Wed — Chipotle Lime Chicken + Peppers & Onion
-    name:'Chipotle Lime Chicken + Peppers & Onion', cal:920, protein:88,
+    name:'Chipotle Lime Chicken + Peppers & Onion', cal:840, protein:82,
     items:[
       {icon:'🍗', label:'140g chicken (2g smoked paprika, 1g chili powder, 1g cumin, 3g minced garlic, 15g lime juice)'},
       {icon:'🫑', label:'150g roasted bell peppers + onion (5g olive oil, salt + pepper)'},
       {icon:'🥗', label:'60g mixed greens'},
-      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
   '2026-06-25':{ // Thu — Turkey & Zucchini Bowl
-    name:'Turkey & Zucchini Bowl', cal:940, protein:82,
+    name:'Turkey & Zucchini Bowl', cal:860, protein:76,
     items:[
       {icon:'🦃', label:'170g ground turkey (3g minced garlic, 1g dried oregano, 2g smoked paprika, 5g olive oil)'},
       {icon:'🥒', label:'150g roasted zucchini (5g olive oil, salt + pepper)'},
       {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes, 28g crumbled feta'},
-      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   },
   '2026-06-26':{ // Fri — Herb Salmon + Green Beans
-    name:'Herb Salmon + Green Beans', cal:970, protein:90,
+    name:'Herb Salmon + Green Beans', cal:890, protein:84,
     items:[
       {icon:'🐟', label:'170g salmon (15g lemon juice, 5g fresh dill, 3g minced garlic, 5g olive oil)'},
       {icon:'🫛', label:'150g roasted green beans (5g olive oil, salt + pepper)'},
       {icon:'🥗', label:'60g mixed greens, 75g cherry tomatoes'},
-      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'},
-      {icon:'🧀', label:'1 string cheese'}
+      {icon:'🥣', label:'170g cottage cheese, 60g berries, 28g almonds'}
     ]
   }
 };
@@ -2089,7 +2084,6 @@ const WL_WEEK_PLANS={
       // Dairy
       {id:'cottage',     section:'Dairy',   icon:'🥣', label:'Cottage cheese — 2 tubs (24oz each)'},
       {id:'feta',        section:'Dairy',   icon:'🧀', label:'Crumbled feta — 1 container (113g)', key:'feta', baseLabel:'Feta', qty:{n:113,u:'g'}},
-      {id:'string_chz',  section:'Dairy',   icon:'🧀', label:'String cheese — 5', checked:true},
       // Pantry
       {id:'almonds',     section:'Pantry',  icon:'🥜', label:'Almonds — 1 bag (need ~140g)', checked:true},
       {id:'garlic',      section:'Pantry',  icon:'🧄', label:'Garlic — fresh head', checked:true},
